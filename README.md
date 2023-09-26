@@ -6,3 +6,11 @@ It is an essential interactive tool for scientists and professionals in the fiel
 ```
 remotes::install_github("EMBRIOInstitute/CalcioInsights", auth_token = "your token")
 ```
+## Example
+
+This is a basic example which shows you how to solve a common problem:
+
+``` r
+library(CalcioInsights)
+run_app()
+```
