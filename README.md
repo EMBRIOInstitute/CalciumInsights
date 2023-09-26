@@ -4,5 +4,5 @@ It is an essential interactive tool for scientists and professionals in the fiel
 ## How to install the app
 
 ```
-remote::install_github("DeiverSuarez/CalcioInsights", auth_token = "your token")
+remote::install_github("EMBRIOInstitute/CalcioInsights", auth_token = "your token")
 ```
