@@ -12,10 +12,11 @@ app_ui <- function(request) {
     # Your application UI logic
     fluidPage(
       navbarPage("CalcioInsights",
-                 tabPanel("Home",icon = icon("home", lib = "glyphicon"),
-                          htmltools::includeHTML(
-                            system.file("app/www/home.html", package = "CalcioInsights")
-                            )),
+                 tabPanel("Home",icon = icon("home", lib = "glyphicon")#,
+                           # htmltools::includeHTML(
+                           #   system.file("app/www/home.html", package = "CalcioInsights")
+                           #  )
+                          ),
                  navbarMenu("Descriptive Analysis",
                             tabPanel("Raw data",
                                      mod_Raw_data_ui("Raw_data_1")

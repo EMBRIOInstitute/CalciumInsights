@@ -146,11 +146,11 @@ mod_Raw_data_server <- function(id){
       table_peak$prominence <- round(prominens(data = data_raw, peak = table_positions_peaks)$prominens_amplitud,3)  # valor de los prominens
       table_peak$Prominence_Midpoint <- Puntos_medios$p_eak_mediun # valor medio de las promineces
 
-      first_time <- as.data.frame(response_time(data = data_raw, peak = table_positions_peaks,
-                                     Puntos_medios = Puntos_medios)$first_time )  #primer tiempo
-      second_time <- as.data.frame(response_time(data = data_raw, peak = table_positions_peaks,
-                                     Puntos_medios = Puntos_medios)$second_time)  #segundo tiempo
-      Tiempo_respose <- as.data.frame(response_time(data = data_raw, peak = table_positions_peaks,
+       first_time <- as.data.frame(response_time(data = data_raw, peak = table_positions_peaks,
+                                      Puntos_medios = Puntos_medios)$first_time )  #primer tiempo
+       second_time <- as.data.frame(response_time(data = data_raw, peak = table_positions_peaks,
+                                      Puntos_medios = Puntos_medios)$second_time)  #segundo tiempo
+       Tiempo_respose <- as.data.frame(response_time(data = data_raw, peak = table_positions_peaks,
                                      Puntos_medios = Puntos_medios)$Tiempo_respose) #tiempo de respuesta
 
 
