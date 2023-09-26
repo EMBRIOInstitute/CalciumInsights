@@ -150,8 +150,10 @@ mod_Raw_data_server <- function(id){
                                       Puntos_medios = Puntos_medios)$first_time )  #primer tiempo
        second_time <- as.data.frame(response_time(data = data_raw, peak = table_positions_peaks,
                                       Puntos_medios = Puntos_medios)$second_time)  #segundo tiempo
-       Tiempo_respose <- as.data.frame(response_time(data = data_raw, peak = table_positions_peaks,
-                                     Puntos_medios = Puntos_medios)$Tiempo_respose) #tiempo de respuesta
+       Tiempo_respose <- response_time(data = data_raw, peak = table_positions_peaks,
+                                     Puntos_medios = Puntos_medios)$Tiempo_respose #tiempo de respuesta
+
+       data_segmento_tiempo <- data.frame(x1 = first_time[1,1], x2 = second_time[1,1])
 
 
       gg <- ggplot2::ggplot(data_raw, ggplot2::aes(x = data_raw[,1], y = data_raw[,2])) +
@@ -169,10 +171,20 @@ mod_Raw_data_server <- function(id){
         ggplot2::geom_point(data = Puntos_medios, ggplot2::aes(x = posiscion_medio,
                                              y = p_eak_mediun), color = "blue", size = 1) +
         ggplot2::geom_point(data = first_time,
-                            ggplot2::aes(x = first_time[1,1], y = 0), color = "green", size = 2)+
+                            ggplot2::aes(x = first_time[1,1], y = 0), color = "green", size = 2) +
         ggplot2::geom_point(data = second_time,
-                            ggplot2::aes(x = second_time[1,1], y = 0), color = "green", size = 2)+
+                            ggplot2::aes(x = second_time[1,1], y = 0), color = "green", size = 2) +
+        ggplot2::geom_segment(data = data_segmento_tiempo,
+                              ggplot2::aes(x = x1, xend = x2, y = 0, yend = 0),
+                              linetype = "solid", color = "green") +
+        ggplot2::geom_text(data = data_segmento_tiempo,  # Utiliza el mismo conjunto de datos para asegurarte de que 'Tiempo_respose' esté disponible
+                           ggplot2::aes(x = (x1 + x2) / 2, y = 0, label = Tiempo_respose),  # Ubicación del texto en el medio del segmento
+                           vjust = 1.5,  # Alineación vertical
+                           hjust = 0.5,  # Alineación horizontal (centro)
+                           color = "black",  # Color del texto
+                           size = 5) +  # Tamaño del texto
         ggplot2::theme_minimal()
+
 
       return(list(gg = gg, table_peak=table_peak))
 
