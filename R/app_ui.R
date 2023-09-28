@@ -30,7 +30,7 @@ app_ui <- function(request) {
                  ),
                  navbarMenu("Inference",
                             tabPanel("Functional ANOVA",
-                                     #aqui va el modulo
+                                     mod_FunctionalANOVA_ui("FunctionalANOVA_1")
                             )
 
                  ),

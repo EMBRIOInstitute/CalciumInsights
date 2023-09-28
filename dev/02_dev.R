@@ -23,6 +23,11 @@ usethis::use_package( "mdatools" )
 usethis::use_package( "pracma" )
 usethis::use_package( "tidyverse" )
 usethis::use_package( "dplyr" )
+usethis::use_package( "reshape2" )
+usethis::use_package( "refund" )
+usethis::use_package( "fda" )
+usethis::use_package( "fds" )
+usethis::use_package( "FoSIntro" )
 
 
 attachment::att_amend_desc()
@@ -32,6 +37,7 @@ attachment::att_amend_desc()
 golem::add_module(name = "Raw_data") # Name of the module
 golem::add_module(name = "Smoothed_data") # Name of the module  Denoising data
 golem::add_module(name = "Denoising_data") # Name of the module
+golem::add_module(name = "FunctionalANOVA")
 ## Add helper functions ----
 ## Creates fct_* and utils_*
 golem::add_fct("helpers", with_test = TRUE)
@@ -42,6 +48,7 @@ golem::add_utils("prominens")
 golem::add_utils("FWHM")
 golem::add_utils("Savitzky_Golay")
 golem::add_utils("response_time")
+golem::add_utils("model_functional")
 
 ## External resources
 ## Creates .js and .css files at inst/app/www

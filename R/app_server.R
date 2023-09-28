@@ -9,4 +9,5 @@ app_server <- function(input, output, session) {
   mod_Raw_data_server("Raw_data_1")
   mod_Smoothed_data_server("Smoothed_data_1")
   mod_Denoising_data_server("Denoising_data_1")
+  mod_FunctionalANOVA_server("FunctionalANOVA_1")
 }
