@@ -18,12 +18,12 @@ mod_Raw_data_ui <- function(id){
                                         '.csv'),
                              label = h5("Dataset")),
                    numericInput(inputId = ns("Cell"),
-                                label = "Select a cell:",
+                                label = "Select a Cell:",
                                 value = 1, min = 1),
                    numericInput(inputId = ns("point_impact"),
-                                label = "points of impact:",
+                                label = "Points of Impact:",
                                 value = 0),
-                   tags$h4("findpeaks Function Arguments",
+                   tags$h4("Find Peaks Function Arguments",
                            style = "color: gray; margin-top: 10px;"),
 
                    numericInput(inputId = ns("minpeakheight"),
@@ -31,15 +31,22 @@ mod_Raw_data_ui <- function(id){
                                 value = 0.1, min = 0, max = 100,step = 0.1),
                    numericInput(inputId = ns("minpeakdistance"),
                                 label = "Minimum Peak Distance (Index-Based)",
-                                value = 2, min = 0, max = 100),
+                                value = 30, min = 0, max = 100),
                    numericInput(inputId = ns("nups"),
                                 label = "Minimum Increasing Steps to Reach a Peak",
                                 value = 1, min = 0, max = 100),
                    numericInput(inputId = ns("ndowns"),
                                 label = "Minimum Decreasing Steps After the Peak",
                                 value = 1, min = 0, max = 100),
+                   selectInput(ns("auc"),
+                               label = "AUC",
+                               choices = list("no"=1,
+                                              "yes"=2
+                               )
+                   ),
                    downloadButton(ns("downloadData.one"),
-                                  "Save My Results")
+                                  "Save My Results"),
+
 
                    ),
       mainPanel(
@@ -51,6 +58,7 @@ mod_Raw_data_ui <- function(id){
                  ),
         tabPanel("Peaks",
                  DT::DTOutput(ns("table_peaks")),
+                 DT::DTOutput(ns("table_AUC")),
                  plotOutput(ns("plot_peak"))
 
         )
@@ -156,6 +164,16 @@ mod_Raw_data_server <- function(id){
        data_segmento_tiempo <- data.frame(x1 = first_time[1,1], x2 = second_time[1,1])
 
 
+       if(input$auc==2){
+
+
+        AUC <- AUC(datos = data_raw, P_min = first_time[1,1] , P_max = second_time[1,1])$area
+        AUC_abs_error <- AUC(datos = data_raw, P_min = first_time[1,1] , P_max = second_time[1,1])$with_absolute_error
+
+        tabla_AUC <- data.frame(AUC = AUC, AUC_abs_error = AUC_abs_error, P_min = first_time[1,1], P_max = second_time[1,1])
+       }
+       else {tabla_AUC <- data.frame()}
+
       gg <- ggplot2::ggplot(data_raw, ggplot2::aes(x = data_raw[,1], y = data_raw[,2])) +
         ggplot2::geom_line() +
         ggplot2::geom_hline(yintercept = input$minpeakheight, linetype = "dashed", color = "blue") +
@@ -186,7 +204,7 @@ mod_Raw_data_server <- function(id){
         ggplot2::theme_minimal()
 
 
-      return(list(gg = gg, table_peak=table_peak))
+      return(list(gg = gg, table_peak = table_peak, tabla_AUC = tabla_AUC))
 
     })
 
@@ -197,12 +215,22 @@ mod_Raw_data_server <- function(id){
 
     output$table_peaks <- DT::renderDataTable({
       df <- peaks_plot()$table_peak
+      #colnames(df) <- c("absolute_amplitude", "prominence","prominence_midpoint" , "position_peaks", "l_inf", "l_sup")
 
       column_order <- c("absolute_amplitude", "prominence","Prominence_Midpoint" , "posision_peaks", "l_inf", "l_sup")
 
 
 
       DT::datatable(df[, column_order])
+    })
+
+
+    output$table_AUC <- DT::renderDataTable({
+      df <- peaks_plot()$tabla_AUC
+      DT::datatable(df, options = list(
+        pagingType = 'simple',
+        dom = 't'
+      ))
     })
 
 

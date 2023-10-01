@@ -21,10 +21,10 @@ app_ui <- function(request) {
                             tabPanel("Raw data",
                                      mod_Raw_data_ui("Raw_data_1")
                             ),
-                            tabPanel("Smoothed data",
+                            tabPanel("Savitzky-Golay",
                                      mod_Smoothed_data_ui("Smoothed_data_1")
                             ),
-                            tabPanel("Denoising data",
+                            tabPanel("Loess",
                                      mod_Denoising_data_ui("Denoising_data_1")
                             )
                  ),

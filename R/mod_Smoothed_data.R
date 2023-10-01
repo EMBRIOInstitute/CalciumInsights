@@ -265,9 +265,9 @@ mod_Smoothed_data_server <- function(id){
     output$table_peaks1 <- DT::renderDataTable({
       df <- peaks_plot1()$table_peak
 
-      column_order <- c("absolute_amplitude", "prominence","Prominence_Midpoint" , "posision_peaks", "l_inf", "l_sup")
+      colnames(df) <- c("absolute_amplitude", "prominence","prominence_midpoint" , "position_peaks", "l_inf", "l_sup")
 
-
+      column_order <- c("absolute_amplitude", "prominence","prominence_midpoint" , "position_peaks", "l_inf", "l_sup")
 
       DT::datatable(df[, column_order])
     })

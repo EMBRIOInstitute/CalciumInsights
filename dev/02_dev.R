@@ -49,6 +49,9 @@ golem::add_utils("FWHM")
 golem::add_utils("Savitzky_Golay")
 golem::add_utils("response_time")
 golem::add_utils("model_functional")
+golem::add_utils("AUC")
+golem::add_utils("AUC2")
+
 
 ## External resources
 ## Creates .js and .css files at inst/app/www
