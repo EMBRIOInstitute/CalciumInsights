@@ -179,9 +179,9 @@ mod_Denoising_data_server <- function(id){
 
 
         AUC <- AUC2(datos = data_smoothed, P_min = first_time[1,1] , P_max = second_time[1,1])$area
-        AUC_abs_error <- AUC2(datos = data_smoothed, P_min = first_time[1,1] , P_max = second_time[1,1])$with_absolute_error
+        #AUC_abs_error <- AUC2(datos = data_smoothed, P_min = first_time[1,1] , P_max = second_time[1,1])$with_absolute_error
 
-        tabla_AUC <- data.frame(AUC = AUC, AUC_abs_error = AUC_abs_error, P_min = first_time[1,1], P_max = second_time[1,1])
+        tabla_AUC <- data.frame(AUC = AUC, P_min = first_time[1,1], P_max = second_time[1,1])
       }
       else {tabla_AUC <- data.frame()}
 
