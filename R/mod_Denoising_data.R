@@ -25,7 +25,7 @@ mod_Denoising_data_ui <- function(id){
                                 value = 0),
                    numericInput(inputId = ns("span"),
                                 label = "Smoothness Control:",
-                                value = 0.1),
+                                value = 0.1,min = 0, max = 1,step = 0.01),
                    tags$h4("Find Peaks Function Arguments",
                            style = "color: gray; margin-top: 10px;"),
                    numericInput(inputId = ns("minpeakheight2"),
@@ -223,10 +223,22 @@ mod_Denoising_data_server <- function(id){
 
 
       df_raw_smoothed <- data.frame(data_smoothed = data_smoothed[,2], data_raw = data_raw[,2] )
+      modelo <- lm(data_smoothed ~ data_raw, data = df_raw_smoothed)
+      r_cuadrado <- summary(modelo)$r.squared
 
-      gg2 <- ggplot2::ggplot(df_raw_smoothed, ggplot2::aes(x = data_smoothed, y = data_raw)) +
-        ggplot2::geom_point() +
+
+
+      gg2 <- ggplot2::ggplot(df_raw_smoothed, ggplot2::aes(x = data_raw  , y = data_smoothed)) +
+        ggplot2::geom_point() +              # Para mostrar los puntos de datos
+        ggplot2::geom_smooth(method = "lm", formula = y ~ x, se = FALSE) +  # Para agregar la línea de regresión lineal
+        ggplot2::labs(title = "Linear Regression Plot", x = "Raw data", y = "Smoothed data") +
         ggplot2::theme_minimal()
+
+      gg2 <- gg2 +
+        ggplot2::geom_text(x = max(df_raw_smoothed$data_raw) * 0.8, y = max(df_raw_smoothed$data_smoothed) * 0.5,
+                  label = paste("R^2 =", round(r_cuadrado, 4)),
+                  parse = TRUE, hjust = 0, vjust = 0, size = 5)
+
 
 
 

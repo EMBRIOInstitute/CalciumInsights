@@ -7,7 +7,7 @@ AUC2 <- function(datos, P_min , P_max){
     approx(df$tiempo, df$sing, xout = x)$y
   }
 
-  area <- integrate(your_function, P_min, P_max, subdivisions = 1000, rel.tol = 0.1, abs.tol = 0.1)
+  area <- integrate(your_function, P_min, P_max, subdivisions = 10000, rel.tol = 0.01, abs.tol = 0.01)
 
   area1 <- area$value
 
