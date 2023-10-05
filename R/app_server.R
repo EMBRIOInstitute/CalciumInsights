@@ -10,4 +10,5 @@ app_server <- function(input, output, session) {
   mod_Smoothed_data_server("Smoothed_data_1")
   mod_Denoising_data_server("Denoising_data_1")
   mod_FunctionalANOVA_server("FunctionalANOVA_1")
+  mod_Special_Case_Circular_Scanning_server("Special_Case_Circular_Scanning_1")
 }

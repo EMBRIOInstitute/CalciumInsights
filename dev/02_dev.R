@@ -37,6 +37,7 @@ attachment::att_amend_desc()
 golem::add_module(name = "Raw_data") # Name of the module
 golem::add_module(name = "Smoothed_data") # Name of the module  Denoising data
 golem::add_module(name = "Denoising_data") # Name of the module
+golem::add_module(name = "Special_Case_Circular_Scanning") # Name of the module
 golem::add_module(name = "FunctionalANOVA")
 ## Add helper functions ----
 ## Creates fct_* and utils_*
@@ -45,12 +46,15 @@ golem::add_utils("helpers", with_test = TRUE)
 golem::add_utils("load_file")
 golem::add_utils("peaks")
 golem::add_utils("prominens")
+golem::add_utils("prominens_case")
 golem::add_utils("FWHM")
+golem::add_utils("FWHM_case")
 golem::add_utils("Savitzky_Golay")
 golem::add_utils("response_time")
 golem::add_utils("model_functional")
 golem::add_utils("AUC")
 golem::add_utils("AUC2")
+golem::add_utils("half_prominance")
 
 
 ## External resources

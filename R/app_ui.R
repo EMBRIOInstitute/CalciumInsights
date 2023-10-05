@@ -26,7 +26,12 @@ app_ui <- function(request) {
                             ),
                             tabPanel("Loess",
                                      mod_Denoising_data_ui("Denoising_data_1")
+                            ),
+                            tabPanel("Special Case: Circular Scanning",
+                            mod_Special_Case_Circular_Scanning_ui("Special_Case_Circular_Scanning_1")
                             )
+
+
                  ),
                  navbarMenu("Inference",
                             tabPanel("Functional ANOVA",

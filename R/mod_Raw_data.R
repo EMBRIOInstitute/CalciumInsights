@@ -21,8 +21,11 @@ mod_Raw_data_ui <- function(id){
                                 label = "Select a Cell:",
                                 value = 1, min = 1),
                    numericInput(inputId = ns("point_impact"),
-                                label = "Points of Impact:",
+                                label = "Stimulus Onset Time:",
                                 value = 0),
+                   div(
+                     style = "border-top: 1px solid #ccc; margin-top: 10px; margin-bottom: 10px;"
+                   ),
                    tags$h4("Find Peaks Function Arguments",
                            style = "color: gray; margin-top: 10px;"),
 
@@ -38,12 +41,19 @@ mod_Raw_data_ui <- function(id){
                    numericInput(inputId = ns("ndowns"),
                                 label = "Minimum Decreasing Steps After the Peak",
                                 value = 1, min = 0, max = 100),
+                   div(
+                     style = "border-top: 1px solid #ccc; margin-top: 10px; margin-bottom: 10px;"
+                   ),
                    selectInput(ns("auc"),
                                label = "AUC",
                                choices = list("no"=1,
                                               "yes"=2
                                )
                    ),
+                   numericInput(inputId = ns("Integration_Reference"),
+                                label = "AUC Reference",
+                                value = 0, step = 0.1),
+
                    downloadButton(ns("downloadData.one"),
                                   "Save My Results"),
 
@@ -166,11 +176,15 @@ mod_Raw_data_server <- function(id){
 
        if(input$auc==2){
 
+         Integration_Reference <- input$Integration_Reference
 
-        AUC <- AUC(datos = data_raw, P_min = first_time[1,1] , P_max = second_time[1,1])$area
-        AUC_abs_error <- AUC(datos = data_raw, P_min = first_time[1,1] , P_max = second_time[1,1])$with_absolute_error
+        AUC <- AUC(datos = data_raw, Integration_Reference = Integration_Reference)
+        area <- AUC$area
+        AUC_abs_error <- AUC$with_absolute_error
+        P_min = AUC$P_min
+        P_max = AUC$P_max
 
-        tabla_AUC <- data.frame(AUC = AUC, AUC_abs_error = AUC_abs_error, P_min = first_time[1,1], P_max = second_time[1,1])
+        tabla_AUC <- data.frame(AUC = area, P_min = P_min, P_max = P_max)
        }
        else {tabla_AUC <- data.frame()}
 
@@ -186,23 +200,28 @@ mod_Raw_data_server <- function(id){
         ggplot2::geom_segment(data = df_peaks_parcia,
                               ggplot2::aes(x = p_ini1, xend = p_ini2, y =p_fin1 , yend = p_fin2),
                                   linetype = "dashed", color = "blue") +
-        ggplot2::geom_point(data = Puntos_medios, ggplot2::aes(x = posiscion_medio,
-                                             y = p_eak_mediun), color = "blue", size = 1) +
-        ggplot2::geom_point(data = first_time,
-                            ggplot2::aes(x = first_time[1,1], y = 0), color = "green", size = 2) +
-        ggplot2::geom_point(data = second_time,
-                            ggplot2::aes(x = second_time[1,1], y = 0), color = "green", size = 2) +
-        ggplot2::geom_segment(data = data_segmento_tiempo,
-                              ggplot2::aes(x = x1, xend = x2, y = 0, yend = 0),
-                              linetype = "solid", color = "green") +
-        ggplot2::geom_text(data = data_segmento_tiempo,  # Utiliza el mismo conjunto de datos para asegurarte de que 'Tiempo_respose' esté disponible
-                           ggplot2::aes(x = (x1 + x2) / 2, y = 0, label = Tiempo_respose),  # Ubicación del texto en el medio del segmento
-                           vjust = 1.5,  # Alineación vertical
-                           hjust = 0.5,  # Alineación horizontal (centro)
-                           color = "black",  # Color del texto
-                           size = 5) +  # Tamaño del texto
+        # ggplot2::geom_point(data = Puntos_medios, ggplot2::aes(x = posiscion_medio,
+        #                                      y = p_eak_mediun), color = "blue", size = 1) +
+        # ggplot2::geom_point(data = first_time,
+        #                     ggplot2::aes(x = first_time[1,1], y = 0), color = "green", size = 2) +
+        # ggplot2::geom_point(data = second_time,
+        #                     ggplot2::aes(x = second_time[1,1], y = 0), color = "green", size = 2) +
+        # ggplot2::geom_segment(data = data_segmento_tiempo,
+        #                       ggplot2::aes(x = x1, xend = x2, y = 0, yend = 0),
+        #                       linetype = "solid", color = "green") +
+        # ggplot2::geom_text(data = data_segmento_tiempo,  # Utiliza el mismo conjunto de datos para asegurarte de que 'Tiempo_respose' esté disponible
+        #                    ggplot2::aes(x = (x1 + x2) / 2, y = 0, label = Tiempo_respose),  # Ubicación del texto en el medio del segmento
+        #                    vjust = 1.5,  # Alineación vertical
+        #                    hjust = 0.5,  # Alineación horizontal (centro)
+        #                    color = "black",  # Color del texto
+        #                    size = 5) +  # Tamaño del texto
         ggplot2::theme_minimal()
 
+      if(input$auc==2){
+        gg <- gg +
+          ggplot2::geom_hline(yintercept = input$Integration_Reference, linetype = "dashed", color = "green")
+        }
+      else {gg <- gg}
 
       return(list(gg = gg, table_peak = table_peak, tabla_AUC = tabla_AUC))
 
@@ -215,13 +234,14 @@ mod_Raw_data_server <- function(id){
 
     output$table_peaks <- DT::renderDataTable({
       df <- peaks_plot()$table_peak
-      #colnames(df) <- c("absolute_amplitude", "prominence","prominence_midpoint" , "position_peaks", "l_inf", "l_sup")
+      df <- df[,-6]
+      colnames(df) <- c("Absolute_Amplitude", "Peak_Time", "L_inf", "L_sup", "Prominence")
 
-      column_order <- c("absolute_amplitude", "prominence","Prominence_Midpoint" , "posision_peaks", "l_inf", "l_sup")
+      column_order <- c("Absolute_Amplitude","Prominence", "Peak_Time", "L_inf", "L_sup")
 
 
 
-      DT::datatable(df[, column_order])
+      DT::datatable(df[,column_order])
     })
 
 
