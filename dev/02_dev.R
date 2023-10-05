@@ -54,6 +54,7 @@ golem::add_utils("response_time")
 golem::add_utils("model_functional")
 golem::add_utils("AUC")
 golem::add_utils("AUC2")
+golem::add_utils("AUC_case")
 golem::add_utils("half_prominance")
 
 

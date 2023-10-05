@@ -26,6 +26,13 @@ mod_Special_Case_Circular_Scanning_ui <- function(id){
                    numericInput(inputId = ns("point_impact_case"),
                                 label = "Stimulus Onset Time:",
                                 value = 0),
+                   selectInput(ns("raw_data_case"),
+                               label = "Raw Data",
+                               choices = list("no"=1,
+                                              "yes"=2
+                               )
+                   ),
+
                    ),
       mainPanel(
         tabsetPanel(
@@ -141,10 +148,16 @@ mod_Special_Case_Circular_Scanning_server <- function(id){
       #table_peak$Prominence_Midpoint <- Puntos_medios$p_eak_mediun # valor medio de las promineces
       table_peak$Time_to_peak <- table_peak[,2]- input$point_impact_case
 
-      half_prominence <- line_half_prominence(data = data_smoothed, peak = table_positions_peaks, Puntos_medios = Puntos_medios$p_eak_mediun)$half_prominence
+      half_prominence <- line_half_prominence(data = data_smoothed,
+                                              peak = table_positions_peaks,
+                                              Puntos_medios = Puntos_medios$p_eak_mediun)$half_prominence
+      AUC <- AUC_case(datos = data_smoothed)$area
 
       gg <- ggplot2::ggplot(data_smoothed, ggplot2::aes(x = data_smoothed[,1], y = data_smoothed[,2])) +
         ggplot2::geom_line() +
+        ggplot2::geom_ribbon(ggplot2::aes(ymin = min(data_smoothed[,1]), ymax = min(data_smoothed[,2])), fill = "grey", alpha = 1) +
+        ggplot2::geom_area(fill = "green", alpha = 0.2) +
+        ggplot2::geom_hline(yintercept = min(data_smoothed[,2]), linetype = "dashed", color = "black") +
         ggplot2::geom_point(data = data_putos_pekas,
                             ggplot2::aes(x = x, y = y), color = "red", size = 2) +
         ggplot2::geom_segment(data = vertical_segments,
@@ -158,18 +171,26 @@ mod_Special_Case_Circular_Scanning_server <- function(id){
                                            yend = y),linetype = "dashed", color = "orange", size = 1) +
         # ggplot2::geom_point(data = Puntos_medios, ggplot2::aes(x = posiscion_medio,
         #                                                        y = p_eak_mediun), color = "blue", size = 1) +
+        ggplot2::labs(title = "", x = "time", y = "calcium signal") + # Títulos de la gráfica
           ggplot2::theme_minimal()
 
+      if (input$raw_data_case == 2){
+        gg <- gg + ggplot2::geom_line(data = data_raw, ggplot2::aes(x = data_raw[,1], y = data_raw[,2]),color = "red" )
+      }
+      else{gg <- gg + ggplot2::geom_line( )}
 
-      return(list(gg = gg, table_peak = table_peak, half_prominence = half_prominence))
+
+      return(list(gg = gg, table_peak = table_peak, half_prominence = half_prominence, AUC = AUC))
     })
 
 
     output$half_prominece <- DT::renderDataTable({
       df <- peaks_plot()$half_prominence
+      AUC <- peaks_plot()$AUC
       df$FWHM <- df[,2]-df[,1]
       df <- df[,-3]
-      colnames(df) <- c("time_1_FWHM", "time_1_FWHM", "FWHM" )
+      colnames(df) <- c("time_1_FWHM", "time_2_FWHM", "FWHM" )
+      df$AUC <- AUC
       DT::datatable(df, options = list(
         pagingType = 'simple',
         dom = 't'
@@ -215,16 +236,16 @@ mod_Special_Case_Circular_Scanning_server <- function(id){
          time_peak[i] = df_smoothed[,1][peak[,2]]-input$point_impact_case
 
        }
-       df_radius <- data.frame(radius = as.numeric(row.names(data)), Time_to_peak = time_peak )
+       df_radius <- data.frame(Distance = as.numeric(row.names(data)), Time_to_peak = time_peak )
 
-       lm_model <- lm(radius ~ Time_to_peak, data = df_radius)
+       lm_model <- lm(Distance ~ Time_to_peak, data = df_radius)
 
 
        #r_squared <- summary(lm_model)$r.squared
        anova_result <- summary(lm_model)
 
        # Crear una gráfica de dispersión con el modelo ajustado y el R^2
-       g <- ggplot2::ggplot(data = df_radius, ggplot2::aes(x = Time_to_peak, y = radius)) +
+       g <- ggplot2::ggplot(data = df_radius, ggplot2::aes(x = Time_to_peak, y = Distance)) +
          ggplot2::geom_point() +  # Gráfico de dispersión de los datos
          ggplot2::geom_smooth(method = "lm", formula = y ~ x, se = FALSE, color = "blue") +  # Modelo ajustado
          #ggplot2::annotate("text", x = max(df_radius$Time_to_peak), y = max(df_radius$Time_to_peak), label = paste("R^2 =", round(r_squared, 2)), color = "red") +  # Texto del R^2
