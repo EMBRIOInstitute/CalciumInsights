@@ -46,21 +46,6 @@ right_left_FWHM <- function(data1, peak, P_M){
     df_interpolation = data.frame(Time = x_values, sing = round(y_pred,2))
     posicion <- which.min(abs(df_interpolation$sing-P_M11))
 
-
-    # Crear un gráfico para visualizar la aproximación
-    # library(ggplot2)
-    #
-    # data <- data.frame(x = x, y = y)
-    # data_pred <- data.frame(x = x_values, y = y_pred)
-    #
-    # g <- ggplot() +
-    #   geom_point(data = data, aes(x = x, y = y), color = "red", size = 3, shape = 19) +
-    #   geom_line(data = data_pred, aes(x = x, y = y), color = "blue", size = 1) +
-    #   labs(title = "Aproximación Polinómica (Grado 10)",
-    #        x = "X",
-    #        y = "Y") +
-    # theme_minimal()
-
     as.numeric(unname(df_interpolation[posicion,][1,]))
   }
 

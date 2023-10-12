@@ -148,9 +148,21 @@ mod_Special_Case_Circular_Scanning_server <- function(id){
       #table_peak$Prominence_Midpoint <- Puntos_medios$p_eak_mediun # valor medio de las promineces
       table_peak$Time_to_peak <- table_peak[,2]- input$point_impact_case
 
-      half_prominence <- line_half_prominence(data = data_smoothed,
+      half_prominence <- line_half_prominence(data1 = data_smoothed,
                                               peak = table_positions_peaks,
-                                              Puntos_medios = Puntos_medios$p_eak_mediun)$half_prominence
+                                              P_M = Puntos_medios$p_eak_mediun)
+
+      left_FWHM <- half_prominence$df
+      right_FWHM <- half_prominence$df2
+
+
+
+
+      half_prominence <- data.frame(Time_left_FWHM = left_FWHM$Time_left_FWHM, Time_right_FWHM = right_FWHM$Time_right_FWHM, y = right_FWHM$y)
+
+
+
+
       AUC <- AUC_case(datos = data_smoothed)$area
 
       gg <- ggplot2::ggplot(data_smoothed, ggplot2::aes(x = data_smoothed[,1], y = data_smoothed[,2])) +
@@ -165,12 +177,16 @@ mod_Special_Case_Circular_Scanning_server <- function(id){
                               linetype = "dashed", color = "red") +
         ggplot2::geom_segment(data = df_peaks_parcia,
                               ggplot2::aes(x = p_ini1, xend = p_ini2, y =p_fin1 , yend = p_fin2),
-                              linetype = "dashed", color = "blue", size = 1) +
+                              linetype = "dashed", color = "black", size = 2) +
         ggplot2::geom_segment(data = half_prominence,
-                              ggplot2::aes(x = x1, xend = x2, y = y,
-                                           yend = y),linetype = "dashed", color = "orange", size = 1) +
-        # ggplot2::geom_point(data = Puntos_medios, ggplot2::aes(x = posiscion_medio,
-        #                                                        y = p_eak_mediun), color = "blue", size = 1) +
+                              ggplot2::aes(x = Time_left_FWHM, xend = Time_right_FWHM, y = y,
+                                           yend = y),linetype = "solid", color = "orange", size = 1) +
+        ggplot2::geom_point(data = Puntos_medios, ggplot2::aes(x = posiscion_medio,
+                                                               y = p_eak_mediun), color = "orange", size = 2) +
+        ggplot2::geom_point(data = half_prominence, ggplot2::aes(x = Time_left_FWHM,
+                                                               y = y), color = "orange", size = 2) +
+        ggplot2::geom_point(data = half_prominence, ggplot2::aes(x = Time_right_FWHM,
+                                                                 y = y), color = "orange", size = 2) +
         ggplot2::labs(title = "", x = "time", y = "calcium signal") + # Títulos de la gráfica
           ggplot2::theme_minimal()
 
@@ -187,9 +203,9 @@ mod_Special_Case_Circular_Scanning_server <- function(id){
     output$half_prominece <- DT::renderDataTable({
       df <- peaks_plot()$half_prominence
       AUC <- peaks_plot()$AUC
-      df$FWHM <- df[,2]-df[,1]
-      df <- df[,-3]
-      colnames(df) <- c("time_1_FWHM", "time_2_FWHM", "FWHM" )
+      df$FWHM <- df$Time_right_FWHM - df$Time_left_FWHM
+
+      colnames(df) <- c("time_1_FWHM", "time_2_FWHM","Midpoint", "FWHM" )
       df$AUC <- AUC
       DT::datatable(df, options = list(
         pagingType = 'simple',
