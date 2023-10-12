@@ -21,7 +21,7 @@ mod_Denoising_data_ui <- function(id){
                                 label = "Select a Cell:",
                                 value = 1, min = 1),
                    numericInput(inputId = ns("point_impact2"),
-                                label = "Points of Impact:",
+                                label = "Stimulus Onset Time:",
                                 value = 0),
                    numericInput(inputId = ns("span"),
                                 label = "Smoothness Control:",
@@ -51,7 +51,10 @@ mod_Denoising_data_ui <- function(id){
                                choices = list("no"=1,
                                               "yes"=2
                                )
-                   )
+                   ),
+                   numericInput(inputId = ns("Integration_Reference1"),
+                                label = "AUC Reference",
+                                value = 0, step = 0.1),
 
 
                    ),
@@ -176,12 +179,15 @@ mod_Denoising_data_server <- function(id){
       data_segmento_tiempo <- data.frame(x1 = first_time[1,1], x2 = second_time[1,1])
 
       if(input$auc2==2){
+        Integration_Reference <- input$Integration_Reference1
 
+        AUC <- AUC2(datos = data_smoothed, Integration_Reference = Integration_Reference)
+        area <- AUC$area
+        AUC_abs_error <- AUC$with_absolute_error
+        P_min = AUC$P_min
+        P_max = AUC$P_max
 
-        AUC <- AUC2(datos = data_smoothed, P_min = first_time[1,1] , P_max = second_time[1,1])$area
-        #AUC_abs_error <- AUC2(datos = data_smoothed, P_min = first_time[1,1] , P_max = second_time[1,1])$with_absolute_error
-
-        tabla_AUC <- data.frame(AUC = AUC, P_min = first_time[1,1], P_max = second_time[1,1])
+        tabla_AUC <- data.frame(AUC = area, P_min = P_min, P_max = P_max)
       }
       else {tabla_AUC <- data.frame()}
 
@@ -200,19 +206,19 @@ mod_Denoising_data_server <- function(id){
                               linetype = "dashed", color = "blue") +
         ggplot2::geom_point(data = Puntos_medios, ggplot2::aes(x = posiscion_medio,
                                                                y = p_eak_mediun), color = "blue", size = 1) +
-        ggplot2::geom_point(data = first_time,
-                            ggplot2::aes(x = first_time[1,1], y = 0), color = "green", size = 2) +
-        ggplot2::geom_point(data = second_time,
-                            ggplot2::aes(x = second_time[1,1], y = 0), color = "green", size = 2) +
-        ggplot2::geom_segment(data = data_segmento_tiempo,
-                              ggplot2::aes(x = x1, xend = x2, y = 0, yend = 0),
-                              linetype = "solid", color = "green") +
-        ggplot2::geom_text(data = data_segmento_tiempo,  # Utiliza el mismo conjunto de datos para asegurarte de que 'Tiempo_respose' esté disponible
-                           ggplot2::aes(x = (x1 + x2) / 2, y = 0, label = Tiempo_respose),  # Ubicación del texto en el medio del segmento
-                           vjust = 1.5,  # Alineación vertical
-                           hjust = 0.5,  # Alineación horizontal (centro)
-                           color = "black",  # Color del texto
-                           size = 5) +  # Tamaño del texto
+        # ggplot2::geom_point(data = first_time,
+        #                     ggplot2::aes(x = first_time[1,1], y = 0), color = "green", size = 2) +
+        # ggplot2::geom_point(data = second_time,
+        #                     ggplot2::aes(x = second_time[1,1], y = 0), color = "green", size = 2) +
+        # ggplot2::geom_segment(data = data_segmento_tiempo,
+        #                       ggplot2::aes(x = x1, xend = x2, y = 0, yend = 0),
+        #                       linetype = "solid", color = "green") +
+        # ggplot2::geom_text(data = data_segmento_tiempo,  # Utiliza el mismo conjunto de datos para asegurarte de que 'Tiempo_respose' esté disponible
+        #                    ggplot2::aes(x = (x1 + x2) / 2, y = 0, label = Tiempo_respose),  # Ubicación del texto en el medio del segmento
+        #                    vjust = 1.5,  # Alineación vertical
+        #                    hjust = 0.5,  # Alineación horizontal (centro)
+        #                    color = "black",  # Color del texto
+        #                    size = 5) +  # Tamaño del texto
         ggplot2::theme_minimal()
 
 
@@ -220,6 +226,12 @@ mod_Denoising_data_server <- function(id){
         gg <- gg + ggplot2::geom_line(data = data_raw, ggplot2::aes(x = data_raw[,1], y = data_raw[,2]),color = "red" )
       }
       else{gg <- gg + ggplot2::geom_line( )}
+
+      if(input$auc2==2){
+        gg <- gg +
+          ggplot2::geom_hline(yintercept = input$Integration_Reference1, linetype = "dashed", color = "green")
+      }
+      else {gg <- gg}
 
 
       df_raw_smoothed <- data.frame(data_smoothed = data_smoothed[,2], data_raw = data_raw[,2] )

@@ -11,7 +11,7 @@ mod_Raw_data_ui <- function(id){
   ns <- NS(id)
   tagList(
     sidebarLayout(
-      sidebarPanel(width = 4,
+      sidebarPanel(width = 3,
                    fileInput(ns("fileBcsv"),
                              accept = c('text/csv',
                                         'text/comma-separated-values,text/plain',
@@ -174,6 +174,20 @@ mod_Raw_data_server <- function(id){
        data_segmento_tiempo <- data.frame(x1 = first_time[1,1], x2 = second_time[1,1])
 
 
+
+
+       right_left_FWHM <- right_left_FWHM(data1=data_raw, peak = table_positions_peaks,
+                                     P_M = Puntos_medios)
+       left_FWHM <- right_left_FWHM$df
+       right_FWHM <- right_left_FWHM$df2
+
+       table_peak$Time_left_FWHM <- left_FWHM$Time_left_FWHM
+       table_peak$Time_right_FWHM <- right_FWHM$Time_right_FWHM
+
+       table_peak$FWHM <- right_FWHM$Time_right_FWHM -left_FWHM$Time_left_FWHM
+
+       table_FWHM <- data.frame(t1 = left_FWHM$Time_left_FWHM, t2 = right_FWHM$Time_right_FWHM, y_FWHM = Puntos_medios$p_eak_mediun)
+
        if(input$auc==2){
 
          Integration_Reference <- input$Integration_Reference
@@ -200,8 +214,12 @@ mod_Raw_data_server <- function(id){
         ggplot2::geom_segment(data = df_peaks_parcia,
                               ggplot2::aes(x = p_ini1, xend = p_ini2, y =p_fin1 , yend = p_fin2),
                                   linetype = "dashed", color = "blue") +
-        # ggplot2::geom_point(data = Puntos_medios, ggplot2::aes(x = posiscion_medio,
-        #                                      y = p_eak_mediun), color = "blue", size = 1) +
+         ggplot2::geom_point(data = Puntos_medios, ggplot2::aes(x = posiscion_medio,
+                                              y = p_eak_mediun), color = "blue", size = 1) +
+        ggplot2::geom_point(data = left_FWHM, ggplot2::aes(x = Time_left_FWHM, y = y),size = 1) +
+        ggplot2::geom_point(data = right_FWHM, ggplot2::aes(x = Time_right_FWHM, y = y), size = 1)+
+        ggplot2::geom_segment(data =  table_FWHM,ggplot2::aes(x = t1, xend = t2, y = y_FWHM , yend = y_FWHM),
+                                                    linetype = "solid", color = "orange") +
         # ggplot2::geom_point(data = first_time,
         #                     ggplot2::aes(x = first_time[1,1], y = 0), color = "green", size = 2) +
         # ggplot2::geom_point(data = second_time,
@@ -234,10 +252,10 @@ mod_Raw_data_server <- function(id){
 
     output$table_peaks <- DT::renderDataTable({
       df <- peaks_plot()$table_peak
-      df <- df[,-6]
-      colnames(df) <- c("Absolute_Amplitude", "Peak_Time", "L_inf", "L_sup", "Prominence")
+      #df <- df[,-6]
+      colnames(df) <- c("Absolute_Amplitude", "Peak_Time", "L_inf", "L_sup", "Prominence", "Prominence_Midpoint", "Time_left_FWHM","Time_right_FWHM", "FWHM")
 
-      column_order <- c("Absolute_Amplitude","Prominence", "Peak_Time", "L_inf", "L_sup")
+      column_order <- c("Absolute_Amplitude","Prominence", "Prominence_Midpoint", "Peak_Time", "L_inf", "L_sup", "Time_left_FWHM","Time_right_FWHM","FWHM")
 
 
 
