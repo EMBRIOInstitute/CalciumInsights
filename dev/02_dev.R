@@ -28,6 +28,8 @@ usethis::use_package( "refund" )
 usethis::use_package( "fda" )
 usethis::use_package( "fds" )
 usethis::use_package( "FoSIntro" )
+usethis::use_package( "reshape2" )
+
 
 
 attachment::att_amend_desc()
@@ -39,6 +41,7 @@ golem::add_module(name = "Smoothed_data") # Name of the module  Denoising data
 golem::add_module(name = "Denoising_data") # Name of the module
 golem::add_module(name = "Special_Case_Circular_Scanning") # Name of the module
 golem::add_module(name = "FunctionalANOVA")
+golem::add_module(name = "Comparison_of_Two_Means")
 ## Add helper functions ----
 ## Creates fct_* and utils_*
 golem::add_fct("helpers", with_test = TRUE)

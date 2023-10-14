@@ -36,6 +36,9 @@ app_ui <- function(request) {
                  navbarMenu("Inference",
                             tabPanel("Functional ANOVA",
                                      mod_FunctionalANOVA_ui("FunctionalANOVA_1")
+                            ),
+                            tabPanel("Hypothesis for the Comparison of Two Groups",
+                            mod_Comparison_of_Two_Means_ui("Comparison_of_Two_Means_1")
                             )
 
                  ),

@@ -11,7 +11,7 @@ mod_Raw_data_ui <- function(id){
   ns <- NS(id)
   tagList(
     sidebarLayout(
-      sidebarPanel(width = 3,
+      sidebarPanel(width = 4,
                    fileInput(ns("fileBcsv"),
                              accept = c('text/csv',
                                         'text/comma-separated-values,text/plain',
@@ -34,7 +34,7 @@ mod_Raw_data_ui <- function(id){
                                 value = 0.1, min = 0, max = 100,step = 0.1),
                    numericInput(inputId = ns("minpeakdistance"),
                                 label = "Minimum Peak Distance (Index-Based)",
-                                value = 30, min = 0, max = 100),
+                                value = 1, min = 0, max = 100),
                    numericInput(inputId = ns("nups"),
                                 label = "Minimum Increasing Steps to Reach a Peak",
                                 value = 1, min = 0, max = 100),

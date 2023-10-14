@@ -178,6 +178,26 @@ mod_Denoising_data_server <- function(id){
 
       data_segmento_tiempo <- data.frame(x1 = first_time[1,1], x2 = second_time[1,1])
 
+
+
+      right_left_FWHM <- right_left_FWHM(data1=data_smoothed, peak = table_positions_peaks,
+                                         P_M = Puntos_medios)
+      left_FWHM <- right_left_FWHM$df
+      right_FWHM <- right_left_FWHM$df2
+
+      table_peak$Time_left_FWHM <- left_FWHM$Time_left_FWHM
+      table_peak$Time_right_FWHM <- right_FWHM$Time_right_FWHM
+
+      table_peak$FWHM <- right_FWHM$Time_right_FWHM -left_FWHM$Time_left_FWHM
+
+      table_FWHM <- data.frame(t1 = left_FWHM$Time_left_FWHM, t2 = right_FWHM$Time_right_FWHM, y_FWHM = Puntos_medios$p_eak_mediun)
+
+
+
+
+
+
+
       if(input$auc2==2){
         Integration_Reference <- input$Integration_Reference1
 
@@ -206,6 +226,10 @@ mod_Denoising_data_server <- function(id){
                               linetype = "dashed", color = "blue") +
         ggplot2::geom_point(data = Puntos_medios, ggplot2::aes(x = posiscion_medio,
                                                                y = p_eak_mediun), color = "blue", size = 1) +
+        ggplot2::geom_point(data = left_FWHM, ggplot2::aes(x = Time_left_FWHM, y = y),size = 1) +
+        ggplot2::geom_point(data = right_FWHM, ggplot2::aes(x = Time_right_FWHM, y = y), size = 1)+
+        ggplot2::geom_segment(data =  table_FWHM,ggplot2::aes(x = t1, xend = t2, y = y_FWHM , yend = y_FWHM),
+                              linetype = "solid", color = "orange") +
         # ggplot2::geom_point(data = first_time,
         #                     ggplot2::aes(x = first_time[1,1], y = 0), color = "green", size = 2) +
         # ggplot2::geom_point(data = second_time,
@@ -273,7 +297,7 @@ mod_Denoising_data_server <- function(id){
       df <- peaks_plot()$table_peak
       #colnames(df) <- c("absolute_amplitude", "prominence","prominence_midpoint" , "position_peaks", "l_inf", "l_sup")
 
-      column_order <- c("absolute_amplitude", "prominence","Prominence_Midpoint" , "posision_peaks", "l_inf", "l_sup")
+      column_order <- c("absolute_amplitude", "prominence","Prominence_Midpoint" , "posision_peaks", "l_inf", "l_sup","Time_left_FWHM","Time_right_FWHM","FWHM")
 
 
 

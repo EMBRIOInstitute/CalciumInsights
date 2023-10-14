@@ -39,7 +39,8 @@ mod_Special_Case_Circular_Scanning_ui <- function(id){
           type = "tabs",
           tabPanel("SummaryData",
                    DT::DTOutput(ns("infotable_case")),
-                   DT::DTOutput(ns("data_case"))
+                   DT::DTOutput(ns("data_case")),
+                   plotOutput(ns("plot_alldata"))
           ),
           tabPanel("Peaks",
                    DT::DTOutput(ns("table_peaks_case")),
@@ -127,9 +128,23 @@ mod_Special_Case_Circular_Scanning_server <- function(id){
                         Peak_Time = posision_peak,  L_inf = l_inf,
                         L_sup = l_sup )
       # #########
+      # top1 <- reshape2::melt(datafunctional, id=colnames(data[,1]))
+      # top1 <- as.data.frame(top1)
+      # colnames(top1) <- c("Time", "Distance", "Value")
+      # g5 = ggplot(data = top1, aes(x=Time,y=Value, group = Distance, colour = Distance))+
+      #      geom_line()
+
+
        return(list(table_peak = p_eak, table_positions_peaks = peak,
                    data_raw = data_raw, df_smoothed = df_smoothed ))
     })
+
+
+    # output$plot_alldata <- renderPlot({
+    #   peaks_df()$g5
+    # })
+
+
 
     peaks_plot <- reactive({
       table_peak = peaks_df()$table_peak  #tabla que muestra los piko
