@@ -1,7 +1,7 @@
 right_left_FWHM <- function(data1, peak, P_M){
 
   izq_FWHM <- function(data1, peak, P_M ,i ){
-
+    suppressWarnings({
     colnames(data1) <- c("Time", "sing")
     v_ps <- peak[,2]  # posicion de los picos
     v_p <- peak[,1]   # los picos
@@ -37,7 +37,7 @@ right_left_FWHM <- function(data1, peak, P_M){
     x <- data1_HFWM[,1]
     y <- data1_HFWM[,2]
     # Realizar un ajuste de regresión polinómica de grado 10
-    degree <- 20
+    degree <- 25
     fit <- lm(y ~ poly(x, degree, raw = TRUE))
     # Valores x para el gráfico
     x_values <- seq(min(x), max(x), length.out = 500)
@@ -47,6 +47,7 @@ right_left_FWHM <- function(data1, peak, P_M){
     posicion <- which.min(abs(df_interpolation$sing-P_M11))
 
     as.numeric(unname(df_interpolation[posicion,][1,]))
+    })
   }
 
   ls = list()
@@ -63,6 +64,7 @@ right_left_FWHM <- function(data1, peak, P_M){
   ###### derecha
 
   der_FWHM <- function(data1, peak, P_M ,i ){
+    suppressWarnings({
     colnames(data1) <- c("Time", "sing")
     v_ps <- peak[,2]  # posicion de los picos
     v_p <- peak[,1]   # los picos
@@ -96,7 +98,7 @@ right_left_FWHM <- function(data1, peak, P_M){
     x <- data1_HFWM[,1]
     y <- data1_HFWM[,2]
     # Realizar un ajuste de regresión polinómica de grado 10
-    degree <- 20
+    degree <- 25
     fit <- lm(y ~ poly(x, degree, raw = TRUE))
     # Valores x para el gráfico
     x_values <- seq(min(x), max(x), length.out = 500)
@@ -105,6 +107,7 @@ right_left_FWHM <- function(data1, peak, P_M){
     df_interpolation = data.frame(Time = x_values, sing = round(y_pred,2))
     posicion <- which.min(abs(df_interpolation$sing-P_M11))
     as.numeric(unname(df_interpolation[posicion,][1,]))
+    })
   }
 
   ls2 = list()

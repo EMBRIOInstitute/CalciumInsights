@@ -18,19 +18,35 @@ mod_Comparison_of_Two_Means_ui <- function(id){
                                         '.csv'),
                              label = h5("Dataset")),
 
+                   numericInput(inputId = ns("bins"),
+                                label = "Bins",
+                                value = 5, min = 1, max = 100,step = 1),
+
                    ),
       mainPanel(
         tabsetPanel(
           type = "tabs",
-          tabPanel("Descriptive Analysis",
+          tabPanel("Summary",
+
                    div(DT::DTOutput(ns("sumarydata")), style = "margin-top: 20px;"),
                    div(DT::DTOutput(ns("data")), style = "margin-top: 20px;"),
+          ),
+          tabPanel("Descriptive Analysis",
+                   tabsetPanel(
+                     type = "tabs",
+                   tabPanel("Histogram",
                    plotOutput(ns("histo1")),
                    plotOutput(ns("histo2")),
+                   ),
+                   tabPanel("Normality Plot",
                    plotOutput(ns("qqplot1")),
                    plotOutput(ns("qqplot2")),
+                   ),
+                   tabPanel("Normality Test",
                    verbatimTextOutput(ns("normality_test_result1")),
                    verbatimTextOutput(ns("normality_test_result2")),
+                   )
+                   )
 
 
 
@@ -89,12 +105,18 @@ mod_Comparison_of_Two_Means_server <- function(id){
 
     output$histo1 <- renderPlot({
       df <- data_info()$data
-      hist(df[,1], main = "Group 1", xlab = colnames(df)[1])
+      x_range1 <- range(df[, 1])
+      x_range <- range(df[, 2])
+
+      hist(df[,1], breaks = input$bins,  main = "Group 1", xlab = colnames(df)[1])
     })
 
     output$histo2 <- renderPlot({
       df <- data_info()$data
-      hist(df[,2], main = "Group 2", xlab = colnames(df)[2])
+      x_range1 <- range(df[, 1])
+      x_range <- range(df[, 2])
+
+      hist(df[,2],  breaks = input$bins, main = "Group 2", xlab = colnames(df)[2])
     })
 
     output$qqplot1 <- renderPlot({

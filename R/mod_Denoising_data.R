@@ -160,13 +160,16 @@ mod_Denoising_data_server <- function(id){
       vertical_segments <- data.frame(x = data_smoothed[,1][peaks],
                                       yend = table_positions_peaks[,1])   # posicion del piko y su altura
 
-      data_min <- prominens(data = data_smoothed, peak = table_positions_peaks)$data_min # puntos minimos donde empiezan los prominents
-      df_peaks_parcia <- prominens(data = data_smoothed, peak = table_positions_peaks)$df_peaks_parcia # el segmento del prominens
 
-      Puntos_medios <- FWHM(peaks = data_smoothed[,1][peaks], firts_peak_div2 = table_positions_peaks[,1][1]/2,
-                            df_peaks_parcia = df_peaks_parcia)$Puntos_medios  # puntos medios de los prominances
+      MSCPFP = Time_of_the_first_peak(data1 = data_smoothed, peak = table_positions_peaks)$cambios_menor_que_pfp # posicion donde hay un cambio en la primera dericada
+                                                                                                            # para el primer pico
 
-      table_peak$prominence <- round(prominens(data = data_smoothed, peak = table_positions_peaks)$prominens_amplitud,3)  # valor de los prominens
+      data_min <- prominens2(data = data_smoothed, peak = table_positions_peaks, MSCPFP = MSCPFP)$data_min # puntos minimos donde empiezan los prominents
+      df_peaks_parcia <- prominens2(data = data_smoothed, peak = table_positions_peaks, MSCPFP = MSCPFP)$df_peaks_parcia # el segmento del prominens
+
+      Puntos_medios <- FWHM2(peaks = data_smoothed[,1][peaks], df_peaks_parcia = df_peaks_parcia)$Puntos_medios  # puntos medios de los prominances
+
+      table_peak$prominence <- round(prominens2(data = data_smoothed, peak = table_positions_peaks, MSCPFP = MSCPFP)$prominens_amplitud,3)  # valor de los prominens
       table_peak$Prominence_Midpoint <- Puntos_medios$p_eak_mediun # valor medio de las promineces
 
       first_time <- as.data.frame(response_time(data = data_smoothed, peak = table_positions_peaks,
@@ -295,9 +298,9 @@ mod_Denoising_data_server <- function(id){
 
     output$table_peaks2 <- DT::renderDataTable({
       df <- peaks_plot()$table_peak
-      #colnames(df) <- c("absolute_amplitude", "prominence","prominence_midpoint" , "position_peaks", "l_inf", "l_sup")
+      colnames(df) <- c("Absolute_Amplitude", "Peak_Time", "L_inf", "L_sup", "Prominence", "Prominence_Midpoint", "Time_left_FWHM","Time_right_FWHM", "FWHM")
 
-      column_order <- c("absolute_amplitude", "prominence","Prominence_Midpoint" , "posision_peaks", "l_inf", "l_sup","Time_left_FWHM","Time_right_FWHM","FWHM")
+      column_order <- c("Absolute_Amplitude","Prominence", "Prominence_Midpoint", "Peak_Time", "L_inf", "L_sup", "Time_left_FWHM","Time_right_FWHM","FWHM")
 
 
 

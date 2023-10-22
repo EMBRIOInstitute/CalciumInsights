@@ -49,8 +49,10 @@ golem::add_utils("helpers", with_test = TRUE)
 golem::add_utils("load_file")
 golem::add_utils("peaks")
 golem::add_utils("prominens")
+golem::add_utils("prominens2")
 golem::add_utils("prominens_case")
 golem::add_utils("FWHM")
+golem::add_utils("FWHM2")
 golem::add_utils("FWHM_case")
 golem::add_utils("right_left_FWHM")
 golem::add_utils("Savitzky_Golay")
@@ -60,6 +62,7 @@ golem::add_utils("AUC")
 golem::add_utils("AUC2")
 golem::add_utils("AUC_case")
 golem::add_utils("half_prominance")
+golem::add_utils("Time_of_the_first_peak")
 
 
 ## External resources
