@@ -15,89 +15,70 @@ mod_Raw_data_ui <- function(id){
     sidebarLayout(
       sidebarPanel(width = 4,
                    useShinyjs(),
-                   tags$style(HTML(".param-label {display: flex; align-items: center;}.small-button { font-size: 8px; padding: 1px 1px; }")),
+                   tags$style(HTML(".param-label {display: flex; align-items: flex-start;}.small-button { font-size: 10px; padding: 2px 2px; }")),
 
-                   div(class = "param-label",
+
                    fileInput(ns("fileBcsv"),
                              accept = c('text/csv',
                                         'text/comma-separated-values,text/plain',
                                         '.csv'),
                              label = h5("Dataset")),
-                   actionButton(ns("param_info_button0"), "?", class = "small-button") ),
-                   div(class = "param-label",
+
                    numericInput(inputId = ns("Cell"),
-                                label = "Select a Cell:",
+                                label = "Components::",
                                 value = 1, min = 1),
-                   actionButton(ns("param_info_button"), "?", class = "small-button") ),
 
-
-                   div(class = "param-label",
                    numericInput(inputId = ns("point_impact"),
                                 label = "Stimulus Onset Time:",
                                 value = 0),
-                   actionButton(ns("param_info_button2"), "?", class = "small-button")
-                   ),
-
                    div(
                      style = "border-top: 1px solid #ccc; margin-top: 10px; margin-bottom: 10px;"
                    ),
+
                    tags$h4("Find Peaks Function Arguments",
                            style = "color: gray; margin-top: 10px;"),
 
-                   div(class = "param-label",
                    numericInput(inputId = ns("minpeakheight"),
                                 label = "Peak Height:",
-                                value = 0.1, min = 0, max = 100,step = 0.1),
-                   actionButton(ns("param_info_button3"), "?", class = "small-button")
-                   ),
-
-                   div(class = "param-label",
+                                value = 0.1, min = 0, step = 0.1),
                    numericInput(inputId = ns("minpeakdistance"),
                                 label = "Peak Distance:",
-                                value = 1, min = 0, max = 100),
-                   actionButton(ns("param_info_button4"), "?", class = "small-button")
-                   ),
-                   div(class = "param-label",
+                                value = 1, min = 0),
+
                    numericInput(inputId = ns("nups"),
                                 label = "Pre-Peak Ascent:",
-                                value = 1, min = 0, max = 100),
-                   actionButton(ns("param_info_button5"), "?", class = "small-button")
-                   ),
+                                value = 1, min = 0),
 
-                   div(class = "param-label",
                    numericInput(inputId = ns("ndowns"),
                                 label = "Post-Peak Descent:",
-                                value = 1, min = 0, max = 100),
-                   actionButton(ns("param_info_button6"), "?", class = "small-button")
-                   ),
+                                value = 1, min = 0),
 
                    div(
                      style = "border-top: 1px solid #ccc; margin-top: 10px; margin-bottom: 10px;"
                    ),
 
-                   div(class = "param-label",
-                   selectInput(ns("auc"),
-                               label = "Area under the curve:",
-                               choices = list("no"=1,
-                                              "yes"=2
-                               )
-                   ),
-                   actionButton(ns("param_info_button7"), "?", class = "small-button")
-                   ),
+                   radioButtons(
+                       inputId = ns("auc"),
+                       label = "Area under the curve:",
+                       choices = c("No" = 1, "Yes" = 2), selected = 1
+                     ),
+
                    conditionalPanel(condition = "input.auc==2", ns=ns,
-                   div(class = "param-label",
                    numericInput(inputId = ns("Integration_Reference"),
                                 label = "Reference Level:",
                                 value = 0, step = 0.1),
-                   actionButton(ns("param_info_button8"), "?", class = "small-button")
-                   )),
-
+                   ),
 
                    downloadButton(ns("downloadData.one"),
                                   "Save My Results"),
 
+                   HTML("<div style='margin-bottom: 10px;'></div>"),
 
+                   div(class = "param-label",
+                       actionButton(ns("param_info_button10"), "Help", class = "small-button")
                    ),
+                   ),
+
       mainPanel(
       tabsetPanel(
         type = "tabs",
@@ -127,80 +108,120 @@ mod_Raw_data_server <- function(id){
     ns <- session$ns
 
 
-    observeEvent(input$param_info_button0, {
+ #####
+    observeEvent(input$param_info_button10, {
       showModal(modalDialog(
-        title = "Button for Data Import and Exploration in CSV and TSV Formats'",
-        "This button serves as a straightforward and efficient instrument facilitating data import and the commencement of exploratory endeavors. It enables the loading of files in both CSV and TSV data interchange formats. A mere activation of this button permits the selection of a data file in the corresponding format, thereby initiating analytical pursuits in a manner characterized by simplicity and efficacy.",
-        footer = modalButton("Close")
+        title = "Application Parameter Guide",
+        size = "l",
+        HTML("
+      <p style='text-align: justify;'>
+        This section provides an overview of essential tools that enhance the data analysis experience.
+        From simple and efficient data import to precise control over analysis parameters,
+        these features establish a robust framework for data exploration and investigation.
+        Each element, from loading data files in different formats to configuring thresholds and criteria,
+        is designed to simplify and enhance the analytical process.
+      </p>
+    "),
+        HTML("
+      <p style='text-align: justify;'>
+        <strong>Dataset:</strong> This button simplifies data import and the start of exploratory work.
+        It allows you to load files in CSV and TSV formats with ease,
+        initiating your analytical tasks with simplicity and efficiency.
+      </p>
+    "),
+        HTML("
+      <p style='text-align: justify;'>
+        <strong>Components:</strong> Choose the cell you want to analyze, corresponding to the columns in the loaded dataset.
+      </p>
+    "),
+        HTML("
+      <p style='text-align: justify;'>
+        <strong>Stimulus Onset Time:</strong> Here, you can select the moment when the experiment's stimulus began,
+        marking the point at which the analysis of the calcium signal starts.
+      </p>
+    "),
+        HTML("
+      <p style='text-align: justify;'>
+        <strong>Peak Height:</strong> This is the minimum (absolute) height required for a peak to be recognized.
+      </p>
+    "),
+        HTML("
+      <p style='text-align: justify;'>
+        <strong>Peak Distance:</strong> This is the minimum distance (in indices) that peaks must have to be counted.
+      </p>
+    "),
+        HTML("
+      <p style='text-align: justify;'>
+        <strong>Pre-Peak Ascent:</strong> This is the minimum number of increasing steps required before a peak is reached.
+      </p>
+    "),
+        HTML("
+      <p style='text-align: justify;'>
+        <strong>Post-Peak Descent:</strong> This is the minimum number of decreasing steps required after a peak.
+      </p>
+    "),
+        HTML("
+      <p style='text-align: justify;'>
+        <strong>Area under the curve:</strong> You can choose to calculate the area under the curve or not.
+      </p>
+    "),
+        HTML("
+      <p style='text-align: justify;'>
+        - 'No': If you do not wish to calculate the area under the curve.
+      </p>
+      <p style='text-align: justify;'>
+        - 'Yes': If you wish to calculate the area under the curve.
+      </p>
+    "),
+        HTML("
+      <p style='text-align: justify;'>
+        <strong>Reference Level:</strong> The assigned value represents a threshold for calculating the area under the curve
+        above this value, depicted on the graph by a green line.
+      </p>
+    "),
+        HTML("
+  <div class='container'>
+    <h2>Metrics Definitions</h2>
+    <div style='overflow-x: auto;'> <!-- Agregamos un contenedor con desplazamiento horizontal -->
+      <table class='table table-striped table-bordered custom-width' style='max-width: 60%;'>
+        <colgroup>
+          <col style='width: 10%;'> <!-- Ajusta el ancho de la columna Metric según tus preferencias -->
+          <col style='width: 40%;'> <!-- Ajusta el ancho de la columna Definition según tus preferencias -->
+          <col style='width: 30%;'> <!-- Ajusta el ancho de la columna Reference según tus preferencias -->
+        </colgroup>
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th>Definition</th>
+            <th>Reference</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Amplitude</td>
+            <td>
+              The maximum distance a wave travels from its resting or equilibrium position. Usually reported as the spatial spread (fullwidth at half-maximal amplitude: FWHM).
+            </td>
+            <td><cite> [1] </cite><br /><cite> [2] </cite></td>
+          </tr>
+          <td>Amplitude</td>
+            <td>
+              The maximum distance a wave travels from its resting or equilibrium position. Usually reported as the spatial spread (fullwidth at half-maximal amplitude: FWHM).
+            </td>
+            <td><cite> [1] </cite><br /><cite> [2] </cite></td>
+          </tr>
+          <!-- Agrega las otras filas de la tabla aquí -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+"),
+
+footer = modalButton("Close")
       ))
     })
 
-    observeEvent(input$param_info_button, {
-      showModal(modalDialog(
-        title = "Ayuda para el parámetro 'Número de muestras'",
-        "El parámetro 'Número de muestras' te permite elegir cuántas muestras aleatorias se generarán.",
-        "Ajusta el valor utilizando el control deslizante y luego haz clic en el botón 'Generar' para realizar el cálculo.",
-        footer = modalButton("Close")
-      ))
-    })
 
-    observeEvent(input$param_info_button2, {
-      showModal(modalDialog(
-        title = "Stimulus Onset Time",
-        "Here, you can select the moment at which the experiment's stimulus commenced, marking the point at which the analysis of the calcium signal begins.",
-        footer = modalButton("Close")
-      ))
-    })
-
-    observeEvent(input$param_info_button3, {
-      showModal(modalDialog(
-        title = "Minimum Absolute Peak Height",
-        "The minimum (absolute) height a peak has to have to be recognized as such",
-        footer = modalButton("Close")
-      ))
-    })
-
-    observeEvent(input$param_info_button4, {
-      showModal(modalDialog(
-        title = "Minimum Peak Distance",
-        "The minimum distance (in indices) peaks have to have to be counted",
-        footer = modalButton("Close")
-      ))
-    })
-
-    observeEvent(input$param_info_button5, {
-      showModal(modalDialog(
-        title = "Minimum Steps to Reach a Peak",
-        "Minimum number of increasing steps before a peak is reached",
-        footer = modalButton("Close")
-      ))
-    })
-
-    observeEvent(input$param_info_button6, {
-      showModal(modalDialog(
-        title = "Decreasing Steps After Peak",
-        "Minimum number of decreasing steps after the peak",
-        footer = modalButton("Close")
-      ))
-    })
-
-    observeEvent(input$param_info_button7, {
-      showModal(modalDialog(
-        title = "Area Under the Curve",
-        "You have the option to choose:",
-        "no: if you do not wish to calculate the area under the curve.",
-        "yes: if you wish to calculate the area under the curve.",
-        footer = modalButton("Close")
-      ))
-    })
-
-    observeEvent(input$param_info_button8, {
-      showModal(modalDialog(
-        title = "Area Under the Curve: Reference Level",
-        "The assigned value represents a threshold indicating the calculation of the area under the curve above this value, depicted on the graph by a green line.",
-        footer = modalButton("Close")
-      ))
-    })
 
 
 #data
@@ -282,8 +303,14 @@ mod_Raw_data_server <- function(id){
                                       peak = table_positions_peaks)$cambios_menor_que_pfp # posicion donde hay un cambio en la primera dericada
                                                                                                             # para el primer pico
 
-      data_min <- prominens2(data = data_raw, peak = table_positions_peaks, MSCPFP = MSCPFP)$data_min # puntos minimos donde empiezan los prominents
-      df_peaks_parcia <- prominens2(data = data_raw, peak = table_positions_peaks, MSCPFP = MSCPFP)$df_peaks_parcia # el segmento del prominens
+      data_min <- prominens2(data = data_raw, peak = table_positions_peaks,
+                             MSCPFP = MSCPFP)$data_min # puntos minimos donde empiezan los prominents
+      df_peaks_parcia <- prominens2(data = data_raw, peak = table_positions_peaks,
+                                    MSCPFP = MSCPFP)$df_peaks_parcia # el segmento del prominens
+
+      time_start_increasin_peak <- prominens2(data = data_raw,
+                                              peak = table_positions_peaks,
+                                              MSCPFP = MSCPFP)$time_start_increasin_peak
 
       # Puntos_medios <- FWHM(peaks = data_raw[,1][peaks], firts_peak_div2 = table_positions_peaks[,1][1]/2,
       #                       df_peaks_parcia = df_peaks_parcia)$Puntos_medios  # puntos medios de los prominances
@@ -315,6 +342,9 @@ mod_Raw_data_server <- function(id){
 
        table_peak$FWHM <- right_FWHM$Time_right_FWHM -left_FWHM$Time_left_FWHM
 
+
+       table_peak$Time_to_peak <- table_peak$posision_peak - time_start_increasin_peak$Time
+
        table_FWHM <- data.frame(t1 = left_FWHM$Time_left_FWHM, t2 = right_FWHM$Time_right_FWHM, y_FWHM = Puntos_medios$p_eak_mediun)
 
        if(input$auc==2){
@@ -338,7 +368,7 @@ mod_Raw_data_server <- function(id){
         ggplot2::geom_line() +
         ggplot2::geom_hline(yintercept = input$minpeakheight, linetype = "dashed", color = "purple") +
         ggplot2::geom_point(data = data_putos_pekas,
-                            ggplot2::aes(x = x, y = y), color = "red", size = 1)+
+                            ggplot2::aes(x = x, y = y), color = "red", size = 2)+
         ggplot2::geom_segment(data = vertical_segments,
                               ggplot2::aes(x = x, xend = x, y = 0, yend = yend),
                      linetype = "dashed", color = "red") +
@@ -347,7 +377,12 @@ mod_Raw_data_server <- function(id){
                                   linetype = "dashed", color = "blue") +
         ggplot2::geom_segment(data =  table_FWHM,ggplot2::aes(x = t1, xend = t2, y = y_FWHM , yend = y_FWHM),
                                                     linetype = "solid", color = "orange") +
+        ggplot2::ggtitle("Metrics Graph") +
+        ggplot2::labs(x = "Time", y = "Signal") +
 
+
+        # ggplot2::geom_point(data = time_start_increasin_peak,
+        #                     ggplot2::aes(x = Time, y = y), color = "red", size = 1)+
         # ggplot2::geom_point(data = left_FWHM, ggplot2::aes(x = Time_left_FWHM, y = y),size = 1) +
         # ggplot2::geom_point(data = right_FWHM, ggplot2::aes(x = Time_right_FWHM, y = y), size = 1)+
         # ggplot2::geom_point(data = Puntos_medios, ggplot2::aes(x = posiscion_medio,
@@ -386,9 +421,9 @@ mod_Raw_data_server <- function(id){
     output$table_peaks <- DT::renderDataTable({
       df <- peaks_plot()$table_peak
       #df <- df[,-6]
-      colnames(df) <- c("Absolute_Amplitude", "Peak_Time", "L_inf", "L_sup", "Prominence", "Prominence_Midpoint", "Time_left_FWHM","Time_right_FWHM", "FWHM")
+      colnames(df) <- c("Absolute_Amplitude", "Peak_Time", "L_inf", "L_sup", "Prominence", "Prominence_Midpoint", "Time_left_FWHM","Time_right_FWHM", "FWHM", "Time_to_peak")
 
-      column_order <- c("Absolute_Amplitude","Prominence", "Prominence_Midpoint", "Peak_Time", "L_inf", "L_sup", "Time_left_FWHM","Time_right_FWHM","FWHM")
+      column_order <- c("Absolute_Amplitude","Prominence", "Prominence_Midpoint", "Peak_Time", "Time_to_peak", "L_inf", "L_sup", "Time_left_FWHM","Time_right_FWHM","FWHM")
 
 
 

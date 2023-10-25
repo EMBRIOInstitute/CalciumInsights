@@ -267,20 +267,44 @@ mod_Special_Case_Circular_Scanning_server <- function(id){
          time_peak[i] = df_smoothed[,1][peak[,2]]-input$point_impact_case
 
        }
-       df_radius <- data.frame(Distance = as.numeric(row.names(data)), Time_to_peak = time_peak )
 
+       df_radius <- data.frame(Distance = as.numeric(row.names(data)), Time_to_peak = time_peak )
        lm_model <- lm(Distance ~ Time_to_peak, data = df_radius)
+       r_cuadrado <- summary(lm_model)$r.squared
 
 
        #r_squared <- summary(lm_model)$r.squared
-       anova_result <- summary(lm_model)
+
 
        # Crear una gráfica de dispersión con el modelo ajustado y el R^2
        g <- ggplot2::ggplot(data = df_radius, ggplot2::aes(x = Time_to_peak, y = Distance)) +
-         ggplot2::geom_point() +  # Gráfico de dispersión de los datos
-         ggplot2::geom_smooth(method = "lm", formula = y ~ x, se = FALSE, color = "blue") +  # Modelo ajustado
-         #ggplot2::annotate("text", x = max(df_radius$Time_to_peak), y = max(df_radius$Time_to_peak), label = paste("R^2 =", round(r_squared, 2)), color = "red") +  # Texto del R^2
-         ggplot2::labs(title = "linear regression", x = "Peak time (s)", y = "Distance (um)")  # Títulos de la gráfica
+         ggplot2::geom_point() +
+         ggplot2::geom_smooth(method = "lm", formula = y ~ x, se = FALSE, color = "blue") +
+         ggplot2::labs(title = "linear regression", x = "Peak time (s)", y = "Distance (um)") +
+         ggplot2::theme_minimal()
+
+       # Calcular la ecuación de la recta de regresión
+
+       intercept <- coef(lm_model)[1]
+       slope <- coef(lm_model)[2]
+
+       equation_text <- sprintf("y = %.2fx + %.2f", slope, intercept)
+
+       g <- g +
+         ggplot2::geom_text(x = mean(df_radius$Time_to_peak)-mean(df_radius$Time_to_peak)*0.2,
+                            y = mean(df_radius$Distance)+1.5*mean(df_radius$Distance)/2,
+                            label = equation_text,
+                            hjust = 0, vjust = 0, size = 5)
+       g <- g +
+         ggplot2::geom_text(x = mean(df_radius$Time_to_peak)-mean(df_radius$Time_to_peak)*0.2,
+                            y = mean(df_radius$Distance) + 1.1*mean(df_radius$Distance)/2,
+                            label = paste("R^2 =", round(r_cuadrado, 4)),
+                            parse = TRUE, hjust = 0, vjust = 0, size = 5)
+
+
+
+       anova_result <- summary(lm_model)
+
 
 
 
