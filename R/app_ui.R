@@ -18,14 +18,15 @@ app_ui <- function(request) {
                              # )
                           ),
                  navbarMenu("Descriptive Analysis",
-                            tabPanel("Raw data",
-                                     mod_Raw_data_ui("Raw_data_1")
-                            ),
+
                             # tabPanel("Savitzky-Golay",
                             #          mod_Smoothed_data_ui("Smoothed_data_1")
                             # ),
                             tabPanel("Loess",
                                      mod_Denoising_data_ui("Denoising_data_1")
+                            ),
+                            tabPanel("Raw data",
+                                     mod_Raw_data_ui("Raw_data_1")
                             ),
                             tabPanel("Special Case: Circular Scanning",
                             mod_Special_Case_Circular_Scanning_ui("Special_Case_Circular_Scanning_1")

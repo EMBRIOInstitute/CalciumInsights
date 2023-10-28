@@ -7,7 +7,7 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
-library(shinyjs)
+#library(shinyjs)
 mod_Denoising_data_ui <- function(id){
   ns <- NS(id)
   tagList(
@@ -44,6 +44,9 @@ mod_Denoising_data_ui <- function(id){
                    numericInput(inputId = ns("ndowns2"),
                                 label = "Post-Peak Descent",
                                 value = 1, min = 0, max = 100),
+                   numericInput(inputId = ns("min_FWHM"),
+                                label = "FWHM (min)",
+                                value = 1, min = 0),
                    selectInput(ns("raw_data"),
                                label = "Raw Data",
                                choices = list("no"=1,

@@ -29,6 +29,7 @@ usethis::use_package( "fda" )
 usethis::use_package( "fds" )
 usethis::use_package( "FoSIntro" )
 usethis::use_package( "reshape2" )
+usethis::use_package( "shinyjs" )
 
 
 

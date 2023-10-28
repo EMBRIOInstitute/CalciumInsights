@@ -105,19 +105,40 @@ mod_Comparison_of_Two_Means_server <- function(id){
 
     output$histo1 <- renderPlot({
       df <- data_info()$data
-      x_range1 <- range(df[, 1])
-      x_range <- range(df[, 2])
+      df[, 1] <- as.numeric(df[, 1])  # Convierte a numérico
+      df[, 2] <- as.numeric(df[, 2])  # Convierte a numérico
 
-      hist(df[,1], breaks = input$bins,  main = "Group 1", xlab = colnames(df)[1])
+      # Elimina filas con valores infinitos o faltantes
+      df <- df[is.finite(df[, 1]) & is.finite(df[, 2]), ]
+
+      # Calcula el rango global
+      overall_range <- range(df[, 1], df[, 2])
+
+      # Luego, crea los histogramas como se mencionó en la respuesta anterior
+
+
+      hist(df[, 1], breaks = input$bins, main = "Group 1", xlab = colnames(df)[1],
+           xlim = overall_range)  # Utiliza xlim para establecer el rango en el eje x
     })
 
     output$histo2 <- renderPlot({
       df <- data_info()$data
-      x_range1 <- range(df[, 1])
-      x_range <- range(df[, 2])
+      df[, 1] <- as.numeric(df[, 1])  # Convierte a numérico
+      df[, 2] <- as.numeric(df[, 2])  # Convierte a numérico
 
-      hist(df[,2],  breaks = input$bins, main = "Group 2", xlab = colnames(df)[2])
+      # Elimina filas con valores infinitos o faltantes
+      df <- df[is.finite(df[, 1]) & is.finite(df[, 2]), ]
+
+      # Calcula el rango global
+      overall_range <- range(df[, 1], df[, 2])
+
+      # Luego, crea los histogramas como se mencionó en la respuesta anterior
+
+
+      hist(df[, 2], breaks = input$bins, main = "Group 2", xlab = colnames(df)[2],
+           xlim = overall_range)  # Utiliza xlim para establecer el rango en el eje x
     })
+
 
     output$qqplot1 <- renderPlot({
       df <- data_info()$data

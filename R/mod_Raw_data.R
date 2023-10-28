@@ -377,6 +377,18 @@ footer = modalButton("Close")
                                   linetype = "dashed", color = "blue") +
         ggplot2::geom_segment(data =  table_FWHM,ggplot2::aes(x = t1, xend = t2, y = y_FWHM , yend = y_FWHM),
                                                     linetype = "solid", color = "orange") +
+
+        ggplot2::annotate(geom = "text", x = 1500, y = 1, label = "---- Peak height",
+                 color = "red", size = 5) +
+        ggplot2::annotate("path", x = 1200, y = 1, xend = 1400, yend = 1,
+                 colour = "red", size = 1.5, alpha = 0.4) +
+
+        # ggplot2::geom_text(
+        #   label="Peak heigth",
+        #   nudge_x = 0.25, nudge_y = 0.25,
+        #   check_overlap = FALSE, color = "red",
+        # ) +
+
         ggplot2::ggtitle("Metrics Graph") +
         ggplot2::labs(x = "Time", y = "Signal") +
 
