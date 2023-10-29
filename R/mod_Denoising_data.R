@@ -84,7 +84,8 @@ mod_Denoising_data_ui <- function(id){
           tabPanel("Peaks",
                    DT::DTOutput(ns("table_peaks2")),
                    DT::DTOutput(ns("table_AUC2")),
-                   plotOutput(ns("plot_peak2")),
+                   #plotOutput(ns("plot_peak2")),
+                   plotOutput(ns("plot_peak3")),
                    plotOutput(ns("plot_raw_smoothed"))
 
 
@@ -265,11 +266,12 @@ mod_Denoising_data_server <- function(id){
 
       table_peak$Time_to_peak <- table_peak$posision_peak - time_start_increasin_peak$Time
 
+      table_peak$puntominimo_y <- prominens2(data = data_smoothed,
+                                             peak = table_positions_peaks,
+                                             MSCPFP = MSCPFP)$df_peaks_parcia$p_fin1
+
+
       table_FWHM <- data.frame(t1 = left_FWHM$Time_left_FWHM, t2 = right_FWHM$Time_right_FWHM, y_FWHM = Puntos_medios$p_eak_mediun)
-
-
-
-
 
 
 
@@ -365,15 +367,54 @@ mod_Denoising_data_server <- function(id){
 
 
 
-
-
-
-
-
       return(list(gg = gg, gg2 = gg2, table_peak = table_peak, tabla_AUC = tabla_AUC))
 
 
     })
+
+    output$plot_peak3 <- renderPlot({
+
+      data_smoothed = peaks_df()$df_smoothed
+      data_raw = peaks_df()$data_raw
+      colnames(data_smoothed) <- c("Time","Sing")
+      df_p <- peaks_plot()$table_peak
+      colnames(df_p) <- c("Absolute_Amplitude", "Peak_Time", "L_inf", "L_sup", "Prominence", "Prominence_Midpoint", "Time_left_FWHM","Time_right_FWHM", "FWHM", "Time_to_peak","puntominimo_y")
+      column_order <- c("Absolute_Amplitude","Prominence", "Prominence_Midpoint", "Peak_Time", "Time_to_peak", "L_inf", "L_sup", "Time_left_FWHM","Time_right_FWHM","FWHM","puntominimo_y")
+      df_p <- df_p[, column_order]
+      df_p <- df_p[df_p$FWHM > input$min_FWHM, ]
+
+
+      gg3 <- ggplot2::ggplot(data_smoothed, ggplot2::aes(x = Time, y = Sing)) +
+        ggplot2::geom_line() +
+        ggplot2::geom_hline(yintercept = input$minpeakheight2, linetype = "dashed", color = "purple") +
+        ggplot2::geom_point(data = df_p,
+                            ggplot2::aes(x = Peak_Time, y = Absolute_Amplitude), color = "red", size = 2) +
+        ggplot2::geom_segment(data = df_p,
+                              ggplot2::aes(x = Peak_Time, xend = Peak_Time, y = 0, yend = Absolute_Amplitude),
+                              linetype = "dashed", color = "red") +
+        ggplot2::geom_segment(data = df_p,
+                              ggplot2::aes(x = Peak_Time, xend = Peak_Time, y = puntominimo_y  , yend = Absolute_Amplitude),
+                              linetype = "dashed", color = "blue") +
+        ggplot2::geom_segment(data =  df_p, ggplot2::aes(x = Time_left_FWHM, xend = Time_right_FWHM, y = Prominence_Midpoint , yend = Prominence_Midpoint),
+                              linetype = "solid", color = "orange") +
+        ggplot2::theme_minimal()
+
+      if (input$raw_data == 2){
+        gg3 <- gg3 + ggplot2::geom_line(data = data_raw, ggplot2::aes(x = data_raw[,1], y = data_raw[,2]),color = "red" )
+      }
+      else{gg3 <- gg3 + ggplot2::geom_line( )}
+
+      if(input$auc2==2){
+        gg3 <- gg3 +
+          ggplot2::geom_hline(yintercept = input$Integration_Reference1, linetype = "dashed", color = "green")
+      }
+      else {gg3 <- gg3}
+
+      gg3
+
+    })
+
+
 
     output$plot_peak2 <- renderPlot({
       peaks_plot()$gg
@@ -384,14 +425,14 @@ mod_Denoising_data_server <- function(id){
     })
 
     output$table_peaks2 <- DT::renderDataTable({
-      df <- peaks_plot()$table_peak
-      colnames(df) <- c("Absolute_Amplitude", "Peak_Time", "L_inf", "L_sup", "Prominence", "Prominence_Midpoint", "Time_left_FWHM","Time_right_FWHM", "FWHM", "Time_to_peak")
+      df_p <- peaks_plot()$table_peak
+      colnames(df_p) <- c("Absolute_Amplitude", "Peak_Time", "L_inf", "L_sup", "Prominence", "Prominence_Midpoint", "Time_left_FWHM","Time_right_FWHM", "FWHM", "Time_to_peak","puntominimo_y")
+      column_order <- c("Absolute_Amplitude","Prominence", "Prominence_Midpoint", "Peak_Time", "Time_to_peak", "L_inf", "L_sup", "Time_left_FWHM","Time_right_FWHM","FWHM","puntominimo_y")
+      df_p <- df_p[, column_order]
+      df_p <- df_p[df_p$FWHM > input$min_FWHM, ]
+      df_p <- df_p[,-11]
 
-      column_order <- c("Absolute_Amplitude","Prominence", "Prominence_Midpoint", "Peak_Time", "Time_to_peak", "L_inf", "L_sup", "Time_left_FWHM","Time_right_FWHM","FWHM")
-
-
-
-      DT::datatable(df[, column_order])
+      DT::datatable(df_p)
     })
 
     output$table_AUC2 <- DT::renderDataTable({
