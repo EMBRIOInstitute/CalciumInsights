@@ -12,4 +12,5 @@ app_server <- function(input, output, session) {
   mod_FunctionalANOVA_server("FunctionalANOVA_1")
   mod_Comparison_of_Two_Means_server("Comparison_of_Two_Means_1")
   mod_Special_Case_Circular_Scanning_server("Special_Case_Circular_Scanning_1")
+  mod_Fourier_transform_server("Fourier_transform_1")
 }

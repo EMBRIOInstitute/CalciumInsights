@@ -40,6 +40,9 @@ app_ui <- function(request) {
                             ),
                             tabPanel("Hypothesis for the Comparison of Two Groups",
                             mod_Comparison_of_Two_Means_ui("Comparison_of_Two_Means_1")
+                            ),
+                            tabPanel("Fourier transform",
+                            mod_Fourier_transform_ui("Fourier_transform_1")
                             )
 
                  ),

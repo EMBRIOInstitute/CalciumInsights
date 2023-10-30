@@ -43,6 +43,7 @@ golem::add_module(name = "Denoising_data") # Name of the module
 golem::add_module(name = "Special_Case_Circular_Scanning") # Name of the module
 golem::add_module(name = "FunctionalANOVA")
 golem::add_module(name = "Comparison_of_Two_Means")
+golem::add_module(name = "Fourier_transform")
 ## Add helper functions ----
 ## Creates fct_* and utils_*
 golem::add_fct("helpers", with_test = TRUE)
