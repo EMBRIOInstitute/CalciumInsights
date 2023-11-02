@@ -82,11 +82,21 @@ mod_Denoising_data_ui <- function(id){
                    DT::DTOutput(ns("data2"))
           ),
           tabPanel("Peaks",
+                   tabsetPanel(
+                    type = "tabs",
+                   tabPanel("Metrics",
                    DT::DTOutput(ns("table_peaks2")),
-                   DT::DTOutput(ns("table_AUC2")),
+                   DT::DTOutput(ns("table_AUC2"))
+                   ),
+                   tabPanel("Metric plots",
                    #plotOutput(ns("plot_peak2")),
                    plotOutput(ns("plot_peak3")),
                    plotOutput(ns("plot_raw_smoothed"))
+                   ),
+                   tabPanel("Components",
+                   plotOutput(ns("plot_component"))
+                   )
+                   )
 
 
           )
@@ -157,17 +167,35 @@ mod_Denoising_data_server <- function(id){
 
     filedata <- reactive({
       req(input$fileBcsv2)
-      fileInput <- load_file(input$fileBcsv2$name, input$fileBcsv2$datapath)
-      fileInput <- as.data.frame(fileInput)
-      return(list(fileInput = fileInput))
+      ext <- tools::file_ext(input$fileBcsv2$name)
+      fileInput1 <- load_file(input$fileBcsv2$name, input$fileBcsv2$datapath, ext)
+      #fileInput1 <- as.data.frame(fileInput1)
+
+      if (ext %in% c("csv", "tsv")) {
+        fileInput <- as.data.frame(fileInput1)
+        fileInput2 <- NULL
+      }
+
+      else if (ext == "json") {
+        fileInput2 <- fileInput1
+        comp <- fileInput2$components
+        com <- t(fileInput2$components)
+        time <- seq(0, fileInput2$image_data[2]-1, by = 1)*fileInput2$image_data[1]
+        com <- cbind(time, com)
+        fileInput <- com
+      }
+      return(list(fileInput = fileInput, fileInput2 = fileInput2))
     })
+
+
+
 
     data_info <- reactive({
       req(filedata()$fileInput)
       Nobservations <- nrow(filedata()$fileInput)
       Ncells <- ncol(filedata()$fileInput)-1
       SummaryData <- data.frame(list(Number = c(Ncells, Nobservations)))
-      rownames(SummaryData) <- c("cells", "Time observations")
+      rownames(SummaryData) <- c("Components", "Time observations")
       list(SummaryData = SummaryData, data = data.frame(filedata()$fileInput,row.names = NULL))
     })
 
@@ -414,6 +442,35 @@ mod_Denoising_data_server <- function(id){
 
     })
 
+
+    output$plot_component <- renderPlot({
+      fileInput2 <- filedata()$fileInput2
+      if (is.null(fileInput2)) {
+        # Si fileInput2 es NULL, muestra un mensaje de error o información
+        error_msg <- "Data insufficient for component visualization."
+        print(error_msg)
+        plot(0, type = "n", ann = TRUE, axes = TRUE)
+        text(1, 0, error_msg, col = "red", cex = 1.5)
+      }  else {
+
+        contour_plot <- fileInput2$contour_plot
+        primera_matriz <- contour_plot[, , 1]
+
+        # Personaliza la paleta de colores con un blanco más intenso
+        colormap <- colorRampPalette(c("black", "red", "yellow", "white"), space = "rgb")(256)
+
+        # Define las dimensiones para hacerlo más rectangular
+        # Puedes ajustar los valores de width y height según tus preferencias
+        width <- 200  # Ancho
+        height <- 198  # Alto
+
+        # Dibuja la imagen con la paleta de colores personalizada y dimensiones personalizadas
+        image(primera_matriz, col = colormap, asp = width/height, axes = FALSE)
+
+
+
+      }
+    })
 
 
     output$plot_peak2 <- renderPlot({
