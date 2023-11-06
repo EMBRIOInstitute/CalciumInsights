@@ -19,7 +19,7 @@
 ## to change the name in the app_sys() function in app_config.R /!\
 ##
 golem::fill_desc(
-  pkg_name = "CalcioInsights", # The Name of the package containing the App
+  pkg_name = "CalciumInsights", # The Name of the package containing the App
   pkg_title = "PKG_TITLE", # The Title of the package containing the App
   pkg_description = "It is an essential interactive tool for scientists and professionals in the fields of biology and neuroscience. This R package enhances the ability to discover patterns and relationships in calcium signal data, providing a profound understanding of underlying biological processes.", # The Description of the package containing the App
   author_first_name = "Deiver", # Your First Name
