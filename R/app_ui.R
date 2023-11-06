@@ -11,7 +11,7 @@ app_ui <- function(request) {
     golem_add_external_resources(),
     # Your application UI logic
     fluidPage(
-      navbarPage("CalciumInsights",
+      navbarPage("CalcioInsights",
                   tabPanel("Home",icon = icon("home", lib = "glyphicon") #,
                              # htmltools::includeHTML(
                              #  system.file("app/www/home.html", package = "CalcioInsights")
@@ -70,7 +70,7 @@ golem_add_external_resources <- function() {
     favicon(),
     bundle_resources(
       path = app_sys("app/www"),
-      app_title = "CalciumInsights"
+      app_title = "CalcioInsights"
     )
     # Add here other external resources
     # for example, you can add shinyalert::useShinyalert()

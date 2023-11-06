@@ -85,11 +85,11 @@ mod_Denoising_data_ui <- function(id){
                    tabsetPanel(
                     type = "tabs",
                    tabPanel("Metrics",
-                   DT::DTOutput(ns("table_peaks2")),
-                   DT::DTOutput(ns("table_AUC2"))
+                   DT::DTOutput(ns("table_peaks2"))
                    ),
                    tabPanel("Metric plots",
                    #plotOutput(ns("plot_peak2")),
+                   DT::DTOutput(ns("table_AUC2")),
                    plotOutput(ns("plot_peak3")),
                    plotOutput(ns("plot_raw_smoothed"))
                    ),
@@ -434,7 +434,9 @@ mod_Denoising_data_server <- function(id){
 
       if(input$auc2==2){
         gg3 <- gg3 +
-          ggplot2::geom_hline(yintercept = input$Integration_Reference1, linetype = "dashed", color = "green")
+          ggplot2::geom_hline(yintercept = input$Integration_Reference1, linetype = "dashed", color = "green") +
+          ggplot2::geom_ribbon(data = subset(data_smoothed, Sing > input$Integration_Reference1),
+                               ggplot2::aes(ymax = Sing , ymin = input$Integration_Reference1), fill = "green", alpha = 0.1)
       }
       else {gg3 <- gg3}
 
@@ -454,22 +456,19 @@ mod_Denoising_data_server <- function(id){
       }  else {
 
         contour_plot <- fileInput2$contour_plot
-        primera_matriz <- contour_plot[, , 1]
+        primera_matriz <- contour_plot[, , 3]
+
+        # Configura el tamaño de la ventana gráfica para hacer la imagen más grande
+        par(pty = "s", mai = 1/100*c(1, 2, 2, 2))  # Ajusta los márgenes si es necesario
 
         # Personaliza la paleta de colores con un blanco más intenso
         colormap <- colorRampPalette(c("black", "red", "yellow", "white"), space = "rgb")(256)
 
-        # Define las dimensiones para hacerlo más rectangular
-        # Puedes ajustar los valores de width y height según tus preferencias
-        width <- 200  # Ancho
-        height <- 198  # Alto
-
-        # Dibuja la imagen con la paleta de colores personalizada y dimensiones personalizadas
-        image(primera_matriz, col = colormap, asp = width/height, axes = FALSE)
+        # Transpone la matriz dos veces para intercambiar ejes x e y y luego dibuja la imagen
+        image(primera_matriz, col = colormap, axes = FALSE, xaxt = "n", yaxt = "n")
 
 
-
-      }
+        }
     })
 
 

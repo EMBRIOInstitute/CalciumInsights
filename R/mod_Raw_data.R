@@ -83,21 +83,35 @@ mod_Raw_data_ui <- function(id){
                    ),
 
       mainPanel(
-      tabsetPanel(
-        type = "tabs",
-        tabPanel("SummaryData",
-                 DT::DTOutput(ns("infotable")),
-                 DT::DTOutput(ns("data"))
-                 ),
-        tabPanel("Peaks",
-                 DT::DTOutput(ns("table_peaks")),
-                 DT::DTOutput(ns("table_AUC")),
-                 #plotOutput(ns("plot_peak")),
-                 plotOutput(ns("plot_peak3"))
+        tabsetPanel(
+          type = "tabs",
+          tabPanel("SummaryData",
+                   DT::DTOutput(ns("infotable")),
+                   DT::DTOutput(ns("data"))
+          ),
+          tabPanel("Peaks",
+                   tabsetPanel(
+                     type = "tabs",
+                     tabPanel("Metrics",
+                              DT::DTOutput(ns("table_peaks"))
+                     ),
+                     tabPanel("Metric plots",
+                              #plotOutput(ns("plot_peak")),
+                              DT::DTOutput(ns("table_AUC")),
+                              plotOutput(ns("plot_peak3"))
 
-        )
+                     ),
+                     tabPanel("Components",
+                              plotOutput(ns("plot_component"))
+                     )
+                   )
+
+
+          )
         )
       )
+
+
 
 
     )
@@ -231,9 +245,24 @@ footer = modalButton("Close")
 #data
     filedata <- reactive({
       req(input$fileBcsv)
-      fileInput <- load_file(input$fileBcsv$name, input$fileBcsv$datapath)
-      fileInput <- as.data.frame(fileInput)
-      return(list(fileInput = fileInput))
+      ext <- tools::file_ext(input$fileBcsv$name)
+      fileInput1 <- load_file(input$fileBcsv$name, input$fileBcsv$datapath, ext)
+      #fileInput1 <- as.data.frame(fileInput1)
+
+      if (ext %in% c("csv", "tsv")) {
+        fileInput <- as.data.frame(fileInput1)
+        fileInput2 <- NULL
+      }
+
+      else if (ext == "json") {
+        fileInput2 <- fileInput1
+        comp <- fileInput2$components
+        com <- t(fileInput2$components)
+        time <- seq(0, fileInput2$image_data[2]-1, by = 1)*fileInput2$image_data[1]
+        com <- cbind(time, com)
+        fileInput <- com
+      }
+      return(list(fileInput = fileInput, fileInput2 = fileInput2))
     })
 
     data_info <- reactive({
@@ -463,7 +492,10 @@ footer = modalButton("Close")
 
       if(input$auc==2){
         gg3 <- gg3 +
-          ggplot2::geom_hline(yintercept = input$Integration_Reference, linetype = "dashed", color = "green")
+          ggplot2::geom_hline(yintercept = input$Integration_Reference, linetype = "dashed", color = "green") +
+          ggplot2::geom_ribbon(data = subset(data_raw, Sing > input$Integration_Reference),
+                               ggplot2::aes(ymax = Sing , ymin = input$Integration_Reference), fill = "green", alpha = 0.2)
+
       }
       else {gg3 <- gg3}
 
@@ -471,7 +503,31 @@ footer = modalButton("Close")
 
     })
 
+    output$plot_component <- renderPlot({
+      fileInput2 <- filedata()$fileInput2
+      if (is.null(fileInput2)) {
+        # Si fileInput2 es NULL, muestra un mensaje de error o información
+        error_msg <- "Data insufficient for component visualization."
+        print(error_msg)
+        plot(0, type = "n", ann = TRUE, axes = TRUE)
+        text(1, 0, error_msg, col = "red", cex = 1.5)
+      }  else {
 
+        contour_plot <- fileInput2$contour_plot
+        primera_matriz <- contour_plot[, , 3]
+
+        # Configura el tamaño de la ventana gráfica para hacer la imagen más grande
+        par(pty = "s", mai = 1/100*c(1, 2, 2, 2))  # Ajusta los márgenes si es necesario
+
+        # Personaliza la paleta de colores con un blanco más intenso
+        colormap <- colorRampPalette(c("black", "red", "yellow", "white"), space = "rgb")(256)
+
+        # Transpone la matriz dos veces para intercambiar ejes x e y y luego dibuja la imagen
+        image(primera_matriz, col = colormap, axes = FALSE, xaxt = "n", yaxt = "n")
+
+
+      }
+    })
 
 
 
