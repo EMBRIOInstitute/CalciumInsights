@@ -16,6 +16,7 @@
 ## Dependencies ----
 ## Amend DESCRIPTION with dependencies read from package code parsing
 usethis::use_package( "shiny" )
+usethis::use_package( "shinydashboard" )
 usethis::use_package( "ggplot2" )
 usethis::use_package( "DT" )
 usethis::use_package( "gridExtra" )

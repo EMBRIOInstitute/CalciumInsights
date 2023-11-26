@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Inicio - Mi Aplicación Shiny</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background-color: #f5f5f5; /* Color de fondo azul celeste */
+      color: #000; /* Color del texto en negro */
+    }
+    h1 {
+      color: #333;
+    }
+    .text-container {
+      margin: 40px;
+      border: 2px solid #66CCCC; /* Borde azul */
+      padding: 20px; /* Espaciado interno */
+    }
+    p {
+      color: #666;
+      text-align: justify;
+    }
+    .center {
+      text-align: center;
+    }
+    .logo {
+      max-width: 250px;
+      height: auto;
+      display: block;
+      margin: 10px auto;
+    }
+    .footer {
+      position: fixed;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      text-align: center;
+      background-color: #f5f5f5;
+      padding: 10px 0;
+    }
+
+    .footer img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+
+    /* Media query para ajustar el pie de página en pantallas más pequeñas */
+    @media (max-width: 768px) {
+      footer {
+        padding: 5px 0; /* Cambiar el espaciado en pantallas más pequeñas */
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="center">
+    <img src="images/logo.png" alt="Logo de la aplicación" class="logo">
+    <h1>Welcome to CalcioInsights</h1>
+    <div class="text-container">
+      <p>
+        Our CalcioInsights application focuses on the analysis of calcium signal metrics, providing a comprehensive set of tools for exploring, visualizing, and analyzing these metrics interactively. The user-friendly interface enables users to investigate key parameters of signal dynamics, such as peak amplitudes, durations, and other critical aspects. This allows for the generation of visual representations and the performance of detailed analyses to gain a better understanding of the complex behavior of calcium signals.
+      </p>
+    </div>
+  </div>
+  <div class="footer">
+    <img src="images/footer_image.png" alt="Imagen de pie de página" width="1900px">
+  </div>
+</body>
+</html>
+

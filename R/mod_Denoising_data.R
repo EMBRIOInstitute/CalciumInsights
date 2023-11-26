@@ -94,7 +94,16 @@ mod_Denoising_data_ui <- function(id){
                    plotOutput(ns("plot_raw_smoothed"))
                    ),
                    tabPanel("Components",
-                   plotOutput(ns("plot_component"))
+                   plotOutput(ns("plot_component")),
+                   verbatimTextOutput(ns("outputList")),
+                   plotOutput(ns("plot_ls")),
+                   plotOutput(ns("plot_box_ls")),
+                   plotOutput(ns("plot_ls1")),
+                   plotOutput(ns("plot_box_ls1")),
+                   plotOutput(ns("plot_ls2")),
+                   plotOutput(ns("plot_box_ls2")),
+                   plotOutput(ns("panel"))
+
                    )
                    )
 
@@ -187,10 +196,7 @@ mod_Denoising_data_server <- function(id){
       return(list(fileInput = fileInput, fileInput2 = fileInput2))
     })
 
-
-
-
-    data_info <- reactive({
+ data_info <- reactive({
       req(filedata()$fileInput)
       Nobservations <- nrow(filedata()$fileInput)
       Ncells <- ncol(filedata()$fileInput)-1
@@ -401,7 +407,6 @@ mod_Denoising_data_server <- function(id){
     })
 
     output$plot_peak3 <- renderPlot({
-
       data_smoothed = peaks_df()$df_smoothed
       data_raw = peaks_df()$data_raw
       colnames(data_smoothed) <- c("Time","Sing")
@@ -458,16 +463,13 @@ mod_Denoising_data_server <- function(id){
         contour_plot <- fileInput2$contour_plot
         primera_matriz <- contour_plot[, , 3]
 
-        # Configura el tamaño de la ventana gráfica para hacer la imagen más grande
-        par(pty = "s", mai = 1/100*c(1, 2, 2, 2))  # Ajusta los márgenes si es necesario
+
+        par(pty = "s")  # Ajusta los márgenes si es necesario
 
         # Personaliza la paleta de colores con un blanco más intenso
         colormap <- colorRampPalette(c("black", "red", "yellow", "white"), space = "rgb")(256)
 
-        # Transpone la matriz dos veces para intercambiar ejes x e y y luego dibuja la imagen
         image(primera_matriz, col = colormap, axes = FALSE, xaxt = "n", yaxt = "n")
-
-
         }
     })
 
@@ -499,6 +501,248 @@ mod_Denoising_data_server <- function(id){
       ))
     })
 
+###################################################
+##### funcion de analisis de todos los transitorios
+####################################################
+####################################################
+
+    all_trasien_peaks_df <- reactive({
+
+      req(filedata()$fileInput)
+      data = filedata()$fileInput
+      data = t(data)
+      colnames(data) = data[1,]
+      data = data[-1,]
+
+
+
+
+      ls <- list()
+      ls1 <- list()
+      ls2 <- list()
+      for (i in 1:dim(data)[1]) {
+
+
+      cell = i
+      data_raw = data.frame(Time = as.numeric(colnames(data)),
+                            signal = as.numeric(data[cell,]))
+      data_raw  = data_raw[data_raw$Time>=input$point_impact2,]
+
+      ##### function loess for smoothed
+      smoothed <- loess(signal ~ Time, data = data_raw , span = input$span)
+      predictions <- predict(smoothed)
+      df_smoothed <- data.frame(Time = data_raw$Time, signal = predictions)
+      #####
+
+      peaks_found <- peaks(data = df_smoothed, nups=input$nups2,
+                           ndowns = input$ndowns2, minpeakheight = input$minpeakheight2,
+                           minpeakdistance = input$minpeakdistance2)
+
+      table_peak <- peaks_found$p_eak
+      table_positions_peaks <- peaks_found$peak
+
+      table_peak = table_peak  #tabla que muestra los piko
+      table_positions_peaks = table_positions_peaks # tabla de las posiciones de los piko
+      data_raw = data_raw  #data con la celula analizada
+      data_smoothed = df_smoothed   # data suavizada
+
+      peaks <- table_positions_peaks[,2]   # Índices donde se encuentran los picos
+      data_putos_pekas = data.frame(x = data_smoothed[,1][peaks], y = data_smoothed[,2][peaks]) #puntos de los picos
+      vertical_segments <- data.frame(x = data_smoothed[,1][peaks],
+                                      yend = table_positions_peaks[,1])   # posicion del piko y su altura
+
+
+      MSCPFP = Time_of_the_first_peak(data1 = data_smoothed, peak = table_positions_peaks)$cambios_menor_que_pfp # posicion donde hay un cambio en la primera dericada
+      # para el primer pico
+
+      data_min <- prominens2(data = data_smoothed, peak = table_positions_peaks, MSCPFP = MSCPFP)$data_min # puntos minimos donde empiezan los prominents
+      df_peaks_parcia <- prominens2(data = data_smoothed, peak = table_positions_peaks, MSCPFP = MSCPFP)$df_peaks_parcia # el segmento del prominens
+
+      time_start_increasin_peak <- prominens2(data = data_smoothed,
+                                              peak = table_positions_peaks,
+                                              MSCPFP = MSCPFP)$time_start_increasin_peak
+
+      Puntos_medios <- FWHM2(peaks = data_smoothed[,1][peaks], df_peaks_parcia = df_peaks_parcia)$Puntos_medios  # puntos medios de los prominances
+
+      table_peak$prominence <- round(prominens2(data = data_smoothed, peak = table_positions_peaks, MSCPFP = MSCPFP)$prominens_amplitud,3)  # valor de los prominens
+      table_peak$Prominence_Midpoint <- Puntos_medios$p_eak_mediun # valor medio de las promineces
+
+      first_time <- as.data.frame(response_time(data = data_smoothed, peak = table_positions_peaks,
+                                                Puntos_medios = Puntos_medios)$first_time )  #primer tiempo
+      second_time <- as.data.frame(response_time(data = data_smoothed, peak = table_positions_peaks,
+                                                 Puntos_medios = Puntos_medios)$second_time)  #segundo tiempo
+      Tiempo_respose <- response_time(data = data_smoothed, peak = table_positions_peaks,
+                                      Puntos_medios = Puntos_medios)$Tiempo_respose #tiempo de respuesta
+
+      data_segmento_tiempo <- data.frame(x1 = first_time[1,1], x2 = second_time[1,1])
+
+      right_left_FWHM <- right_left_FWHM(data1=data_smoothed, peak = table_positions_peaks,
+                                         P_M = Puntos_medios)
+      left_FWHM <- right_left_FWHM$df
+      right_FWHM <- right_left_FWHM$df2
+
+      table_peak$Time_left_FWHM <- left_FWHM$Time_left_FWHM
+      table_peak$Time_right_FWHM <- right_FWHM$Time_right_FWHM
+
+      table_peak$FWHM <- right_FWHM$Time_right_FWHM -left_FWHM$Time_left_FWHM
+
+      table_peak$Time_to_peak <- table_peak$posision_peak - time_start_increasin_peak$Time
+
+      table_peak$puntominimo_y <- prominens2(data = data_smoothed,
+                                             peak = table_positions_peaks,
+                                             MSCPFP = MSCPFP)$df_peaks_parcia$p_fin1
+
+      df_p1 <- table_peak
+
+      colnames(df_p1) <- c("Absolute_Amplitude", "Peak_Time", "L_inf", "L_sup",
+                           "Prominence", "Prominence_Midpoint", "Time_left_FWHM",
+                           "Time_right_FWHM", "FWHM", "Time_to_peak","puntominimo_y")
+      ls[[i]] <- df_p1$Peak_Time
+      ls1[[i]] <- df_p1$Time_to_peak
+      ls2[[i]] <- df_p1$FWHM
+      }
+
+      ################### Peak_Time
+      data_list <- ls
+      data_df <- data.frame(Grupo = rep(1:length(data_list), sapply(data_list, length)), Valor = unlist(data_list))
+
+      # Crear el panel de boxplots
+      ls_plot <- ggplot2::ggplot(data_df, ggplot2::aes(x = factor(Grupo), y = Valor, group = factor(Grupo))) +
+        ggplot2::geom_boxplot() +
+        ggplot2::labs(x = "Components", y = "Peak Time") +
+        ggplot2::ggtitle("Box plot of all the components") +
+        ggplot2::scale_x_discrete(breaks = seq(1, dim(data)[1], by = 10)) +
+        ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1)) +
+        #ggplot2::theme(axis.text = ggplot2::element_text(face = "bold")) +
+        ggplot2::theme(
+          plot.title = ggplot2::element_text(size = 20, face = "bold"),  # Tamaño y estilo del título
+          axis.title.x = ggplot2::element_text(size = 18),               # Tamaño del título del eje x
+          axis.title.y = ggplot2::element_text(size = 18)                # Tamaño del título del eje y
+        ) + ggplot2::theme_minimal()
+      ggplot2::ggsave("f_13.png", plot = ls_plot, device = "png")
+
+
+      ls_Box_plot <- ggplot2::ggplot(data_df, ggplot2::aes(x = Valor)) +
+        ggplot2::geom_histogram(binwidth = 50, fill = "blue", color = "black") +
+        ggplot2::labs(title = "Histogram of all Peak Time", x = "Peak Time", y = "Frequency") +
+        ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1)) +
+        #ggplot2::theme(axis.text = ggplot2::element_text(face = "bold")) +
+        ggplot2::theme(
+          plot.title = ggplot2::element_text(size = 20, face = "bold"),  # Tamaño y estilo del título
+          axis.title.x = ggplot2::element_text(size = 18),               # Tamaño del título del eje x
+          axis.title.y = ggplot2::element_text(size = 18)                # Tamaño del título del eje y
+        ) + ggplot2::theme_minimal()
+      ggplot2::ggsave("f_23.png", plot = ls_Box_plot, device = "png")
+        ##################
+
+      ################### Time_to_peak
+      data_list1 <- ls1
+      data_df1 <- data.frame(Grupo = rep(1:length(data_list1), sapply(data_list1, length)), Valor = unlist(data_list1))
+
+      # Crear el panel de boxplots
+      ls_plot1 <- ggplot2::ggplot(data_df1, ggplot2::aes(x = factor(Grupo), y = Valor, group = factor(Grupo))) +
+        ggplot2::geom_boxplot() +
+        ggplot2::labs(x = "Components", y = "Time to peak") +
+        ggplot2::ggtitle("Box plot of all the components") +
+        ggplot2::scale_x_discrete(breaks = seq(1, dim(data)[1], by = 10)) +
+        ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1)) +
+        ggplot2::theme(
+          plot.title = ggplot2::element_text(size = 20, face = "bold"),  # Tamaño y estilo del título
+          axis.title.x = ggplot2::element_text(size = 18),               # Tamaño del título del eje x
+          axis.title.y = ggplot2::element_text(size = 18)                # Tamaño del título del eje y
+        ) + ggplot2::theme_minimal()
+      ggplot2::ggsave("f_33.png", plot = ls_plot1, device = "png")
+
+      ls_Box_plot1 <- ggplot2::ggplot(data_df1, ggplot2::aes(x = Valor)) +
+        ggplot2::geom_histogram(binwidth = 50, fill = "blue", color = "black") +
+        ggplot2::labs(title = "Histogram of all Time to peak", x = "Time to peak", y = "Frequency") +
+        #ggplot2::theme(axis.text = ggplot2::element_text(face = "bold")) +
+        ggplot2::theme(
+          plot.title = ggplot2::element_text(size = 20, face = "bold"),  # Tamaño y estilo del título
+          axis.title.x = ggplot2::element_text(size = 18),               # Tamaño del título del eje x
+          axis.title.y = ggplot2::element_text(size = 18)                # Tamaño del título del eje y
+        ) + ggplot2::theme_minimal()
+      ggplot2::ggsave("f_43.png", plot = ls_Box_plot1, device = "png")
+      ##################
+
+      ################### FWHM
+      data_list2 <- ls2
+      data_df2 <- data.frame(Grupo = rep(1:length(data_list2), sapply(data_list2, length)), Valor = unlist(data_list2))
+
+      # Crear el panel de boxplots
+      ls_plot2 <- ggplot2::ggplot(data_df2, ggplot2::aes(x = factor(Grupo), y = Valor, group = factor(Grupo))) +
+        ggplot2::geom_boxplot() +
+        ggplot2::labs(x = "Components", y = "FWHM") +
+        ggplot2::ggtitle("Box plot of all the components") +
+        ggplot2::scale_x_discrete(breaks = seq(1, dim(data)[1], by = 10)) +
+        ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1)) +
+        ggplot2::theme(
+          plot.title = ggplot2::element_text(size = 20, face = "bold"),  # Tamaño y estilo del título
+          axis.title.x = ggplot2::element_text(size = 18),               # Tamaño del título del eje x
+          axis.title.y = ggplot2::element_text(size = 18)                # Tamaño del título del eje y
+        ) + ggplot2::theme_minimal()
+      ggplot2::ggsave("f_53.png", plot = ls_plot2, device = "png")
+
+
+      ls_Box_plot2 <- ggplot2::ggplot(data_df2, ggplot2::aes(x = Valor)) +
+        ggplot2::geom_histogram(binwidth = 50, fill = "blue", color = "black") +
+        ggplot2::labs(title = "Histogram of all FWHM", x = "FWHM", y = "Frequency") +
+        #ggplot2::theme(axis.text = ggplot2::element_text(face = "bold")) +
+        ggplot2::theme(
+          plot.title = ggplot2::element_text(size = 20, face = "bold"),  # Tamaño y estilo del título
+          axis.title.x = ggplot2::element_text(size = 18),               # Tamaño del título del eje x
+          axis.title.y = ggplot2::element_text(size = 18)                # Tamaño del título del eje y
+        ) + ggplot2::theme_minimal()
+      ggplot2::ggsave("f_63.png", plot = ls_Box_plot2, device = "png")
+      ##################
+
+
+        panel <- gridExtra::grid.arrange(
+          ggplot2::ggplotGrob(ls_plot), ggplot2::ggplotGrob(ls_Box_plot),
+          ggplot2::ggplotGrob(ls_plot1), ggplot2::ggplotGrob(ls_Box_plot1),
+          ggplot2::ggplotGrob(ls_plot2), ggplot2::ggplotGrob(ls_Box_plot2),
+          ncol = 2
+        )
+      ggplot2::ggsave("panel3.png", plot = panel, device = "png", dpi = 300)
+
+
+      return(list(ls2 = ls2, ls_plot = ls_plot, ls_Box_plot = ls_Box_plot,
+                  ls_plot1 = ls_plot1, ls_Box_plot1 = ls_Box_plot1,
+                  ls_plot2 = ls_plot2, ls_Box_plot2 = ls_Box_plot2, panel = panel))
+    })
+
+
+    output$panel <- renderPlot({
+      all_trasien_peaks_df()$panel
+    })
+
+    output$outputList <- renderPrint({
+      all_trasien_peaks_df()$ls2
+    })
+
+    output$plot_ls <- renderPlot({
+      all_trasien_peaks_df()$ls_plot
+    })
+
+    output$plot_box_ls <- renderPlot({
+      all_trasien_peaks_df()$ls_Box_plot
+    })
+
+    output$plot_ls1 <- renderPlot({
+      all_trasien_peaks_df()$ls_plot1
+    })
+
+    output$plot_box_ls1 <- renderPlot({
+      all_trasien_peaks_df()$ls_Box_plot1
+    })
+
+    output$plot_ls2 <- renderPlot({
+      all_trasien_peaks_df()$ls_plot2
+    })
+
+    output$plot_box_ls2 <- renderPlot({
+      all_trasien_peaks_df()$ls_Box_plot2
+    })
 
 
 

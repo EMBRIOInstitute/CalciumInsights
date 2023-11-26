@@ -12,11 +12,9 @@ app_ui <- function(request) {
     # Your application UI logic
     fluidPage(
       navbarPage("CalcioInsights",
-                  tabPanel("Home",icon = icon("home", lib = "glyphicon") #,
-                             # htmltools::includeHTML(
-                             #  system.file("app/www/home.html", package = "CalcioInsights")
-                             # )
-                          ),
+                 tabPanel("Home", icon = icon("home", lib = "glyphicon"),
+                          tags$iframe(src = "www/index.html", height = "900px", width = "100%")
+                 ),
                  navbarMenu("Descriptive Analysis",
 
                             # tabPanel("Savitzky-Golay",
