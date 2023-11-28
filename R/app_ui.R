@@ -11,7 +11,7 @@ app_ui <- function(request) {
     golem_add_external_resources(),
     # Your application UI logic
     fluidPage(
-      navbarPage("CalcioInsights",
+      navbarPage("CalciumInsights",
                  tabPanel("Home", icon = icon("home", lib = "glyphicon"),
                           tags$iframe(src = "www/index.html", height = "900px", width = "100%")
                  ),

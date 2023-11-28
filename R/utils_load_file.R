@@ -1,4 +1,4 @@
-options(shiny.maxRequestSize = 50 * 1024 * 1024)  # Establece el tamaño máximo a 30 MB
+options(shiny.maxRequestSize = 200 * 1024 * 1024)  # Establece el tamaño máximo a 30 MB
 load_file <- function(name, path, ext) {
   ext <- tools::file_ext(name)
   switch(ext,
