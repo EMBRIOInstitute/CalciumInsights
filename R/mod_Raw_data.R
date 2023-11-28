@@ -14,7 +14,7 @@ mod_Raw_data_ui <- function(id){
   tagList(
     sidebarLayout(
       sidebarPanel(width = 4,
-                   useShinyjs(),
+                   shinyjs::useShinyjs(),
                    tags$style(HTML(".param-label {display: flex; align-items: flex-start;}.small-button { font-size: 10px; padding: 2px 2px; }")),
 
 
