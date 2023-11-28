@@ -7,7 +7,7 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
-#library(shinyjs)
+library(shinyjs)
 mod_Denoising_data_ui <- function(id){
   ns <- NS(id)
   tagList(
