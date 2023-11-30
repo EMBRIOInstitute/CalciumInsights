@@ -47,7 +47,7 @@ mod_Denoising_data_ui <- function(id){
                    numericInput(inputId = ns("min_FWHM"),
                                 label = "FWHM (min)",
                                 value = 1, min = 0),
-                   selectInput(ns("raw_data"),
+                   radioButtons(inputId = ns("raw_data"),
                                label = "Raw Data",
                                choices = list("no"=1,
                                               "yes"=2
@@ -609,7 +609,7 @@ mod_Denoising_data_server <- function(id){
       # Crear el panel de boxplots
       ls_plot <- ggplot2::ggplot(data_df, ggplot2::aes(x = factor(Grupo), y = Valor, group = factor(Grupo))) +
         ggplot2::geom_boxplot() +
-        ggplot2::labs(x = "Components", y = "Peak Time") +
+        ggplot2::labs(x = "Components", y = "Peak Occurrence Time") +
         ggplot2::ggtitle("Box plot of all the components") +
         ggplot2::scale_x_discrete(breaks = seq(1, dim(data)[1], by = 10)) +
         ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1)) +
@@ -624,7 +624,7 @@ mod_Denoising_data_server <- function(id){
 
       ls_Box_plot <- ggplot2::ggplot(data_df, ggplot2::aes(x = Valor)) +
         ggplot2::geom_histogram(binwidth = 50, fill = "blue", color = "black") +
-        ggplot2::labs(title = "Histogram of all Peak Time", x = "Peak Time", y = "Frequency") +
+        ggplot2::labs(title = "Histogram of all Peak Occurrence Time", x = "Peak Occurrence Time", y = "Frequency") +
         ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1)) +
         #ggplot2::theme(axis.text = ggplot2::element_text(face = "bold")) +
         ggplot2::theme(
@@ -642,7 +642,7 @@ mod_Denoising_data_server <- function(id){
       # Crear el panel de boxplots
       ls_plot1 <- ggplot2::ggplot(data_df1, ggplot2::aes(x = factor(Grupo), y = Valor, group = factor(Grupo))) +
         ggplot2::geom_boxplot() +
-        ggplot2::labs(x = "Components", y = "Time to peak") +
+        ggplot2::labs(x = "Components", y = "Peak Rise Time") +
         ggplot2::ggtitle("Box plot of all the components") +
         ggplot2::scale_x_discrete(breaks = seq(1, dim(data)[1], by = 10)) +
         ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1)) +
@@ -655,7 +655,7 @@ mod_Denoising_data_server <- function(id){
 
       ls_Box_plot1 <- ggplot2::ggplot(data_df1, ggplot2::aes(x = Valor)) +
         ggplot2::geom_histogram(binwidth = 50, fill = "blue", color = "black") +
-        ggplot2::labs(title = "Histogram of all Time to peak", x = "Time to peak", y = "Frequency") +
+        ggplot2::labs(title = "Histogram of all Peak Rise Time", x = "Peak Rise Time", y = "Frequency") +
         #ggplot2::theme(axis.text = ggplot2::element_text(face = "bold")) +
         ggplot2::theme(
           plot.title = ggplot2::element_text(size = 20, face = "bold"),  # Tamaño y estilo del título
@@ -716,9 +716,9 @@ mod_Denoising_data_server <- function(id){
       all_trasien_peaks_df()$panel
     })
 
-    output$outputList <- renderPrint({
-      all_trasien_peaks_df()$ls2
-    })
+    # output$outputList <- renderPrint({
+    #   #all_trasien_peaks_df()$ls2
+    # })
 
     output$plot_ls <- renderPlot({
       all_trasien_peaks_df()$ls_plot
