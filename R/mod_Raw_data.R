@@ -25,12 +25,12 @@ mod_Raw_data_ui <- function(id){
                              label = h5("Dataset")),
 
                    numericInput(inputId = ns("Cell"),
-                                label = "Components::",
+                                label = "Components:",
                                 value = 1, min = 1),
 
                    numericInput(inputId = ns("point_impact"),
                                 label = "Stimulus Onset Time:",
-                                value = 0),
+                                value = 1),
                    div(
                      style = "border-top: 1px solid #ccc; margin-top: 10px; margin-bottom: 10px;"
                    ),
@@ -39,22 +39,25 @@ mod_Raw_data_ui <- function(id){
                            style = "color: gray; margin-top: 10px;"),
 
                    numericInput(inputId = ns("minpeakheight"),
-                                label = "Peak Height:",
+                                label = "Min peak height:",
                                 value = 0.1, min = 0, step = 0.1),
                    numericInput(inputId = ns("minpeakdistance"),
-                                label = "Peak Distance:",
+                                label = "min peak distance:",
                                 value = 1, min = 0),
 
                    numericInput(inputId = ns("nups"),
-                                label = "Pre-Peak Ascent:",
+                                label = "Peak Ascent:",
                                 value = 1, min = 0),
 
                    numericInput(inputId = ns("ndowns"),
-                                label = "Post-Peak Descent:",
+                                label = "Peak Descent:",
                                 value = 1, min = 0),
                    numericInput(inputId = ns("min_FWHM2"),
-                                label = "FWHM (min)",
+                                label = "FWHP (minimun)",
                                 value = 1, min = 0),
+                   numericInput(inputId = ns("min_prominence2"),
+                                label = "Prominence (minimun)",
+                                value = 0, min = 0, step = 0.1),
 
                    div(
                      style = "border-top: 1px solid #ccc; margin-top: 10px; margin-bottom: 10px;"
@@ -472,6 +475,8 @@ footer = modalButton("Close")
       column_order <- c("Absolute_Amplitude","Prominence", "Prominence_Midpoint", "Peak_Time", "Time_to_peak", "L_inf", "L_sup", "Time_left_FWHM","Time_right_FWHM","FWHM","puntominimo_y")
       df_p <- df_p[, column_order]
       df_p <- df_p[df_p$FWHM > input$min_FWHM2, ]
+      df_p <- df_p[df_p$Prominence > input$min_prominence2, ]
+
 
 
       gg3 <- ggplot2::ggplot(data_raw, ggplot2::aes(x = Time, y = Sing)) +
@@ -542,6 +547,7 @@ footer = modalButton("Close")
       column_order <- c("Absolute_Amplitude","Prominence", "Prominence_Midpoint", "Peak_Time", "Time_to_peak", "L_inf", "L_sup", "Time_left_FWHM","Time_right_FWHM","FWHM","puntominimo_y")
       df_p <- df_p[, column_order]
       df_p <- df_p[df_p$FWHM > input$min_FWHM2, ]
+      df_p <- df_p[df_p$Prominence > input$min_prominence2, ]
       df_p <- df_p[,-11]
       DT::datatable(df_p)
     })
@@ -558,6 +564,7 @@ footer = modalButton("Close")
         column_order <- c("Absolute_Amplitude","Prominence", "Prominence_Midpoint", "Peak_Time", "Time_to_peak", "L_inf", "L_sup", "Time_left_FWHM","Time_right_FWHM","FWHM","puntominimo_y")
         df_p <- df_p[, column_order]
         df_p <- df_p[df_p$FWHM > input$min_FWHM2, ]
+        df_p <- df_p[df_p$Prominence > input$min_prominence2, ]
         df_p <- df_p[,-11]
         write.csv(df_p, file, row.names = FALSE)
 

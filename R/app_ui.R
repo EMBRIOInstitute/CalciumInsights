@@ -28,7 +28,10 @@ app_ui <- function(request) {
                             ),
                             tabPanel("Special Case: Circular Scanning",
                             mod_Special_Case_Circular_Scanning_ui("Special_Case_Circular_Scanning_1")
-                            )
+                            ),
+                            tabPanel("Graphs for metrics",
+                            mod_Graphs_for_metrics_ui("Graphs_for_metrics_1")
+                            ),
 
 
                  ),

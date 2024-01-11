@@ -31,7 +31,7 @@ usethis::use_package( "fds" )
 usethis::use_package( "FoSIntro" )
 usethis::use_package( "reshape2" )
 usethis::use_package( "shinyjs" )
-
+usethis::use_package( "latex2exp" )
 
 
 attachment::att_amend_desc()
@@ -42,6 +42,7 @@ golem::add_module(name = "Raw_data") # Name of the module
 golem::add_module(name = "Smoothed_data") # Name of the module  Denoising data
 golem::add_module(name = "Denoising_data") # Name of the module
 golem::add_module(name = "Special_Case_Circular_Scanning") # Name of the module
+golem::add_module(name = "Graphs_for_metrics")
 golem::add_module(name = "FunctionalANOVA")
 golem::add_module(name = "Comparison_of_Two_Means")
 golem::add_module(name = "Fourier_transform")
@@ -66,6 +67,8 @@ golem::add_utils("AUC2")
 golem::add_utils("AUC_case")
 golem::add_utils("half_prominance")
 golem::add_utils("Time_of_the_first_peak")
+golem::add_utils("Metrics")
+golem::add_utils("Rise")
 
 
 ## External resources

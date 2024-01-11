@@ -33,20 +33,23 @@ mod_Denoising_data_ui <- function(id){
                    tags$h4("Find Peaks Function Arguments",
                            style = "color: gray; margin-top: 10px;"),
                    numericInput(inputId = ns("minpeakheight2"),
-                                label = "Peak Height",
+                                label = "Min peak height",
                                 value = 0, min = 0, max = 100,step = 0.1),
                    numericInput(inputId = ns("minpeakdistance2"),
-                                label = "Peak Distance:",
+                                label = "Min peak distance:",
                                 value = 0, min = 0, max = 100),
                    numericInput(inputId = ns("nups2"),
-                                label = "Pre-Peak Ascent:",
+                                label = "Peak Ascent:",
                                 value = 1, min = 0, max = 100),
                    numericInput(inputId = ns("ndowns2"),
-                                label = "Post-Peak Descent",
+                                label = "Peak Descent",
                                 value = 1, min = 0, max = 100),
                    numericInput(inputId = ns("min_FWHM"),
-                                label = "FWHM (min)",
-                                value = 1, min = 0),
+                                label = "FWHP (minimun)",
+                                value = 0, min = 0, step = 0.1),
+                   numericInput(inputId = ns("min_prominence"),
+                                label = "Prominence (minimun)",
+                                value = 0, min = 0, step = 0.1),
                    radioButtons(inputId = ns("raw_data"),
                                label = "Raw Data",
                                choices = list("no"=1,
@@ -85,7 +88,8 @@ mod_Denoising_data_ui <- function(id){
                    tabsetPanel(
                     type = "tabs",
                    tabPanel("Metrics",
-                   DT::DTOutput(ns("table_peaks2"))
+                   DT::DTOutput(ns("table_peaks2")),
+                   DT::DTOutput(ns("table_peaks22"))
                    ),
                    tabPanel("Metric plots",
                    #plotOutput(ns("plot_peak2")),
@@ -245,8 +249,10 @@ mod_Denoising_data_server <- function(id){
 
       return(list(table_peak = table_peak,
                   table_positions_peaks  = table_positions_peaks,
-                  data_raw = data_raw, df_smoothed = df_smoothed ))
+                  data_raw = data_raw, df_smoothed = df_smoothed, data = data))
     })
+
+
 
 
     peaks_plot <- reactive({
@@ -299,6 +305,8 @@ mod_Denoising_data_server <- function(id){
       table_peak$FWHM <- right_FWHM$Time_right_FWHM -left_FWHM$Time_left_FWHM
 
       table_peak$Time_to_peak <- table_peak$posision_peak - time_start_increasin_peak$Time
+
+
 
       table_peak$puntominimo_y <- prominens2(data = data_smoothed,
                                              peak = table_positions_peaks,
@@ -398,8 +406,28 @@ mod_Denoising_data_server <- function(id){
                     label = paste("R^2 =", round(r_cuadrado, 4)),
                     parse = TRUE, hjust = 0, vjust = 0, size = 5)
 
+      table_peak$Transient_Ocurrence_Time <- time_start_increasin_peak$Time
 
+      ######## Funcion de rise #####
 
+      data_minimos_crecientes <- data.frame(x1 = time_start_increasin_peak$Time, y1 = data_min$y,
+                                            x2 = table_peak$posision_peaks, y2 = table_peak$absolute_amplitude )
+      cell = as.numeric(input$Cell2)
+      primera_derivada <- Savitzky_Golay(data = peaks_df()$data, p = 2, w = 5, Cell = cell)$data.1nd_P
+
+      primera_derivada1 <- data.frame(Time = primera_derivada$Time,
+                                      deri1 = prospectr::savitzkyGolay(X=data_smoothed$signal,m=1,p = 2,w = 5))
+
+      slope <- c()
+      times_predition <- list()
+      for (i in 1:length(data_minimos_crecientes$x1)) {
+        resultados_filtrados <- subset(primera_derivada1,
+                                       Time %in% data_minimos_crecientes$x1[i]:data_minimos_crecientes$x2[i])
+        slope[i] <- max(resultados_filtrados$deri1)
+      }
+      ##################################
+
+      table_peak$slope <- slope
 
       return(list(gg = gg, gg2 = gg2, table_peak = table_peak, tabla_AUC = tabla_AUC))
 
@@ -411,11 +439,15 @@ mod_Denoising_data_server <- function(id){
       data_raw = peaks_df()$data_raw
       colnames(data_smoothed) <- c("Time","Sing")
       df_p <- peaks_plot()$table_peak
-      colnames(df_p) <- c("Absolute_Amplitude", "Peak_Time", "L_inf", "L_sup", "Prominence", "Prominence_Midpoint", "Time_left_FWHM","Time_right_FWHM", "FWHM", "Time_to_peak","puntominimo_y")
-      column_order <- c("Absolute_Amplitude","Prominence", "Prominence_Midpoint", "Peak_Time", "Time_to_peak", "L_inf", "L_sup", "Time_left_FWHM","Time_right_FWHM","FWHM","puntominimo_y")
+      colnames(df_p) <- c("Absolute_Amplitude", "Peak_Time", "L_inf", "L_sup",
+                          "Prominence", "Prominence_Midpoint", "Time_left_FWHM",
+                          "Time_right_FWHM", "FWHM", "Time_to_peak","puntominimo_y")
+      column_order <- c("Absolute_Amplitude","Prominence", "Prominence_Midpoint",
+                        "Peak_Time", "Time_to_peak", "L_inf", "L_sup",
+                        "Time_left_FWHM","Time_right_FWHM","FWHM","puntominimo_y")
       df_p <- df_p[, column_order]
-      df_p <- df_p[df_p$FWHM > input$min_FWHM, ]
-
+      df_p <- df_p[df_p$FWHM > input$min_FWHM, ]             # Filter for minimun FWHM
+      df_p <- df_p[df_p$Prominence > input$min_prominence, ] #filter for minimun prominence
 
       gg3 <- ggplot2::ggplot(data_smoothed, ggplot2::aes(x = Time, y = Sing)) +
         ggplot2::geom_line() +
@@ -478,20 +510,44 @@ mod_Denoising_data_server <- function(id){
       peaks_plot()$gg
     })
 
+
+
     output$plot_raw_smoothed <- renderPlot({
       peaks_plot()$gg2
     })
 
     output$table_peaks2 <- DT::renderDataTable({
       df_p <- peaks_plot()$table_peak
-      colnames(df_p) <- c("Absolute_Amplitude", "Peak_Time", "L_inf", "L_sup", "Prominence", "Prominence_Midpoint", "Time_left_FWHM","Time_right_FWHM", "FWHM", "Time_to_peak","puntominimo_y")
-      column_order <- c("Absolute_Amplitude","Prominence", "Prominence_Midpoint", "Peak_Time", "Time_to_peak", "L_inf", "L_sup", "Time_left_FWHM","Time_right_FWHM","FWHM","puntominimo_y")
+      colnames(df_p) <- c("Absolute_Amplitude", "Peak Ocurrence Time", "L_inf", "L_sup", "Prominence", "Prominence_Midpoint", "Time_left_FWHM","Time_right_FWHM", "FWHM", "Peak Rise Time","puntominimo_y", "Transient_Ocurrence_Time", "Rise")
+      column_order <- c("Absolute_Amplitude","Prominence", "Prominence_Midpoint", "Peak Ocurrence Time", "Peak Rise Time", "L_inf", "L_sup", "Time_left_FWHM","Time_right_FWHM","FWHM","puntominimo_y", "Transient_Ocurrence_Time", "Rise")
       df_p <- df_p[, column_order]
       df_p <- df_p[df_p$FWHM > input$min_FWHM, ]
-      df_p <- df_p[,-11]
+      #df_p <- df_p[,-11]
 
       DT::datatable(df_p)
     })
+
+
+    output$table_peaks22 <- DT::renderDataTable({
+      df_p <- peaks_plot()$table_peak
+      colnames(df_p) <- c("Absolute_Amplitude", "Peak Ocurrence Time", "L_inf", "L_sup", "Prominence", "Prominence_Midpoint", "Time_left_FWHM","Time_right_FWHM", "FWHM", "Peak Rise Time","puntominimo_y", "Transient_Ocurrence_Time")
+      column_order <- c("Absolute_Amplitude","Prominence", "Prominence_Midpoint", "Peak Ocurrence Time", "Peak Rise Time", "L_inf", "L_sup", "Time_left_FWHM","Time_right_FWHM","FWHM","puntominimo_y", "Transient_Ocurrence_Time")
+
+      time1 <- min(peaks_df()$data_raw$Time)
+      time2 <- max(peaks_df()$data_raw$Time)
+
+      Time_OnSet <- df_p[,12][1]
+      Frequency <- length(df_p[,1])/(time2-time1)
+      df_p2 <- data.frame(Time_OnSet = Time_OnSet, Frequency = Frequency)
+
+
+
+      DT::datatable(df_p2, options = list(
+        pagingType = 'simple',
+        dom = 't'
+      ))
+    })
+
 
     output$table_AUC2 <- DT::renderDataTable({
       df <- peaks_plot()$tabla_AUC
