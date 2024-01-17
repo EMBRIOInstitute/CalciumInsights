@@ -417,42 +417,12 @@ footer = modalButton("Close")
                                   linetype = "dashed", color = "blue") +
         ggplot2::geom_segment(data =  table_FWHM,ggplot2::aes(x = t1, xend = t2, y = y_FWHM , yend = y_FWHM),
                                                     linetype = "solid", color = "orange") +
-
         ggplot2::annotate(geom = "text", x = 1500, y = 1, label = "---- Peak height",
                  color = "red", size = 5) +
         ggplot2::annotate("path", x = 1200, y = 1, xend = 1400, yend = 1,
                  colour = "red", size = 1.5, alpha = 0.4) +
-
-        # ggplot2::geom_text(
-        #   label="Peak heigth",
-        #   nudge_x = 0.25, nudge_y = 0.25,
-        #   check_overlap = FALSE, color = "red",
-        # ) +
-
         ggplot2::ggtitle("Metrics Graph") +
         ggplot2::labs(x = "Time", y = "Signal") +
-
-
-        # ggplot2::geom_point(data = time_start_increasin_peak,
-        #                     ggplot2::aes(x = Time, y = y), color = "red", size = 1)+
-        # ggplot2::geom_point(data = left_FWHM, ggplot2::aes(x = Time_left_FWHM, y = y),size = 1) +
-        # ggplot2::geom_point(data = right_FWHM, ggplot2::aes(x = Time_right_FWHM, y = y), size = 1)+
-        # ggplot2::geom_point(data = Puntos_medios, ggplot2::aes(x = posiscion_medio,
-        #                                      y = p_eak_mediun), color = "blue", size = 1) +
-        #ggplot2::geom_point(data = data_min, ggplot2::aes(x = x, y = y), color = "blue", size = 1) +
-        # ggplot2::geom_point(data = first_time,
-        #                     ggplot2::aes(x = first_time[1,1], y = 0), color = "green", size = 2) +
-        # ggplot2::geom_point(data = second_time,
-        #                     ggplot2::aes(x = second_time[1,1], y = 0), color = "green", size = 2) +
-        # ggplot2::geom_segment(data = data_segmento_tiempo,
-        #                       ggplot2::aes(x = x1, xend = x2, y = 0, yend = 0),
-        #                       linetype = "solid", color = "green") +
-        # ggplot2::geom_text(data = data_segmento_tiempo,  # Utiliza el mismo conjunto de datos para asegurarte de que 'Tiempo_respose' esté disponible
-        #                    ggplot2::aes(x = (x1 + x2) / 2, y = 0, label = Tiempo_respose),  # Ubicación del texto en el medio del segmento
-        #                    vjust = 1.5,  # Alineación vertical
-        #                    hjust = 0.5,  # Alineación horizontal (centro)
-        #                    color = "black",  # Color del texto
-        #                    size = 5) +  # Tamaño del texto
         ggplot2::theme_minimal()
 
       if(input$auc==2){
@@ -492,6 +462,7 @@ footer = modalButton("Close")
                               linetype = "dashed", color = "blue") +
         ggplot2::geom_segment(data =  df_p, ggplot2::aes(x = Time_left_FWHM, xend = Time_right_FWHM, y = Prominence_Midpoint , yend = Prominence_Midpoint),
                               linetype = "solid", color = "orange") +
+        ggplot2::ylab("Fluorescence [a.u.]") +
         ggplot2::theme_minimal()
 
 

@@ -21,6 +21,9 @@ mod_Denoising_data_ui <- function(id){
                                         'text/comma-separated-values,text/plain',
                                         '.csv'),
                              label = h5("Dataset")),
+                   div(
+                     style = "border-top: 1px solid #ccc; margin-top: 10px; margin-bottom: 10px;"
+                   ),
                    numericInput(inputId = ns("Cell2"),
                                 label = "Components:",
                                 value = 1, min = 1),
@@ -30,48 +33,79 @@ mod_Denoising_data_ui <- function(id){
                    numericInput(inputId = ns("span"),
                                 label = "Smoothness Control:",
                                 value = 0.05, min = 0, max = 1,step = 0.01),
+                   div(
+                     style = "border-top: 1px solid #ccc; margin-top: 10px; margin-bottom: 10px;"
+                   ),
+
                    tags$h4("Find Peaks Function Arguments",
                            style = "color: gray; margin-top: 10px;"),
-                   numericInput(inputId = ns("minpeakheight2"),
-                                label = "Min peak height",
-                                value = 0, min = 0, max = 100,step = 0.1),
-                   numericInput(inputId = ns("minpeakdistance2"),
-                                label = "Min peak distance:",
-                                value = 0, min = 0, max = 100),
-                   numericInput(inputId = ns("nups2"),
-                                label = "Peak Ascent:",
-                                value = 1, min = 0, max = 100),
-                   numericInput(inputId = ns("ndowns2"),
-                                label = "Peak Descent",
-                                value = 1, min = 0, max = 100),
-                   numericInput(inputId = ns("min_FWHM"),
-                                label = "FWHP (minimun)",
-                                value = 0, min = 0, step = 0.1),
-                   numericInput(inputId = ns("min_prominence"),
-                                label = "Prominence (minimun)",
-                                value = 0, min = 0, step = 0.1),
-                   radioButtons(inputId = ns("raw_data"),
-                               label = "Raw Data",
-                               choices = list("no"=1,
-                                              "yes"=2
-                               )
+
+                   fluidRow(
+                     column(width = 6,
+                            numericInput(inputId = ns("minpeakheight2"),
+                                         label = "1.Peak height (min)",
+                                         value = 0, min = 0, max = 100, step = 0.1),
+                            numericInput(inputId = ns("ndowns2"),
+                                         label = "3.Peak Descent",
+                                         value = 1, min = 0, max = 100)
+                     ),
+                     column(width = 6,
+                            numericInput(inputId = ns("nups2"),
+                                         label = "2.Peak Ascent:",
+                                         value = 1, min = 0, max = 100),
+                            numericInput(inputId = ns("minpeakdistance2"),
+                                         label = "4.Min peak distance:",
+                                         value = 0, min = 0, max = 100)
+
+                     ),
+                     column(width = 6,
+                            numericInput(inputId = ns("min_FWHM"),
+                                         label = "5.FWHP (min)",
+                                         value = 0, min = 0, step = 0.1)
+                     ),
+                     column(width = 6,
+                            numericInput(inputId = ns("min_prominence"),
+                                         label = "6.Prominence (min)",
+                                         value = 0, min = 0, step = 0.1)
+                     )
                    ),
+
+                   div(
+                     style = "border-top: 1px solid #ccc; margin-top: 10px; margin-bottom: 10px;"
+                   ),
+
                    radioButtons(
                      inputId = ns("auc2"),
                      label = "Area under the curve:",
                      choices = c("No" = 1, "Yes" = 2), selected = 1
                    ),
 
-                   conditionalPanel(condition = "input.auc2==2", ns=ns,
+                   conditionalPanel(condition = "input.auc2==2", ns = ns,
+                                    selectInput(inputId = ns("IntegrationReference1"),
+                                                label = "Reference Level:",
+                                                choices = c("Self-reference" = 1, "The minimum" = 2),
+                                                selected = 1,
+                                                multiple = FALSE)
+                   ),
+
+                   conditionalPanel(condition = "input.auc2==2", ns = ns,
+                   conditionalPanel(condition = "input.IntegrationReference1==1", ns=ns,
                                     numericInput(inputId = ns("Integration_Reference1"),
                                                  label = "Reference Level:",
                                                  value = 0, step = 0.1),
+                   )),
+
+                   radioButtons(inputId = ns("raw_data"),
+                                label = "Raw Data",
+                                choices = list("no"=1,
+                                               "yes"=2
+                                )
                    ),
-
-                   div(class = "param-label",
-                       actionButton(ns("param_info_button11"), "Help", class = "small-button")
-                   )
-
+                   downloadButton(ns("descargarP"), "Peak Metrics"),
+                   div(class = "param-label", style = "display: flex; justify-content: space-between;",
+                       downloadButton(ns("descargar"), "Transient Metrics"),
+                       actionButton(ns("param_info_button11"), "Help", class = "btn-sm")
+                       ),
 
 
                    ),
@@ -99,6 +133,7 @@ mod_Denoising_data_ui <- function(id){
                    ),
                    tabPanel("Components",
                    plotOutput(ns("plot_component")),
+                   plotOutput(ns("panel")),
                    verbatimTextOutput(ns("outputList")),
                    plotOutput(ns("plot_ls")),
                    plotOutput(ns("plot_box_ls")),
@@ -106,8 +141,6 @@ mod_Denoising_data_ui <- function(id){
                    plotOutput(ns("plot_box_ls1")),
                    plotOutput(ns("plot_ls2")),
                    plotOutput(ns("plot_box_ls2")),
-                   plotOutput(ns("panel"))
-
                    )
                    )
 
@@ -318,7 +351,13 @@ mod_Denoising_data_server <- function(id){
 
 
       if(input$auc2==2){
+
+        if (input$IntegrationReference1==1){
         Integration_Reference <- input$Integration_Reference1
+        }
+        else{
+          Integration_Reference <- min(data_smoothed$signal)
+        }
 
         AUC <- AUC2(datos = data_smoothed, Integration_Reference = Integration_Reference)
         area <- AUC$area
@@ -330,7 +369,6 @@ mod_Denoising_data_server <- function(id){
       }
       else {tabla_AUC <- data.frame()}
 
-
       gg <- ggplot2::ggplot(data_smoothed, ggplot2::aes(x = data_smoothed[,1], y = data_smoothed[,2])) +
         ggplot2::geom_line() +
       ggplot2::geom_hline(yintercept = input$minpeakheight2, linetype = "dashed", color = "blue") +
@@ -339,7 +377,6 @@ mod_Denoising_data_server <- function(id){
         ggplot2::geom_segment(data = vertical_segments,
                               ggplot2::aes(x = x, xend = x, y = 0, yend = yend),
                               linetype = "dashed", color = "red") +
-        #ggplot2::geom_point(data = data_min, ggplot2::aes(x = x, y = y), color = "blue", size = 1) +
         ggplot2::geom_segment(data = df_peaks_parcia,
                               ggplot2::aes(x = p_ini1, xend = p_ini2, y =p_fin1 , yend = p_fin2),
                               linetype = "dashed", color = "blue") +
@@ -351,19 +388,6 @@ mod_Denoising_data_server <- function(id){
                               linetype = "solid", color = "orange") +
         ggplot2::ggtitle("Metrics Graph") +
         ggplot2::labs(x = "Time", y = "Signal") +
-        # ggplot2::geom_point(data = first_time,
-        #                     ggplot2::aes(x = first_time[1,1], y = 0), color = "green", size = 2) +
-        # ggplot2::geom_point(data = second_time,
-        #                     ggplot2::aes(x = second_time[1,1], y = 0), color = "green", size = 2) +
-        # ggplot2::geom_segment(data = data_segmento_tiempo,
-        #                       ggplot2::aes(x = x1, xend = x2, y = 0, yend = 0),
-        #                       linetype = "solid", color = "green") +
-        # ggplot2::geom_text(data = data_segmento_tiempo,  # Utiliza el mismo conjunto de datos para asegurarte de que 'Tiempo_respose' esté disponible
-        #                    ggplot2::aes(x = (x1 + x2) / 2, y = 0, label = Tiempo_respose),  # Ubicación del texto en el medio del segmento
-        #                    vjust = 1.5,  # Alineación vertical
-        #                    hjust = 0.5,  # Alineación horizontal (centro)
-        #                    color = "black",  # Color del texto
-        #                    size = 5) +  # Tamaño del texto
         ggplot2::theme_minimal()
 
 
@@ -462,6 +486,7 @@ mod_Denoising_data_server <- function(id){
                               linetype = "dashed", color = "blue") +
         ggplot2::geom_segment(data =  df_p, ggplot2::aes(x = Time_left_FWHM, xend = Time_right_FWHM, y = Prominence_Midpoint , yend = Prominence_Midpoint),
                               linetype = "solid", color = "orange") +
+        ggplot2::ylab("Fluorescence [a.u.]") +
         ggplot2::theme_minimal()
 
       if (input$raw_data == 2){
@@ -470,10 +495,18 @@ mod_Denoising_data_server <- function(id){
       else{gg3 <- gg3 + ggplot2::geom_line( )}
 
       if(input$auc2==2){
+
+        if (input$IntegrationReference1==1){
+          Integration_Reference <- input$Integration_Reference1
+        }
+        else{
+          Integration_Reference <- min(data_smoothed$Sing)
+        }
+
         gg3 <- gg3 +
-          ggplot2::geom_hline(yintercept = input$Integration_Reference1, linetype = "dashed", color = "green") +
-          ggplot2::geom_ribbon(data = subset(data_smoothed, Sing > input$Integration_Reference1),
-                               ggplot2::aes(ymax = Sing , ymin = input$Integration_Reference1), fill = "green", alpha = 0.1)
+          ggplot2::geom_hline(yintercept = Integration_Reference, linetype = "dashed", color = "green") +
+          ggplot2::geom_ribbon(data = subset(data_smoothed, Sing > Integration_Reference),
+                               ggplot2::aes(ymax = Sing , ymin = Integration_Reference), fill = "green", alpha = 0.1)
       }
       else {gg3 <- gg3}
 
@@ -518,17 +551,21 @@ mod_Denoising_data_server <- function(id){
 
     output$table_peaks2 <- DT::renderDataTable({
       df_p <- peaks_plot()$table_peak
-      colnames(df_p) <- c("Absolute_Amplitude", "Peak Ocurrence Time", "L_inf", "L_sup", "Prominence", "Prominence_Midpoint", "Time_left_FWHM","Time_right_FWHM", "FWHM", "Peak Rise Time","puntominimo_y", "Transient_Ocurrence_Time", "Rise")
-      column_order <- c("Absolute_Amplitude","Prominence", "Prominence_Midpoint", "Peak Ocurrence Time", "Peak Rise Time", "L_inf", "L_sup", "Time_left_FWHM","Time_right_FWHM","FWHM","puntominimo_y", "Transient_Ocurrence_Time", "Rise")
+      colnames(df_p) <- c("Absolute_Amplitude", "Peak Occurrence Time", "L_inf", "L_sup", "Prominence", "Prominence_Midpoint", "Time_left_FWHM", "Time_right_FWHM", "FWHM", "Peak Rise Time", "puntominimo_y", "Transient_Occurrence_Time", "Rise")
+      column_order <- c("Absolute_Amplitude", "Prominence", "Prominence_Midpoint", "Peak Occurrence Time", "Peak Rise Time", "L_inf", "L_sup", "Time_left_FWHM", "Time_right_FWHM", "FWHM", "puntominimo_y", "Transient_Occurrence_Time", "Rise")
       df_p <- df_p[, column_order]
       df_p <- df_p[df_p$FWHM > input$min_FWHM, ]
-      #df_p <- df_p[,-11]
+      df_p <- df_p[df_p$Prominence > input$min_prominence, ]
 
-      DT::datatable(df_p)
+      DT::datatable(df_p, options = list(
+        dom = 't', # Mostrar solo la tabla sin búsqueda, paginación, etc.
+        autoWidth = TRUE
+      ), caption = tags$caption(tags$strong("Peak Metrics")))
     })
 
 
-    output$table_peaks22 <- DT::renderDataTable({
+
+    output$table_peaks22 <- DT::renderDT({
       df_p <- peaks_plot()$table_peak
       colnames(df_p) <- c("Absolute_Amplitude", "Peak Ocurrence Time", "L_inf", "L_sup", "Prominence", "Prominence_Midpoint", "Time_left_FWHM","Time_right_FWHM", "FWHM", "Peak Rise Time","puntominimo_y", "Transient_Ocurrence_Time")
       column_order <- c("Absolute_Amplitude","Prominence", "Prominence_Midpoint", "Peak Ocurrence Time", "Peak Rise Time", "L_inf", "L_sup", "Time_left_FWHM","Time_right_FWHM","FWHM","puntominimo_y", "Transient_Ocurrence_Time")
@@ -540,22 +577,26 @@ mod_Denoising_data_server <- function(id){
       Frequency <- length(df_p[,1])/(time2-time1)
       df_p2 <- data.frame(Time_OnSet = Time_OnSet, Frequency = Frequency)
 
+      if (input$auc2==2){            #AUC TABLE
+        Transient_Metrics <- cbind(df_p2, peaks_plot()$tabla_AUC)
+      }
+      else {Transient_Metrics <- df_p2}
 
-
-      DT::datatable(df_p2, options = list(
+      DT::datatable(Transient_Metrics,  options = list(
         pagingType = 'simple',
-        dom = 't'
-      ))
+        dom = 't',
+        autoWidth = TRUE
+      ),caption = tags$caption(tags$strong("Transient Metrics")))
     })
 
 
-    output$table_AUC2 <- DT::renderDataTable({
-      df <- peaks_plot()$tabla_AUC
-      DT::datatable(df, options = list(
-        pagingType = 'simple',
-        dom = 't'
-      ))
-    })
+    # output$table_AUC2 <- DT::renderDataTable({
+    #   df <- peaks_plot()$tabla_AUC
+    #   DT::datatable(df, options = list(
+    #     pagingType = 'simple',
+    #     dom = 't'
+    #   ))
+    # })
 
 ###################################################
 ##### funcion de analisis de todos los transitorios
@@ -675,7 +716,7 @@ mod_Denoising_data_server <- function(id){
           axis.title.x = ggplot2::element_text(size = 18),               # Tamaño del título del eje x
           axis.title.y = ggplot2::element_text(size = 18)                # Tamaño del título del eje y
         ) + ggplot2::theme_minimal()
-      ggplot2::ggsave("f_13.png", plot = ls_plot, device = "png")
+      #ggplot2::ggsave("f_13.png", plot = ls_plot, device = "png")
 
 
       ls_Box_plot <- ggplot2::ggplot(data_df, ggplot2::aes(x = Valor)) +
@@ -688,7 +729,7 @@ mod_Denoising_data_server <- function(id){
           axis.title.x = ggplot2::element_text(size = 18),               # Tamaño del título del eje x
           axis.title.y = ggplot2::element_text(size = 18)                # Tamaño del título del eje y
         ) + ggplot2::theme_minimal()
-      ggplot2::ggsave("f_23.png", plot = ls_Box_plot, device = "png")
+      #ggplot2::ggsave("f_23.png", plot = ls_Box_plot, device = "png")
         ##################
 
       ################### Time_to_peak
@@ -707,7 +748,7 @@ mod_Denoising_data_server <- function(id){
           axis.title.x = ggplot2::element_text(size = 18),               # Tamaño del título del eje x
           axis.title.y = ggplot2::element_text(size = 18)                # Tamaño del título del eje y
         ) + ggplot2::theme_minimal()
-      ggplot2::ggsave("f_33.png", plot = ls_plot1, device = "png")
+      #ggplot2::ggsave("f_33.png", plot = ls_plot1, device = "png")
 
       ls_Box_plot1 <- ggplot2::ggplot(data_df1, ggplot2::aes(x = Valor)) +
         ggplot2::geom_histogram(binwidth = 50, fill = "blue", color = "black") +
@@ -718,7 +759,7 @@ mod_Denoising_data_server <- function(id){
           axis.title.x = ggplot2::element_text(size = 18),               # Tamaño del título del eje x
           axis.title.y = ggplot2::element_text(size = 18)                # Tamaño del título del eje y
         ) + ggplot2::theme_minimal()
-      ggplot2::ggsave("f_43.png", plot = ls_Box_plot1, device = "png")
+      #ggplot2::ggsave("f_43.png", plot = ls_Box_plot1, device = "png")
       ##################
 
       ################### FWHM
@@ -737,7 +778,7 @@ mod_Denoising_data_server <- function(id){
           axis.title.x = ggplot2::element_text(size = 18),               # Tamaño del título del eje x
           axis.title.y = ggplot2::element_text(size = 18)                # Tamaño del título del eje y
         ) + ggplot2::theme_minimal()
-      ggplot2::ggsave("f_53.png", plot = ls_plot2, device = "png")
+      #ggplot2::ggsave("f_53.png", plot = ls_plot2, device = "png")
 
 
       ls_Box_plot2 <- ggplot2::ggplot(data_df2, ggplot2::aes(x = Valor)) +
@@ -749,7 +790,7 @@ mod_Denoising_data_server <- function(id){
           axis.title.x = ggplot2::element_text(size = 18),               # Tamaño del título del eje x
           axis.title.y = ggplot2::element_text(size = 18)                # Tamaño del título del eje y
         ) + ggplot2::theme_minimal()
-      ggplot2::ggsave("f_63.png", plot = ls_Box_plot2, device = "png")
+      #ggplot2::ggsave("f_63.png", plot = ls_Box_plot2, device = "png")
       ##################
 
 
@@ -759,7 +800,7 @@ mod_Denoising_data_server <- function(id){
           ggplot2::ggplotGrob(ls_plot2), ggplot2::ggplotGrob(ls_Box_plot2),
           ncol = 2
         )
-      ggplot2::ggsave("panel3.png", plot = panel, device = "png", dpi = 300)
+      #ggplot2::ggsave("panel3.png", plot = panel, device = "png", dpi = 300)
 
 
       return(list(ls2 = ls2, ls_plot = ls_plot, ls_Box_plot = ls_Box_plot,
@@ -776,29 +817,84 @@ mod_Denoising_data_server <- function(id){
     #   #all_trasien_peaks_df()$ls2
     # })
 
-    output$plot_ls <- renderPlot({
-      all_trasien_peaks_df()$ls_plot
-    })
+    # output$plot_ls <- renderPlot({
+    #   all_trasien_peaks_df()$ls_plot
+    # })
+    #
+    # output$plot_box_ls <- renderPlot({
+    #   all_trasien_peaks_df()$ls_Box_plot
+    # })
+    #
+    # output$plot_ls1 <- renderPlot({
+    #   all_trasien_peaks_df()$ls_plot1
+    # })
+    #
+    # output$plot_box_ls1 <- renderPlot({
+    #   all_trasien_peaks_df()$ls_Box_plot1
+    # })
+    #
+    # output$plot_ls2 <- renderPlot({
+    #   all_trasien_peaks_df()$ls_plot2
+    # })
+    #
+    # output$plot_box_ls2 <- renderPlot({
+    #   all_trasien_peaks_df()$ls_Box_plot2
+    # })
 
-    output$plot_box_ls <- renderPlot({
-      all_trasien_peaks_df()$ls_Box_plot
-    })
 
-    output$plot_ls1 <- renderPlot({
-      all_trasien_peaks_df()$ls_plot1
-    })
+    #downloadData transients
 
-    output$plot_box_ls1 <- renderPlot({
-      all_trasien_peaks_df()$ls_Box_plot1
-    })
+    output$descargar <- downloadHandler(
+      filename = function() {
+        paste("Transient_Metrics", ".csv", sep = "")
 
-    output$plot_ls2 <- renderPlot({
-      all_trasien_peaks_df()$ls_plot2
-    })
+      },
+      content = function(file) {
 
-    output$plot_box_ls2 <- renderPlot({
-      all_trasien_peaks_df()$ls_Box_plot2
-    })
+        df_p <- peaks_plot()$table_peak
+        colnames(df_p) <- c("Absolute_Amplitude", "Peak Ocurrence Time",
+                            "L_inf", "L_sup", "Prominence",
+                            "Prominence_Midpoint", "Time_left_FWHM",
+                            "Time_right_FWHM", "FWHM", "Peak Rise Time",
+                            "puntominimo_y", "Transient_Ocurrence_Time")
+        column_order <- c("Absolute_Amplitude","Prominence",
+                          "Prominence_Midpoint", "Peak Ocurrence Time",
+                          "Peak Rise Time", "L_inf", "L_sup", "Time_left_FWHM",
+                          "Time_right_FWHM","FWHM","puntominimo_y",
+                          "Transient_Ocurrence_Time")
+        time1 <- min(peaks_df()$data_raw$Time)
+        time2 <- max(peaks_df()$data_raw$Time)
+        Time_OnSet <- df_p[,12][1]
+        Frequency <- length(df_p[,1])/(time2-time1)
+        df_p2 <- data.frame(Time_OnSet = Time_OnSet, Frequency = Frequency)
+
+        if (input$auc2==2){            #AUC TABLE
+          Transient_Metrics <- cbind(df_p2, peaks_plot()$tabla_AUC)
+        }
+        else {Transient_Metrics <- df_p2}
+
+        write.csv(Transient_Metrics, file, row.names = FALSE)
+      }
+    )
+
+    #download Peak Metrics
+    output$descargarP <- downloadHandler(
+      filename = function() {
+        paste("Peak_Metrics", ".csv", sep = "")
+
+      },
+      content = function(file) {
+        df_p <- peaks_plot()$table_peak
+        colnames(df_p) <- c("Absolute_Amplitude", "Peak Occurrence Time", "L_inf", "L_sup", "Prominence", "Prominence_Midpoint", "Time_left_FWHM", "Time_right_FWHM", "FWHM", "Peak Rise Time", "puntominimo_y", "Transient_Occurrence_Time", "Rise")
+        column_order <- c("Absolute_Amplitude", "Prominence", "Prominence_Midpoint", "Peak Occurrence Time", "Peak Rise Time", "L_inf", "L_sup", "Time_left_FWHM", "Time_right_FWHM", "FWHM", "puntominimo_y", "Transient_Occurrence_Time", "Rise")
+        df_p <- df_p[, column_order]
+        df_p <- df_p[df_p$FWHM > input$min_FWHM, ]
+        df_p <- df_p[df_p$Prominence > input$min_prominence, ]
+
+        write.csv(df_p, file, row.names = FALSE)
+      }
+    )
+
 
 
 

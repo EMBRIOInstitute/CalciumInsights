@@ -17,6 +17,7 @@
 ## Amend DESCRIPTION with dependencies read from package code parsing
 usethis::use_package( "shiny" )
 usethis::use_package( "shinydashboard" )
+usethis::use_package( "shinyjs" )
 usethis::use_package( "ggplot2" )
 usethis::use_package( "DT" )
 usethis::use_package( "gridExtra" )
@@ -32,6 +33,7 @@ usethis::use_package( "FoSIntro" )
 usethis::use_package( "reshape2" )
 usethis::use_package( "shinyjs" )
 usethis::use_package( "latex2exp" )
+usethis::use_package( "plotly" )
 
 
 attachment::att_amend_desc()
