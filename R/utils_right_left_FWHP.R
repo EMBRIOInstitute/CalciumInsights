@@ -1,4 +1,4 @@
-right_left_FWHM <- function(data1, peak, P_M){
+right_left_FWHP <- function(data1, peak, P_M){
 
   izq_FWHM <- function(data1, peak, P_M ,i ){
     suppressWarnings({
@@ -58,7 +58,7 @@ right_left_FWHM <- function(data1, peak, P_M){
   df= data.frame(ls)
   colnames(df) <- NULL
   df <- t(df)
-  colnames(df) <- c("Time_left_FWHM", "y")
+  colnames(df) <- c("Time_left_FWHP", "y")
   df <- as.data.frame(df)
   ###############
   ###### derecha
@@ -118,7 +118,7 @@ right_left_FWHM <- function(data1, peak, P_M){
   df2= data.frame(ls2)
   colnames(df2) <- NULL
   df2 <- t(df2)
-  colnames(df2) <- c("Time_right_FWHM", "y")
+  colnames(df2) <- c("Time_right_FWHP", "y")
   df2 <- as.data.frame(df2)
 
   return(list(df = df, df2 = df2))

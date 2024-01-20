@@ -1,16 +1,11 @@
 AUC <- function(datos, Integration_Reference){
 
-
   colnames(datos) <- c("Time","sing")
   smoothed <- loess(sing ~ Time, data = datos, span = 0.1)
   predictions <- predict(smoothed)
-
   df <- data.frame(tiempo = datos$Time, sing = predictions) #toda la data
-
   df2 <- data.frame(tiempo = datos$Time, sing = predictions)  #data restringida al nivel de referencia de integracion
-
   df2$sing[df2$sing > Integration_Reference] <- Integration_Reference
-
   df3 = df[df$sing >= Integration_Reference,]  #todos los datos por ensima del eje de referencia
 
   #integral total
