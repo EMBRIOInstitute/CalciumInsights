@@ -33,9 +33,6 @@ mod_Denoising_data_ui <- function(id){
                    numericInput(inputId = ns("Cell2"),
                                 label = "Region of Interest (ROI):",
                                 value = 1, min = 1),
-                   numericInput(inputId = ns("point_impact2"),
-                                label = "Stimulus Onset Time:",
-                                value = 0),
                    numericInput(inputId = ns("span"),
                                 label = "Smoothness Control:",
                                 value = 0.05, min = 0, max = 1,step = 0.01),
@@ -48,7 +45,7 @@ mod_Denoising_data_ui <- function(id){
                    fluidRow(
                      column(width = 6,
                             numericInput(inputId = ns("minpeakheight2"),
-                                         label = "1.Peak height (min)",
+                                         label = "1.Peak Height (min)",
                                          value = 0, min = 0, max = 100,
                                          step = 0.1),
                             numericInput(inputId = ns("ndowns2"),
@@ -61,7 +58,7 @@ mod_Denoising_data_ui <- function(id){
                                          label = "2.Peak Ascent:",
                                          value = 1, min = 0, max = 100),
                             numericInput(inputId = ns("minpeakdistance2"),
-                                         label = "4.Min peak distance:",
+                                         label = "4.Min Peak Distance:",
                                          value = 0, min = 0, max = 100)
 
                      ),
@@ -83,7 +80,7 @@ mod_Denoising_data_ui <- function(id){
 
                    radioButtons(
                      inputId = ns("auc2"),
-                     label = "Area under the curve:",
+                     label = "Area Under the Curve (AUC):",
                      choices = c("No" = 1, "Yes" = 2), selected = 1
                    ),
 
@@ -152,6 +149,7 @@ mod_Denoising_data_ui <- function(id){
                    ),
                    tabPanel("Metric plots",
                    plotOutput(ns("plot_peak3")),
+                   plotOutput(ns("derivative")),
                    plotOutput(ns("plot_raw_smoothed"))
                    ),
                    tabPanel("Components",
@@ -300,7 +298,7 @@ mod_Denoising_data_server <- function(id){
       cell = as.numeric(input$Cell2)
       data_raw = data.frame(Time = as.numeric(colnames(data)),
                             signal = as.numeric(data[cell,]))
-      data_raw  = data_raw[data_raw$Time>=input$point_impact2,]
+
 
       ##### function loess for smoothed
       smoothed <- loess(signal ~ Time, data = data_raw , span = input$span)
@@ -435,12 +433,24 @@ mod_Denoising_data_server <- function(id){
       r_cuadrado <- summary(modelo)$r.squared
 
       gg2 <- ggplot2::ggplot(df_raw_smoothed,
-                             ggplot2::aes(x = data_raw,
-                                          y = data_smoothed)) +
+                             ggplot2::aes(x = data_raw, y = data_smoothed)) +
         ggplot2::geom_point() +
         ggplot2::geom_smooth(method = "lm", formula = y ~ x, se = FALSE) +
-        ggplot2::labs(title = "Linear Regression Plot", x = "Raw data", y = "Smoothed data") +
-        ggplot2::theme_minimal()
+        ggplot2::labs(title = "Linear Regression",
+                      x = "Raw data",
+                      y = "Smoothed data") +
+        ggplot2::theme_minimal() +
+        ggplot2::theme_classic() +
+        ggplot2::theme(
+          plot.title = ggplot2::element_text(size = 28, face = "bold"),
+          axis.title = ggplot2::element_text(size = 28, face = "bold"),
+          axis.text = ggplot2::element_text(size = 16, face = "bold"),
+          legend.title = ggplot2::element_text(size = 28, face = "bold"),
+          legend.text = ggplot2::element_text(size = 28, face = "bold")
+        )
+
+
+
 
       ###### Calculate the linear regression equation
 
@@ -473,6 +483,7 @@ mod_Denoising_data_server <- function(id){
                                          p = 2,
                                          w = 5,
                                          Cell = cell)$data.1nd_P
+
       primera_derivada1 <- data.frame(Time = primera_derivada$Time,
                                       deri1 = prospectr::savitzkyGolay(X=data_smoothed$signal,
                                                                        m=1,
@@ -481,15 +492,57 @@ mod_Denoising_data_server <- function(id){
       slope <- c()
       times_predition <- list()
       for (i in 1:length(data_minimos_crecientes$x1)) {
-        resultados_filtrados <- subset(primera_derivada1,
-                                       Time %in% data_minimos_crecientes$x1[i]:data_minimos_crecientes$x2[i])
+        resultados_filtrados <- primera_derivada1[primera_derivada1$Time >= data_minimos_crecientes$x1[i] & primera_derivada1$Time <= data_minimos_crecientes$x2[i], ]
         slope[i] <- max(resultados_filtrados$deri1)
       }
       table_peak$slope <- slope
+
+
+
+
       ################################## FWHM
       return(list(gg2 = gg2, table_peak = table_peak, tabla_AUC = tabla_AUC,
-                  baseline1 = baseline1))
+                  baseline1 = baseline1,
+                  primera_derivada1 = primera_derivada1))
       })
+
+
+    output$derivative <- renderPlot({
+
+      data_derivative <- peaks_plot()$primera_derivada1
+
+    derivative <- ggplot2::ggplot(data_derivative,
+                             ggplot2::aes(x = Time, y = deri1)) +
+      ggplot2::geom_line(linetype = "solid",size = 1.5, color = "black") +
+      ggplot2::geom_hline(yintercept = 0,
+                          linetype = "dashed", color = "purple") +
+      ggplot2::labs(title = "Firts Derivative",
+                    x = "Time [s]",
+                    y = "Fluorescence [a.u.]") +
+
+      ggplot2::theme_classic() +
+
+      ggplot2::theme(plot.title = ggplot2::element_text(size = 28,
+                                                        face = "bold")) +
+
+      ggplot2::theme(axis.title.y = ggplot2::element_text(size = 28,
+                                                          face = "bold")) +
+      ggplot2::theme(axis.title.x = ggplot2::element_text(size = 28,
+                                                          face = "bold")) +
+      ggplot2::theme(axis.text.x = ggplot2::element_text(size = 16,
+                                                         face = "bold")) +
+      ggplot2::theme(axis.text.y = ggplot2::element_text(size = 16,
+                                                         face = "bold"))
+
+
+    derivative
+
+
+    })
+
+
+
+
 
 
 
@@ -541,33 +594,53 @@ mod_Denoising_data_server <- function(id){
       colnames(data_smoothed) <- c("Time","Sing")
       df_p <- Peaks_Data_Final()$df_p
 
+      data_derivative <- peaks_plot()$primera_derivada1
+
       gg3 <- ggplot2::ggplot(data_smoothed,
                              ggplot2::aes(x = Time, y = Sing)) +
-        ggplot2::geom_line() +
+        ggplot2::geom_line(linetype = "solid",size = 1.5, color = "black") +
+
         ggplot2::geom_hline(yintercept = input$minpeakheight2,
                             linetype = "dashed", color = "purple") +
         ggplot2::geom_point(data = df_p,
                             ggplot2::aes(x = Peak_Occurence_Time, y = Amplitude),
-                            color = "red", size = 2) +
+                            color = "red", size = 6) +
         ggplot2::geom_segment(data = df_p,
                               ggplot2::aes(x = Peak_Occurence_Time,
                                            xend = Peak_Occurence_Time,
                                            y = peaks_plot()$baseline1,
                                            yend = Amplitude),
-                              linetype = "dashed", color = "red") +
+                              linetype = "dashed",size = 1.5, color = "red") +
         ggplot2::geom_segment(data = df_p,
                               ggplot2::aes(x = Peak_Occurence_Time,
                                            xend = Peak_Occurence_Time,
                                            y = puntominimo_y, yend = Amplitude),
-                              linetype = "dashed", color = "blue") +
+                              linetype = "dashed",size = 1.5, color = "blue") +
         ggplot2::geom_segment(data =  df_p,
                               ggplot2::aes(x = Time_left_FWHP,
                                            xend = Time_right_FWHP,
                                            y = Prominence_Midpoint,
                                            yend = Prominence_Midpoint),
-                              linetype = "solid", color = "orange") +
-        ggplot2::ylab("Fluorescence [a.u.]") +
-        ggplot2::theme_minimal()
+                              linetype = "solid",size = 1.5, color = "orange") +
+
+        ggplot2::labs(title = "Calcium Trace",
+                      x = "Time [s]",
+                      y = "Fluorescence [a.u.]") +
+
+        ggplot2::theme_classic() +
+
+        ggplot2::theme(plot.title = ggplot2::element_text(size = 28,
+                                                          face = "bold")) +
+
+        ggplot2::theme(axis.title.y = ggplot2::element_text(size = 28,
+                                                            face = "bold")) +
+        ggplot2::theme(axis.title.x = ggplot2::element_text(size = 28,
+                                                            face = "bold")) +
+        ggplot2::theme(axis.text.x = ggplot2::element_text(size = 16,
+                                                            face = "bold")) +
+        ggplot2::theme(axis.text.y = ggplot2::element_text(size = 16,
+                                                           face = "bold"))
+
 
       if (input$raw_data == 2){
         gg3 <- gg3 + ggplot2::geom_line(data = data_raw,
@@ -596,11 +669,13 @@ mod_Denoising_data_server <- function(id){
                              xend = Time_right_FWHM,
                              y = Amplitude_Midpoint,
                              yend = Amplitude_Midpoint),
-                         linetype = "dashed", color = "peru")
+                         linetype = "dashed",size = 1.5, color = "Maroon 1")
       }
       else {gg3 <- gg3}
       gg3
     })
+
+
 
 
     output$plot_component <- renderPlot({
@@ -685,7 +760,7 @@ mod_Denoising_data_server <- function(id){
       cell = i
       data_raw = data.frame(Time = as.numeric(colnames(data)),
                             signal = as.numeric(data[cell,]))
-      data_raw  = data_raw[data_raw$Time>=input$point_impact2,]
+
 
       ##### function loess for smoothed
       smoothed <- loess(signal ~ Time, data = data_raw ,

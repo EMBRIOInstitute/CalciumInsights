@@ -62,7 +62,7 @@ Metrics <- function(fileInput_1, nups3, ndowns3, minpeakheight3,
                                             peak = table_positions_peaks,
                                             MSCPFP = MSCPFP)$time_start_increasin_peak
 
-    Puntos_medios <- FWHM2(peaks = data_smoothed[,1][peaks], df_peaks_parcia = df_peaks_parcia)$Puntos_medios  # puntos medios de los prominances
+    Puntos_medios <- FWHP2(peaks = data_smoothed[,1][peaks], df_peaks_parcia = df_peaks_parcia)$Puntos_medios  # puntos medios de los prominances
 
     table_peak$prominence <- round(prominens2(data = data_smoothed, peak = table_positions_peaks, MSCPFP = MSCPFP)$prominens_amplitud,3)  # valor de los prominens
     table_peak$Prominence_Midpoint <- Puntos_medios$p_eak_mediun # valor medio de las promineces
@@ -76,7 +76,7 @@ Metrics <- function(fileInput_1, nups3, ndowns3, minpeakheight3,
 
     data_segmento_tiempo <- data.frame(x1 = first_time[1,1], x2 = second_time[1,1])
 
-    right_left_FWHM <- right_left_FWHM(data1=data_smoothed, peak = table_positions_peaks,
+    right_left_FWHM <- right_left_FWHP(data1=data_smoothed, peak = table_positions_peaks,
                                        P_M = Puntos_medios)
     left_FWHM <- right_left_FWHM$df
     right_FWHM <- right_left_FWHM$df2
