@@ -516,7 +516,7 @@ mod_Denoising_data_server <- function(id){
       ggplot2::geom_line(linetype = "solid",size = 1.5, color = "black") +
       ggplot2::geom_hline(yintercept = 0,
                           linetype = "dashed", color = "purple") +
-      ggplot2::labs(title = "Firts Derivative",
+      ggplot2::labs(title = "First Derivative",
                     x = "Time [s]",
                     y = "Fluorescence [a.u.]") +
 
@@ -541,28 +541,8 @@ mod_Denoising_data_server <- function(id){
     })
 
 
-
-
-
-
-
-    Peaks_Data_Final <- reactive({
-      FWHM <- peaks_FWHM()$FWHM
-      df_p <- peaks_plot()$table_peak
-      df_p$FWHM <- FWHM
-
-      colnames(df_p) <- c("Amplitude", "Peak_Occurence_Time", "L_inf", "L_sup",
-                          "Prominence", "Prominence_Midpoint", "Time_left_FWHP",
-                          "Time_right_FWHP", "FWHP", "Peak_Rise_Time",
-                          "puntominimo_y", "Transient_Ocurrence_Time",
-                          "Rise_Rate", "FWHM")
-      df_p <- df_p[df_p$FWHP > input$min_FWHP, ]             # Filter for minimun FWHP
-      df_p <- df_p[df_p$Prominence > input$min_prominence, ] #filter for minimun prominence
-      df_p <- df_p[df_p$Amplitude > peaks_plot()$baseline1, ] #filter for minimun prominence
-      return(list(df_p = df_p))
-    })
-
     peaks_FWHM <- reactive({
+
       baseline1 <- peaks_plot()$baseline1
       table_positions_peaks = peaks_df()$table_positions_peaks # tabla de las posiciones de los piko
       data_raw = peaks_df()$data_raw  #data con la celula analizada
@@ -587,8 +567,33 @@ mod_Denoising_data_server <- function(id){
 
     })
 
+
+
+
+    Peaks_Data_Final <- reactive({
+      df_p <- peaks_plot()$table_peak
+      df_FWHM1 <- peaks_FWHM()$df_FWHM
+
+      df_p$FWHM <- peaks_FWHM()$FWHM
+
+      colnames(df_p) <- c("Amplitude", "Peak_Occurence_Time", "L_inf", "L_sup",
+                          "Prominence", "Prominence_Midpoint", "Time_left_FWHP",
+                          "Time_right_FWHP", "FWHP", "Peak_Rise_Time",
+                          "puntominimo_y", "Transient_Ocurrence_Time",
+                          "Rise_Rate", "FWHM")
+
+      df_FWHM2 <- cbind(df_p,df_FWHM1) #union de la data y df_FWHM1
+
+      df_FWHM2 <- df_FWHM2[df_FWHM2$FWHP > input$min_FWHP, ]             # Filter for minimun FWHP
+      df_FWHM2 <- df_FWHM2[df_FWHM2$Prominence > input$min_prominence, ] #filter for minimun prominence
+      df_FWHM2 <- df_FWHM2[df_FWHM2$Amplitude > peaks_plot()$baseline1, ] #filter for minimun prominence
+      df_p <- df_FWHM2
+      return(list(df_p = df_p))
+    })
+
+
+
     output$plot_peak3 <- renderPlot({
-      df_FWHM <- peaks_FWHM()$df_FWHM
       data_smoothed = peaks_df()$df_smoothed
       data_raw = peaks_df()$data_raw
       colnames(data_smoothed) <- c("Time","Sing")
@@ -664,12 +669,12 @@ mod_Denoising_data_server <- function(id){
       else {gg3 <- gg3}
 
       if (input$FWHM==2){
-      gg3 <- gg3 + ggplot2::geom_segment(data = df_FWHM,
+      gg3 <- gg3 + ggplot2::geom_segment(data = df_p,
                                   ggplot2::aes(x = Time_left_FWHM,
                              xend = Time_right_FWHM,
                              y = Amplitude_Midpoint,
                              yend = Amplitude_Midpoint),
-                         linetype = "dashed",size = 1.5, color = "Maroon 1")
+                         linetype = "solid",size = 1.5, color = "Maroon 1")
       }
       else {gg3 <- gg3}
       gg3
