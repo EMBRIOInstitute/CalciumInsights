@@ -84,7 +84,7 @@ golem::add_sass_file("custom")
 
 ## Add internal datasets ----
 ## If you have data in your package
-usethis::use_data_raw(name = "my_dataset", open = FALSE)
+usethis::use_data_raw(name = "Data_Simulate_Calcium", open = FALSE)
 
 ## Tests ----
 ## Add one line by test you want to create
@@ -93,7 +93,7 @@ usethis::use_test("app")
 # Documentation
 
 ## Vignette ----
-usethis::use_vignette("CalcioInsights")
+usethis::use_vignette("CalciumInsights")
 devtools::build_vignettes()
 
 ## Code Coverage----

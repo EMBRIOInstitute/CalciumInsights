@@ -16,17 +16,19 @@ mod_Denoising_data_ui <- function(id){
                    shinyjs::useShinyjs(),
                    tags$style(HTML(".param-label {display: flex; align-items: flex-start;}.small-button { font-size: 10px; padding: 2px 2px; }")),
 
-                   div(class = "param-label",
-                       style = "display: flex; justify-content: space-between;",
+                   actionButton(ns("param_info_button11"), "Help",
+                                class = "btn-sm",
+                                style = "position: absolute; top: 0; right: 15px; margin: 5px;"),
+
+                   radioButtons(ns("data_simulate"), "Example Data",
+                                choices = c("Yes"=1, "No"=0),
+                                selected = 0),
+
                        fileInput(ns("fileBcsv2"),
                                  accept = c('text/csv',
                                             'text/comma-separated-values,text/plain',
                                             '.csv'),
                                  label = h5("Dataset")),
-                       actionButton(ns("param_info_button11"), "Help",
-                                    class = "btn-sm")
-                   ),
-
 
                    div(style = "border-top: 1px solid #ccc; margin-top: 10px; margin-bottom: 10px;"),
 
@@ -234,6 +236,16 @@ mod_Denoising_data_server <- function(id){
 
 
     filedata <- reactive({
+      if (input$data_simulate > 0) {
+        # Cargar los datos de ejemplo
+        data_example <- readRDS(system.file("data", "data_Simulate_calcium.rds", package = "CalciumInsights"))
+        fileInput <- data_example
+        fileInput2 <- NULL  # O ajusta según tus necesidades
+      }
+
+
+
+      else{
       req(input$fileBcsv2)
       ext <- tools::file_ext(input$fileBcsv2$name)
       fileInput1 <- load_file(input$fileBcsv2$name,
@@ -253,6 +265,7 @@ mod_Denoising_data_server <- function(id){
                     by = 1)*fileInput2$image_data[1]
         com <- cbind(time, com)
         fileInput <- com
+      }
       }
       return(list(fileInput = fileInput, fileInput2 = fileInput2))
     })

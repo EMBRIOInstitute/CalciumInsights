@@ -17,16 +17,20 @@ mod_Raw_data_ui <- function(id){
                    shinyjs::useShinyjs(),
                    tags$style(HTML(".param-label {display: flex; align-items: flex-start;}.small-button { font-size: 10px; padding: 2px 2px; }")),
 
-                   div(class = "param-label",
-                       style = "display: flex; justify-content: space-between;",
+                    actionButton(ns("param_info_button11"), "Help",
+                                class = "btn-sm",
+                                style = "position: absolute; top: 0; right: 15px; margin: 5px;"),
+
                        fileInput(ns("fileBcsv2"),
                                  accept = c('text/csv',
                                             'text/comma-separated-values,text/plain',
                                             '.csv'),
                                  label = h5("Dataset")),
-                       actionButton(ns("param_info_button11"), "Help",
-                                    class = "btn-sm")
-                   ),
+
+                   # radioButtons(ns("data_simulate"), "Data simulate",  #data example
+                   #                    choices = c("Yes"=1, "No"=0),
+                   #                    selected = 0),
+
                    div(style = "border-top: 1px solid #ccc; margin-top: 10px; margin-bottom: 10px;"),
 
                    numericInput(inputId = ns("Cell2"),
@@ -278,7 +282,17 @@ footer = modalButton("Close")
 
 
     filedata <- reactive({
+
+      # if (input$data_simulate > 0) {
+      #   # Cargar los datos de ejemplo
+      #   data_example <- readRDS(system.file("data", "data_Simulate_calcium.rds", package = "CalciumInsights"))
+      #   fileInput <- data_example
+      #   fileInput2 <- NULL  # O ajusta según tus necesidades
+      # }
+
+      #else{
       req(input$fileBcsv2)
+
       ext <- tools::file_ext(input$fileBcsv2$name)
       fileInput1 <- load_file(input$fileBcsv2$name,
                               input$fileBcsv2$datapath,
@@ -287,19 +301,21 @@ footer = modalButton("Close")
       if (ext %in% c("csv", "tsv")) {
         fileInput <- as.data.frame(fileInput1)
         fileInput2 <- NULL
-      }
-
-      else if (ext == "json") {
+      } else if (ext == "json") {
         fileInput2 <- fileInput1
         comp <- fileInput2$components
         com <- t(fileInput2$components)
-        time <- seq(0, fileInput2$image_data[2]-1,
-                    by = 1)*fileInput2$image_data[1]
+        time <- seq(0, fileInput2$image_data[2]-1, by = 1) * fileInput2$image_data[1]
         com <- cbind(time, com)
         fileInput <- com
       }
+      #}
+
+
+
       return(list(fileInput = fileInput, fileInput2 = fileInput2))
     })
+
 
     #########Summary of Data #########
 
