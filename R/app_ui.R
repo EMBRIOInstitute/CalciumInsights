@@ -26,27 +26,27 @@ app_ui <- function(request) {
                             tabPanel("Raw data",
                                      mod_Raw_data_ui("Raw_data_1")
                             ),
-                            tabPanel("Special Case: Circular Scanning",
-                            mod_Special_Case_Circular_Scanning_ui("Special_Case_Circular_Scanning_1")
-                            ),
-                            tabPanel("Graphs for metrics",
-                            mod_Graphs_for_metrics_ui("Graphs_for_metrics_1")
-                            ),
+                            # tabPanel("Special Case: Circular Scanning",
+                            # mod_Special_Case_Circular_Scanning_ui("Special_Case_Circular_Scanning_1")
+                            # ),
+                            # tabPanel("Graphs for metrics",
+                            # mod_Graphs_for_metrics_ui("Graphs_for_metrics_1")
+                            # ),
 
 
                  ),
-                 navbarMenu("Inference",
-                            tabPanel("Functional ANOVA",
-                                     mod_FunctionalANOVA_ui("FunctionalANOVA_1")
-                            ),
-                            tabPanel("Hypothesis for the Comparison of Two Groups",
-                            mod_Comparison_of_Two_Means_ui("Comparison_of_Two_Means_1")
-                            ),
-                            tabPanel("Fourier transform",
-                            mod_Fourier_transform_ui("Fourier_transform_1")
-                            )
-
-                 ),
+                 # navbarMenu("Inference",
+                 #            tabPanel("Functional ANOVA",
+                 #                     mod_FunctionalANOVA_ui("FunctionalANOVA_1")
+                 #            ),
+                 #            tabPanel("Hypothesis for the Comparison of Two Groups",
+                 #            mod_Comparison_of_Two_Means_ui("Comparison_of_Two_Means_1")
+                 #            ),
+                 #            tabPanel("Fourier transform",
+                 #            mod_Fourier_transform_ui("Fourier_transform_1")
+                 #            )
+                 #
+                 # ),
 
                  )
     )

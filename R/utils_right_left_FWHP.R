@@ -40,7 +40,7 @@ right_left_FWHP <- function(data1, peak, P_M){
     degree <- 25
     fit <- lm(y ~ poly(x, degree, raw = TRUE))
     # Valores x para el gráfico
-    x_values <- seq(min(x), max(x), length.out = 500)
+    x_values <- seq(min(x), max(x), length.out = 3000)
     # Predecir valores y con el modelo ajustado
     y_pred <- predict(fit, data.frame(x = x_values))
     df_interpolation = data.frame(Time = x_values, sing = round(y_pred,2))
@@ -101,7 +101,7 @@ right_left_FWHP <- function(data1, peak, P_M){
     degree <- 25
     fit <- lm(y ~ poly(x, degree, raw = TRUE))
     # Valores x para el gráfico
-    x_values <- seq(min(x), max(x), length.out = 500)
+    x_values <- seq(min(x), max(x), length.out = 3000)
     # Predecir valores y con el modelo ajustado
     y_pred <- predict(fit, data.frame(x = x_values))
     df_interpolation = data.frame(Time = x_values, sing = round(y_pred,2))

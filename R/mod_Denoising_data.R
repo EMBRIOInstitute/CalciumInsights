@@ -124,13 +124,13 @@ mod_Denoising_data_ui <- function(id){
 
 
 
-                   downloadButton(ns("descargarP"), "Transient Metrics"),
-                   downloadButton(ns("descargar"), "Trace Metrics"),
+                   downloadButton(ns("descargarP"), "Trace Metrics"),
+                   downloadButton(ns("descargar"), "Transient Metrics"),
 
 
 
 
-                   ),
+      ),
 
 
       mainPanel(
@@ -142,27 +142,27 @@ mod_Denoising_data_ui <- function(id){
           ),
           tabPanel("Peaks",
                    tabsetPanel(
-                    type = "tabs",
-                   tabPanel("Metrics",
-                   DT::DTOutput(ns("table_peaks2")),
-                   DT::DTOutput(ns("table_peaks22"))
-                   ),
-                   tabPanel("Metric plots",
-                   plotOutput(ns("plot_peak3")),
-                   plotOutput(ns("derivative")),
-                   plotOutput(ns("plot_raw_smoothed"))
-                   ),
-                   tabPanel("Components",
-                   plotOutput(ns("plot_component")),
-                   plotOutput(ns("panel")),
-                   verbatimTextOutput(ns("outputList")),
-                   plotOutput(ns("plot_ls")),
-                   plotOutput(ns("plot_box_ls")),
-                   plotOutput(ns("plot_ls1")),
-                   plotOutput(ns("plot_box_ls1")),
-                   plotOutput(ns("plot_ls2")),
-                   plotOutput(ns("plot_box_ls2")),
-                   )
+                     type = "tabs",
+                     tabPanel("Metrics",
+                              DT::DTOutput(ns("table_peaks2")),
+                              DT::DTOutput(ns("table_peaks22"))
+                     ),
+                     tabPanel("Metric plots",
+                              plotOutput(ns("plot_peak3")),
+                              plotOutput(ns("derivative")),
+                              plotOutput(ns("plot_raw_smoothed"))
+                     ),
+                     tabPanel("Components",
+                              #plotOutput(ns("plot_component")),
+                              plotOutput(ns("panel")),
+                              verbatimTextOutput(ns("outputList")),
+                              plotOutput(ns("plot_ls")),
+                              plotOutput(ns("plot_box_ls")),
+                              plotOutput(ns("plot_ls1")),
+                              plotOutput(ns("plot_box_ls1")),
+                              plotOutput(ns("plot_ls2")),
+                              plotOutput(ns("plot_box_ls2")),
+                     )
                    )
 
 
@@ -274,7 +274,7 @@ mod_Denoising_data_server <- function(id){
       df <- data_info()$data
       DT::datatable(df,options = list(
         pagingType = 'simple'
-        ), caption = tags$caption(tags$strong("Dataset:")))
+      ), caption = tags$caption(tags$strong("Dataset:")))
     })
 
     output$infotable2 <- DT::renderDataTable({
@@ -332,8 +332,8 @@ mod_Denoising_data_server <- function(id){
                                       yend = table_positions_peaks[,1]) # posicion del piko y su altura
       MSCPFP = Time_of_the_first_peak(data1 = data_smoothed,
                                       peak = table_positions_peaks)$cambios_menor_que_pfp # posicion donde
-                                                                                           #hay un cambio en la primera derivada
-                                                                                            # para el primer pico
+                                                                                          #hay un cambio en la primera derivada
+                                                                                          # para el primer pico
       data_min <- prominens2(data = data_smoothed,
                              peak = table_positions_peaks,
                              MSCPFP = MSCPFP)$data_min # puntos minimos donde empiezan los prominents
@@ -345,14 +345,14 @@ mod_Denoising_data_server <- function(id){
       time_start_increasin_peak <- prominens2(data = data_smoothed,
                                               peak = table_positions_peaks,
                                               MSCPFP = MSCPFP)$time_start_increasin_peak
-
+      #####
 
       Puntos_medios <- FWHP2(peaks = data_smoothed[,1][peaks],
                              df_peaks_parcia = df_peaks_parcia)$Puntos_medios  # puntos medios de los prominances
 
       table_peak$prominence <- prominens2(data = data_smoothed,
-                                                peak = table_positions_peaks,
-                                                MSCPFP = MSCPFP)$prominens_amplitud  # valor de los prominens
+                                          peak = table_positions_peaks,
+                                          MSCPFP = MSCPFP)$prominens_amplitud  # valor de los prominens
 
       table_peak$Prominence_Midpoint <- Puntos_medios$p_eak_mediun # valor medio de las promineces
 
@@ -450,8 +450,6 @@ mod_Denoising_data_server <- function(id){
         )
 
 
-
-
       ###### Calculate the linear regression equation
 
       intercept <- coef(modelo)[1]
@@ -459,16 +457,19 @@ mod_Denoising_data_server <- function(id){
 
       equation_text <- sprintf("y = %.2fx + %.2f", slope, intercept)
 
+
       gg2 <- gg2 +
         ggplot2::geom_text(x = mean(df_raw_smoothed$data_raw) - sd(df_raw_smoothed$data_raw),
                            y = mean(df_raw_smoothed$data_smoothed) + sd(df_raw_smoothed$data_raw),
                            label = equation_text,
                            hjust = 0, vjust = 0, size = 5)
       gg2 <- gg2 +
-          ggplot2::geom_text(x = mean(df_raw_smoothed$data_raw) - sd(df_raw_smoothed$data_raw),
-                             y = mean(df_raw_smoothed$data_smoothed) + 2*sd(df_raw_smoothed$data_raw),
-                    label = paste("R^2 =", round(r_cuadrado, 4)),
-                    parse = TRUE, hjust = 0, vjust = 0, size = 5)
+        ggplot2::geom_text(x = mean(df_raw_smoothed$data_raw) - sd(df_raw_smoothed$data_raw),
+                           y = mean(df_raw_smoothed$data_smoothed) + 2*sd(df_raw_smoothed$data_raw),
+                           label = paste("R^2 =", round(r_cuadrado, 4)),
+                           parse = TRUE, hjust = 0, vjust = 0, size = 5)
+
+
 
       table_peak$Transient_Ocurrence_Time <- time_start_increasin_peak$Time
 
@@ -504,38 +505,38 @@ mod_Denoising_data_server <- function(id){
       return(list(gg2 = gg2, table_peak = table_peak, tabla_AUC = tabla_AUC,
                   baseline1 = baseline1,
                   primera_derivada1 = primera_derivada1))
-      })
+    })
 
 
     output$derivative <- renderPlot({
 
       data_derivative <- peaks_plot()$primera_derivada1
 
-    derivative <- ggplot2::ggplot(data_derivative,
-                             ggplot2::aes(x = Time, y = deri1)) +
-      ggplot2::geom_line(linetype = "solid",size = 1.5, color = "black") +
-      ggplot2::geom_hline(yintercept = 0,
-                          linetype = "dashed", color = "purple") +
-      ggplot2::labs(title = "First Derivative",
-                    x = "Time [s]",
-                    y = "Fluorescence [a.u.]") +
+      derivative <- ggplot2::ggplot(data_derivative,
+                                    ggplot2::aes(x = Time, y = deri1)) +
+        ggplot2::geom_line(linetype = "solid",size = 1.5, color = "black") +
+        ggplot2::geom_hline(yintercept = 0,
+                            linetype = "dashed", color = "purple") +
+        ggplot2::labs(title = "First Derivative",
+                      x = "Time [s]",
+                      y = "Fluorescence [a.u.]") +
 
-      ggplot2::theme_classic() +
+        ggplot2::theme_classic() +
 
-      ggplot2::theme(plot.title = ggplot2::element_text(size = 28,
-                                                        face = "bold")) +
-
-      ggplot2::theme(axis.title.y = ggplot2::element_text(size = 28,
+        ggplot2::theme(plot.title = ggplot2::element_text(size = 28,
                                                           face = "bold")) +
-      ggplot2::theme(axis.title.x = ggplot2::element_text(size = 28,
-                                                          face = "bold")) +
-      ggplot2::theme(axis.text.x = ggplot2::element_text(size = 16,
-                                                         face = "bold")) +
-      ggplot2::theme(axis.text.y = ggplot2::element_text(size = 16,
-                                                         face = "bold"))
+
+        ggplot2::theme(axis.title.y = ggplot2::element_text(size = 28,
+                                                            face = "bold")) +
+        ggplot2::theme(axis.title.x = ggplot2::element_text(size = 28,
+                                                            face = "bold")) +
+        ggplot2::theme(axis.text.x = ggplot2::element_text(size = 16,
+                                                           face = "bold")) +
+        ggplot2::theme(axis.text.y = ggplot2::element_text(size = 16,
+                                                           face = "bold"))
 
 
-    derivative
+      derivative
 
 
     })
@@ -642,7 +643,7 @@ mod_Denoising_data_server <- function(id){
         ggplot2::theme(axis.title.x = ggplot2::element_text(size = 28,
                                                             face = "bold")) +
         ggplot2::theme(axis.text.x = ggplot2::element_text(size = 16,
-                                                            face = "bold")) +
+                                                           face = "bold")) +
         ggplot2::theme(axis.text.y = ggplot2::element_text(size = 16,
                                                            face = "bold"))
 
@@ -669,12 +670,12 @@ mod_Denoising_data_server <- function(id){
       else {gg3 <- gg3}
 
       if (input$FWHM==2){
-      gg3 <- gg3 + ggplot2::geom_segment(data = df_p,
-                                  ggplot2::aes(x = Time_left_FWHM,
-                             xend = Time_right_FWHM,
-                             y = Amplitude_Midpoint,
-                             yend = Amplitude_Midpoint),
-                         linetype = "solid",size = 1.5, color = "Maroon 1")
+        gg3 <- gg3 + ggplot2::geom_segment(data = df_p,
+                                           ggplot2::aes(x = Time_left_FWHM,
+                                                        xend = Time_right_FWHM,
+                                                        y = Amplitude_Midpoint,
+                                                        yend = Amplitude_Midpoint),
+                                           linetype = "solid",size = 1.5, color = "Maroon 1")
       }
       else {gg3 <- gg3}
       gg3
@@ -683,23 +684,23 @@ mod_Denoising_data_server <- function(id){
 
 
 
-    output$plot_component <- renderPlot({
-      fileInput2 <- filedata()$fileInput2
-      if (is.null(fileInput2)) {
-        # Si fileInput2 es NULL, muestra un mensaje de error o información
-        error_msg <- "Data insufficient for component visualization."
-        print(error_msg)
-        plot(0, type = "n", ann = TRUE, axes = TRUE)
-        text(1, 0, error_msg, col = "red", cex = 1.5)
-      }  else {
-        contour_plot <- fileInput2$contour_plot
-        primera_matriz <- contour_plot[, , 3]
-        par(pty = "s")  # Ajusta los márgenes si es necesario
-        # Personaliza la paleta de colores con un blanco más intenso
-        colormap <- colorRampPalette(c("black", "red", "yellow", "white"), space = "rgb")(256)
-        image(primera_matriz, col = colormap, axes = FALSE, xaxt = "n", yaxt = "n")
-        }
-    })
+    # output$plot_component <- renderPlot({
+    #   fileInput2 <- filedata()$fileInput2
+    #   if (is.null(fileInput2)) {
+    #     # Si fileInput2 es NULL, muestra un mensaje de error o información
+    #     error_msg <- "Data insufficient for component visualization."
+    #     print(error_msg)
+    #     plot(0, type = "n", ann = TRUE, axes = TRUE)
+    #     text(1, 0, error_msg, col = "red", cex = 1.5)
+    #   }  else {
+    #     contour_plot <- fileInput2$contour_plot
+    #     primera_matriz <- contour_plot[, , 3]
+    #     par(pty = "s")  # Ajusta los márgenes si es necesario
+    #     # Personaliza la paleta de colores con un blanco más intenso
+    #     colormap <- colorRampPalette(c("black", "red", "yellow", "white"), space = "rgb")(256)
+    #     image(primera_matriz, col = colormap, axes = FALSE, xaxt = "n", yaxt = "n")
+    #   }
+    # })
 
 
     output$plot_raw_smoothed <- renderPlot({
@@ -743,10 +744,10 @@ mod_Denoising_data_server <- function(id){
       ),caption = tags$caption(tags$strong("Trace Metrics")))
     })
 
-###################################################
-##### funcion de analisis de todos los transitorios
-####################################################
-####################################################
+    ###################################################
+    ##### funcion de analisis de todos los transitorios
+    ####################################################
+    ####################################################
 
     all_trasien_peaks_df <- reactive({
 
@@ -762,100 +763,100 @@ mod_Denoising_data_server <- function(id){
       for (i in 1:dim(data)[1]) {
 
 
-      cell = i
-      data_raw = data.frame(Time = as.numeric(colnames(data)),
-                            signal = as.numeric(data[cell,]))
+        cell = i
+        data_raw = data.frame(Time = as.numeric(colnames(data)),
+                              signal = as.numeric(data[cell,]))
 
 
-      ##### function loess for smoothed
-      smoothed <- loess(signal ~ Time, data = data_raw ,
-                        span = input$span)
-      predictions <- predict(smoothed)
-      df_smoothed <- data.frame(Time = data_raw$Time,
-                                signal = predictions)
-      #####
+        ##### function loess for smoothed
+        smoothed <- loess(signal ~ Time, data = data_raw ,
+                          span = input$span)
+        predictions <- predict(smoothed)
+        df_smoothed <- data.frame(Time = data_raw$Time,
+                                  signal = predictions)
+        #####
 
-      peaks_found <- peaks(data = df_smoothed,
-                           nups=input$nups2,
-                           ndowns = input$ndowns2,
-                           minpeakheight = input$minpeakheight2,
-                           minpeakdistance = input$minpeakdistance2)
+        peaks_found <- peaks(data = df_smoothed,
+                             nups=input$nups2,
+                             ndowns = input$ndowns2,
+                             minpeakheight = input$minpeakheight2,
+                             minpeakdistance = input$minpeakdistance2)
 
-      table_peak <- peaks_found$p_eak
-      table_positions_peaks <- peaks_found$peak
+        table_peak <- peaks_found$p_eak
+        table_positions_peaks <- peaks_found$peak
 
-      table_peak = table_peak  #tabla que muestra los piko
-      table_positions_peaks = table_positions_peaks # tabla de las posiciones de los piko
-      data_raw = data_raw  #data con la celula analizada
-      data_smoothed = df_smoothed   # data suavizada
+        table_peak = table_peak  #tabla que muestra los piko
+        table_positions_peaks = table_positions_peaks # tabla de las posiciones de los piko
+        data_raw = data_raw  #data con la celula analizada
+        data_smoothed = df_smoothed   # data suavizada
 
-      peaks <- table_positions_peaks[,2]   # Índices donde se encuentran los picos
-      data_putos_pekas = data.frame(x = data_smoothed[,1][peaks],
-                                    y = data_smoothed[,2][peaks]) #puntos de los picos
-      vertical_segments <- data.frame(x = data_smoothed[,1][peaks],
-                                      yend = table_positions_peaks[,1])   # posicion del piko y su altura
+        peaks <- table_positions_peaks[,2]   # Índices donde se encuentran los picos
+        data_putos_pekas = data.frame(x = data_smoothed[,1][peaks],
+                                      y = data_smoothed[,2][peaks]) #puntos de los picos
+        vertical_segments <- data.frame(x = data_smoothed[,1][peaks],
+                                        yend = table_positions_peaks[,1])   # posicion del piko y su altura
 
 
-      MSCPFP = Time_of_the_first_peak(data1 = data_smoothed,
-                                      peak = table_positions_peaks)$cambios_menor_que_pfp # posicion donde hay un cambio en la primera dericada
-      # para el primer pico
+        MSCPFP = Time_of_the_first_peak(data1 = data_smoothed,
+                                        peak = table_positions_peaks)$cambios_menor_que_pfp # posicion donde hay un cambio en la primera dericada
+        # para el primer pico
 
-      data_min <- prominens2(data = data_smoothed,
-                             peak = table_positions_peaks,
-                             MSCPFP = MSCPFP)$data_min # puntos minimos donde empiezan los prominents
-      df_peaks_parcia <- prominens2(data = data_smoothed,
-                                    peak = table_positions_peaks,
-                                    MSCPFP = MSCPFP)$df_peaks_parcia # el segmento del prominens
-
-      time_start_increasin_peak <- prominens2(data = data_smoothed,
-                                              peak = table_positions_peaks,
-                                              MSCPFP = MSCPFP)$time_start_increasin_peak
-
-      Puntos_medios <- FWHP2(peaks = data_smoothed[,1][peaks],
-                             df_peaks_parcia = df_peaks_parcia)$Puntos_medios  # puntos medios de los prominances
-
-      table_peak$prominence <- prominens2(data = data_smoothed,
-                                                peak = table_positions_peaks,
-                                                MSCPFP = MSCPFP)$prominens_amplitud  # valor de los prominens
-      table_peak$Prominence_Midpoint <- Puntos_medios$p_eak_mediun # valor medio de las promineces
-
-      first_time <- as.data.frame(response_time(data = data_smoothed,
-                                                peak = table_positions_peaks,
-                                                Puntos_medios = Puntos_medios)$first_time )  #primer tiempo
-      second_time <- as.data.frame(response_time(data = data_smoothed,
-                                                 peak = table_positions_peaks,
-                                                 Puntos_medios = Puntos_medios)$second_time)  #segundo tiempo
-      Tiempo_respose <- response_time(data = data_smoothed,
+        data_min <- prominens2(data = data_smoothed,
+                               peak = table_positions_peaks,
+                               MSCPFP = MSCPFP)$data_min # puntos minimos donde empiezan los prominents
+        df_peaks_parcia <- prominens2(data = data_smoothed,
                                       peak = table_positions_peaks,
-                                      Puntos_medios = Puntos_medios)$Tiempo_respose #tiempo de respuesta
+                                      MSCPFP = MSCPFP)$df_peaks_parcia # el segmento del prominens
 
-      data_segmento_tiempo <- data.frame(x1 = first_time[1,1],
-                                         x2 = second_time[1,1])
+        time_start_increasin_peak <- prominens2(data = data_smoothed,
+                                                peak = table_positions_peaks,
+                                                MSCPFP = MSCPFP)$time_start_increasin_peak
 
-      right_left_FWHP <- right_left_FWHP(data1=data_smoothed, peak = table_positions_peaks,
-                                         P_M = Puntos_medios)
-      left_FWHP <- right_left_FWHP$df
-      right_FWHP <- right_left_FWHP$df2
+        Puntos_medios <- FWHP2(peaks = data_smoothed[,1][peaks],
+                               df_peaks_parcia = df_peaks_parcia)$Puntos_medios  # puntos medios de los prominances
 
-      table_peak$Time_left_FWHP <- left_FWHP$Time_left_FWHP
-      table_peak$Time_right_FWHP <- right_FWHP$Time_right_FWHP
+        table_peak$prominence <- prominens2(data = data_smoothed,
+                                            peak = table_positions_peaks,
+                                            MSCPFP = MSCPFP)$prominens_amplitud  # valor de los prominens
+        table_peak$Prominence_Midpoint <- Puntos_medios$p_eak_mediun # valor medio de las promineces
 
-      table_peak$FWHP <- right_FWHP$Time_right_FWHP -left_FWHP$Time_left_FWHP
+        first_time <- as.data.frame(response_time(data = data_smoothed,
+                                                  peak = table_positions_peaks,
+                                                  Puntos_medios = Puntos_medios)$first_time )  #primer tiempo
+        second_time <- as.data.frame(response_time(data = data_smoothed,
+                                                   peak = table_positions_peaks,
+                                                   Puntos_medios = Puntos_medios)$second_time)  #segundo tiempo
+        Tiempo_respose <- response_time(data = data_smoothed,
+                                        peak = table_positions_peaks,
+                                        Puntos_medios = Puntos_medios)$Tiempo_respose #tiempo de respuesta
 
-      table_peak$Time_to_peak <- table_peak$posision_peak - time_start_increasin_peak$Time
+        data_segmento_tiempo <- data.frame(x1 = first_time[1,1],
+                                           x2 = second_time[1,1])
 
-      table_peak$puntominimo_y <- prominens2(data = data_smoothed,
-                                             peak = table_positions_peaks,
-                                             MSCPFP = MSCPFP)$df_peaks_parcia$p_fin1
+        right_left_FWHP <- right_left_FWHP(data1=data_smoothed, peak = table_positions_peaks,
+                                           P_M = Puntos_medios)
+        left_FWHP <- right_left_FWHP$df
+        right_FWHP <- right_left_FWHP$df2
 
-      df_p1 <- table_peak
+        table_peak$Time_left_FWHP <- left_FWHP$Time_left_FWHP
+        table_peak$Time_right_FWHP <- right_FWHP$Time_right_FWHP
 
-      colnames(df_p1) <- c("Absolute_Amplitude", "Peak_Time", "L_inf", "L_sup",
-                           "Prominence", "Prominence_Midpoint", "Time_left_FWHP",
-                           "Time_right_FWHP", "FWHP", "Time_to_peak","puntominimo_y")
-      ls[[i]] <- df_p1$Peak_Time
-      ls1[[i]] <- df_p1$Time_to_peak
-      ls2[[i]] <- df_p1$FWHP
+        table_peak$FWHP <- right_FWHP$Time_right_FWHP -left_FWHP$Time_left_FWHP
+
+        table_peak$Time_to_peak <- table_peak$posision_peak - time_start_increasin_peak$Time
+
+        table_peak$puntominimo_y <- prominens2(data = data_smoothed,
+                                               peak = table_positions_peaks,
+                                               MSCPFP = MSCPFP)$df_peaks_parcia$p_fin1
+
+        df_p1 <- table_peak
+
+        colnames(df_p1) <- c("Absolute_Amplitude", "Peak_Time", "L_inf", "L_sup",
+                             "Prominence", "Prominence_Midpoint", "Time_left_FWHP",
+                             "Time_right_FWHP", "FWHP", "Time_to_peak","puntominimo_y")
+        ls[[i]] <- df_p1$Peak_Time
+        ls1[[i]] <- df_p1$Time_to_peak
+        ls2[[i]] <- df_p1$FWHP
       }
 
       ################### Peak_Time
@@ -889,7 +890,7 @@ mod_Denoising_data_server <- function(id){
           axis.title.y = ggplot2::element_text(size = 18)                # Tamaño del título del eje y
         ) + ggplot2::theme_minimal()
       #ggplot2::ggsave("f_23.png", plot = ls_Box_plot, device = "png")
-        ##################
+      ##################
 
       ################### Time_to_peak
       data_list1 <- ls1
@@ -953,12 +954,12 @@ mod_Denoising_data_server <- function(id){
       ##################
 
 
-        panel <- gridExtra::grid.arrange(
-          ggplot2::ggplotGrob(ls_plot), ggplot2::ggplotGrob(ls_Box_plot),
-          ggplot2::ggplotGrob(ls_plot1), ggplot2::ggplotGrob(ls_Box_plot1),
-          ggplot2::ggplotGrob(ls_plot2), ggplot2::ggplotGrob(ls_Box_plot2),
-          ncol = 2
-        )
+      panel <- gridExtra::grid.arrange(
+        ggplot2::ggplotGrob(ls_plot), ggplot2::ggplotGrob(ls_Box_plot),
+        ggplot2::ggplotGrob(ls_plot1), ggplot2::ggplotGrob(ls_Box_plot1),
+        ggplot2::ggplotGrob(ls_plot2), ggplot2::ggplotGrob(ls_Box_plot2),
+        ncol = 2
+      )
       #ggplot2::ggsave("panel3.png", plot = panel, device = "png", dpi = 300)
 
 
@@ -1022,11 +1023,11 @@ mod_Denoising_data_server <- function(id){
                             Baseline, Number_of_Peaks = number_of_peaks)
 
         if (input$auc2==2){            #AUC TABLE
-          Trace_Metrics <- cbind(df_p2, peaks_plot()$tabla_AUC)
+          Transient_Metrics <- cbind(df_p2, peaks_plot()$tabla_AUC)
         }
-        else {Trace_Metrics <- df_p2}
+        else {Transient_Metrics <- df_p2}
 
-        write.csv( Trace_Metrics, file, row.names = FALSE)
+        write.csv(Transient_Metrics, file, row.names = FALSE)
       }
     )
 

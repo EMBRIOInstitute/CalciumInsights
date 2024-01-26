@@ -34,6 +34,8 @@ usethis::use_package( "reshape2" )
 usethis::use_package( "shinyjs" )
 usethis::use_package( "latex2exp" )
 usethis::use_package( "plotly" )
+usethis::use_package( "magrittr" )
+usethis::use_package( "png" )
 
 
 attachment::att_amend_desc()
@@ -41,8 +43,8 @@ attachment::att_amend_desc()
 ## Add modules ----
 ## Create a module infrastructure in R/
 golem::add_module(name = "Raw_data") # Name of the module
-golem::add_module(name = "Smoothed_data") # Name of the module  Denoising data
 golem::add_module(name = "Denoising_data") # Name of the module
+golem::add_module(name = "Smoothed_data") # Name of the module  Denoising data
 golem::add_module(name = "Special_Case_Circular_Scanning") # Name of the module
 golem::add_module(name = "Graphs_for_metrics")
 golem::add_module(name = "FunctionalANOVA")
