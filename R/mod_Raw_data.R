@@ -117,6 +117,7 @@ mod_Raw_data_ui <- function(id){
                    ),
                    downloadButton(ns("descargarP"), "Trace Metrics"),
                    downloadButton(ns("descargar"), "Transient Metrics"),
+                   downloadButton(ns("Calcium_Trance_Graph"), "Calcium Trance Graph")
       ),
       mainPanel(
         tabsetPanel(
@@ -611,8 +612,8 @@ footer = modalButton("Close")
     })
 
 
+    Trance_Graph <- reactive({
 
-    output$plot_peak3 <- renderPlot({
       data_smoothed = peaks_df()$df_smoothed
       data_raw = peaks_df()$data_raw
       colnames(data_smoothed) <- c("Time","Sing")
@@ -688,7 +689,14 @@ footer = modalButton("Close")
                                            linetype = "solid",size = 1.5, color = "Maroon 1")
       }
       else {gg3 <- gg3}
-      gg3
+      return(list(gg3 = gg3))
+
+
+    })
+
+    output$plot_peak3 <- renderPlot({
+      Trance_Graph()$gg3
+
     })
 
 
@@ -1056,6 +1064,19 @@ footer = modalButton("Close")
                                         "Prominence", "FWHP", "FWHM", "Peak_Rise_Time",
                                         "Transient_Ocurrence_Time", "Rise_Rate"))
         write.csv(df_p, file, row.names = FALSE)
+      }
+    )
+
+    output$Calcium_Trance_Graph <- downloadHandler(
+      filename = function() {
+        paste("calcium_trance", Sys.Date(), ".png", sep = "")
+      },
+      content = function(file) {
+        # Get the ggplot object from the reactive
+        gg_plot <- Trance_Graph()$gg3
+
+        # Save the ggplot object as a PNG file
+        ggplot2::ggsave(file, plot = gg_plot, dpi = 300)
       }
     )
 
