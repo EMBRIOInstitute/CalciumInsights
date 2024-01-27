@@ -134,6 +134,9 @@ mod_Raw_data_ui <- function(id){
                               DT::DTOutput(ns("table_peaks22"))
                      ),
                      tabPanel("Metric plots",
+                              actionButton(ns("legends"), "Legends",
+                                           class = "btn-sm",
+                                           style = "position: absolute; top: 80px; right: 160px; margin: 5px;"),
                               plotOutput(ns("plot_peak3")),
                               plotOutput(ns("derivative")),
                               #plotOutput(ns("plot_raw_smoothed"))
@@ -278,6 +281,21 @@ mod_Raw_data_server <- function(id){
 footer = modalButton("Close")
       ))
     })
+
+###### legends of graph
+    observeEvent(input$legends, {
+      showModal(modalDialog(
+        title = "Legends",
+        size = "l",
+        img(src = system.file("app", "www", "images", "legend.png",
+                              package = "CalciumInsights"), width = "100%"),
+        footer = modalButton("Close")
+      ))
+    })
+
+
+
+
 
     #########load Data #########
 
@@ -696,8 +714,9 @@ footer = modalButton("Close")
 
     output$plot_peak3 <- renderPlot({
       Trance_Graph()$gg3
-
     })
+
+
 
 
 
@@ -1079,6 +1098,10 @@ footer = modalButton("Close")
         ggplot2::ggsave(file, plot = gg_plot, dpi = 300)
       }
     )
+
+
+
+
 
 
 
