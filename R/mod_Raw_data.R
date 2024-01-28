@@ -193,38 +193,42 @@ mod_Raw_data_server <- function(id){
     "),
         HTML("
       <p style='text-align: justify;'>
-        <strong>Components:</strong> Choose the cell you want to analyze, corresponding to the columns in the loaded dataset.
+        <strong>Region of Interest (ROI):</strong> Choose the cell you want to analyze, corresponding to the columns in the loaded dataset.
       </p>
     "),
         HTML("
       <p style='text-align: justify;'>
-        <strong>Stimulus Onset Time:</strong> Here, you can select the moment when the experiment's stimulus began,
-        marking the point at which the analysis of the calcium signal starts.
+        <strong>Peak Height (min):</strong> This is the minimum (absolute) height required for a peak to be recognized.
       </p>
     "),
         HTML("
       <p style='text-align: justify;'>
-        <strong>Peak Height:</strong> This is the minimum (absolute) height required for a peak to be recognized.
+        <strong>Peak Ascent:</strong> This is the minimum number of increasing steps required before a peak is reached.
       </p>
     "),
         HTML("
       <p style='text-align: justify;'>
-        <strong>Peak Distance:</strong> This is the minimum distance (in indices) that peaks must have to be counted.
+        <strong>Peak Descent:</strong> This is the minimum number of decreasing steps required after a peak.
       </p>
     "),
         HTML("
       <p style='text-align: justify;'>
-        <strong>Pre-Peak Ascent:</strong> This is the minimum number of increasing steps required before a peak is reached.
+        <strong>Min Peak Distance:</strong> This is the minimum distance (in indices) that peaks must have to be counted.
       </p>
     "),
         HTML("
       <p style='text-align: justify;'>
-        <strong>Post-Peak Descent:</strong> This is the minimum number of decreasing steps required after a peak.
+        <strong>FWHP (min):</strong> The minimum Full Width at Half-Prominence considered for a peak to be identified as such.
       </p>
     "),
         HTML("
       <p style='text-align: justify;'>
-        <strong>Area under the curve:</strong> You can choose to calculate the area under the curve or not.
+        <strong>Prominence (min):</strong> This is the prominence distance that peaks must have to be counted.
+      </p>
+    "),
+        HTML("
+      <p style='text-align: justify;'>
+        <strong>Area Under the Curve (AUC):</strong> You can choose to calculate the area under the curve or not.
       </p>
     "),
         HTML("
@@ -237,46 +241,162 @@ mod_Raw_data_server <- function(id){
     "),
         HTML("
       <p style='text-align: justify;'>
-        <strong>Reference Level:</strong> The assigned value represents a threshold for calculating the area under the curve
-        above this value, depicted on the graph by a green line.
+        <strong>Baseline:</strong> You can select a Baseline.
       </p>
     "),
+        HTML("
+      <p style='text-align: justify;'>
+        - 'Reference Level 0': The baseline takes the line y = 0.
+      </p>
+      <p style='text-align: justify;'>
+        - 'Standar definition': The baseline is the average fluorescence from the beginning of the signal up to the Time Onset.
+      </p>
+      <p style='text-align: justify;'>
+        - 'Interval': Here you can define a time interval of your preference where you can calculate the average fluorescence of the signal, and this average will be used as the baseline.
+      </p>
+      <p style='text-align: justify;'>
+        - 'Your own baseline': You can define your own baseline value.
+      </p>
+       <p style='text-align: justify;'>
+        - 'min': Baseline is defined as the minimum fluorescence value of the signal.
+      </p>
+    "),
+        HTML("
+      <p style='text-align: justify;'>
+        <strong> You can choose whether to display or not the Full Width at Half Maximum (FWHM) on the Calcium Trace graph.</strong>
+      </p>
+    "),
+        HTML("
+      <p style='text-align: justify;'>
+        - 'No': If you do not wish to display the Full Width at Half Maximum (FWHM) on the Calcium Trace graph.
+      </p>
+      <p style='text-align: justify;'>
+        - 'Yes': If you wish to display the Full Width at Half Maximum (FWHM) on the Calcium Trace graph.
+      </p>
+    "),
+
+
         HTML("
   <div class='container'>
     <h2>Metrics Definitions</h2>
     <div style='overflow-x: auto;'> <!-- Agregamos un contenedor con desplazamiento horizontal -->
-      <table class='table table-striped table-bordered custom-width' style='max-width: 60%;'>
-        <colgroup>
-          <col style='width: 10%;'> <!-- Ajusta el ancho de la columna Metric según tus preferencias -->
-          <col style='width: 40%;'> <!-- Ajusta el ancho de la columna Definition según tus preferencias -->
-          <col style='width: 30%;'> <!-- Ajusta el ancho de la columna Reference según tus preferencias -->
-        </colgroup>
-        <thead>
-          <tr>
-            <th>Metric</th>
-            <th>Definition</th>
-            <th>Reference</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Amplitude</td>
-            <td>
-              The maximum distance a wave travels from its resting or equilibrium position. Usually reported as the spatial spread (fullwidth at half-maximal amplitude: FWHM).
-            </td>
-            <td><cite> [1] </cite><br /><cite> [2] </cite></td>
-          </tr>
-          <td>Amplitude</td>
-            <td>
-              The maximum distance a wave travels from its resting or equilibrium position. Usually reported as the spatial spread (fullwidth at half-maximal amplitude: FWHM).
-            </td>
-            <td><cite> [1] </cite><br /><cite> [2] </cite></td>
-          </tr>
-          <!-- Agrega las otras filas de la tabla aquí -->
-        </tbody>
-      </table>
-    </div>
+     <table class='table table-striped table-bordered custom-width' style='max-width: 60%;'>
+  <colgroup>
+    <col style='width: 30%;'>
+    <col style='width: 50%;'>
+    <col style='width: 20%;'>
+  </colgroup>
+  <thead>
+    <tr>
+      <th>Metric</th>
+      <th>Description</th>
+      <th>Reference</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Peak</td>
+      <td>The peak is the maximum fluorescence ratio during the transient.</td>
+      <td>[1]</td>
+    </tr>
+    <tr>
+      <td>Amplitude or Peak Height</td>
+      <td>Peak height is the difference between the baseline and peak, i.e., the amplitude of the transient, constructed using the following formula:
+      Amplitude = Peak Calcium Level - Baseline Calcium</td>
+      <td>[1,2]</td>
+    </tr>
+    <tr>
+      <td>Full Width at Half-Maximum (FWHM)</td>
+      <td>The maximum distance a wave travels from its resting or equilibrium position, usually reported as the spatial spread. Response duration, which is the time between half amplitude on the ascent and descent of the transient.</td>
+      <td>[3,4,5]</td>
+    </tr>
+    <tr>
+      <td>Prominence</td>
+      <td>Prominence refers to the distinctiveness of a peak in a calcium signal. It is a measure of how much a specific peak stands out from the surrounding fluctuations in calcium concentration. Prominence takes into account both the height of the peak and its relative position compared to neighboring events.</td>
+      <td>[6]</td>
+    </tr>
+    <tr>
+      <td>Full Width at Half-Prominence (FWHP)</td>
+      <td>It represents the width of a signal, typically a peak or an event, at the level where its prominence is equal to half of its maximum prominence. It measures the width of a feature in a signal at the point where its intensity has decreased by half from the peak value. This parameter is also referred to as transient duration 50 (TD50).</td>
+      <td>[6,7]</td>
+    </tr>
+    <tr>
+      <td>Peak Occurrence Time</td>
+      <td>Refers to the specific moment or point in time when a calcium signal reaches its maximum amplitude or concentration during a transient event.</td>
+      <td>[8]</td>
+    </tr>
+    <tr>
+      <td>Time Onset</td>
+      <td>It refers to the moment when the increase in calcium concentration within a cell begins. It marks the initiation or starting point of the transient event.</td>
+      <td>[5,9]</td>
+    </tr>
+    <tr>
+      <td>Transient Occurrence Time</td>
+      <td>It alludes to the specific moment or time at which a transient event, characterized by a temporary increase in calcium concentration within a cell, takes place. It signifies the initiation or onset of the transient event and is typically measured from the beginning of the recording or a specific reference point.</td>
+      <td>[Referencia específica]</td>
+    </tr>
+    <tr>
+      <td>Peak Rise Time</td>
+      <td>Amount of time that a calcium transient takes to reach its peak from the baseline.</td>
+      <td>[10]</td>
+    </tr>
+    <tr>
+      <td>Baseline</td>
+      <td>The baseline is defined as the fluorescence ratio at the beginning of the transient. The base or starting level of calcium before a signal occurs. Resting calcium concentration in the cytosol of a cell.</td>
+      <td>[1,3]</td>
+    </tr>
+    <tr>
+      <td>Area Under the Curve (AUC)</td>
+      <td>A statistical technique with mathematical integration to quantify the exposure of a calcium signal in a specific period.</td>
+      <td>[11]</td>
+    </tr>
+    <tr>
+      <td>Number of Peaks</td>
+      <td>The number of calcium transients or spikes in a signal denotes the number of peaks. Calculated from discerning the time between changes in calcium concentrations.</td>
+      <td>[12–14]</td>
+    </tr>
+    <tr>
+      <td>Frequency</td>
+      <td>How often an event repeats over a period of time represents frequency. Regarding calcium, it refers to the oscillatory feature of a calcium signal. The duration of each change in calcium concentration.</td>
+      <td>[15]</td>
+    </tr>
+    <tr>
+      <td>Rise Rate</td>
+      <td>The rate of change of the average fluorescence intensity with respect to time, specifically,
+      is the change in average fluorescence relative to its initial value per second.
+      This expression can be used to quantify how quickly the average frequency is increasing in relation to time, and the maximal velocity is usually reported.
+      </td>
+      <td>[16,17]</td>
+    </tr>
+  </tbody>
+</table>
+</div>
   </div>
+"),
+ HTML("
+<p style='text-align: justify;'>
+  <strong>Reference Levels:</strong>
+  <ol>
+    <li>Knyrim M, Rabe S, Grossmann C, Gekle M, Schreier B. Influence of miR-221/222 on cardiomyocyte calcium handling and function. Cell Biosci. 2021 Dec;11(1):160.</li>
+    <li>Ríos E, Shirokova N, Kirsch WG, Pizarro G, Stern MD, Cheng H, et al. A Preferred Amplitude of Calcium Sparks in Skeletal Muscle. Biophys J. 2001 Jan;80(1):169–83.</li>
+    <li>Smith IF, Wiltgen SM, Parker I. Localization of puff sites adjacent to the plasma membrane: Functional and spatial characterization of Ca2+ signaling in SH-SY5Y cells utilizing membrane-permeant caged IP3. Cell Calcium. 2009 Jan;45(1):65–76.</li>
+    <li>Smedler E, Uhlén P. Frequency decoding of calcium oscillations. Biochim Biophys Acta BBA - Gen Subj. 2014 Mar;1840(3):964–9.</li>
+    <li>Mackay L, Mikolajewicz N, Komarova SV, Khadra A. Systematic Characterization of Dynamic Parameters of Intracellular Calcium Signals. Front Physiol [Internet]. 2016 Nov 10 [cited 2024 Jan 10];7. Available from: http://journal.frontiersin.org/article/10.3389/fphys.2016.00525/full</li>
+    <li>Yang H, Stebbeds W, Francis J, Pointon A, Obrezanova O, Beattie KA, et al. Deriving waveform parameters from calcium transients in human iPSC-derived cardiomyocytes to predict cardiac activity with machine learning. Stem Cell Rep. 2022 Mar;17(3):556–68.</li>
+    <li>Burridge PW, Diecke S, Matsa E, Sharma A, Wu H, Wu JC. Modeling Cardiovascular Diseases with Patient-Specific Human Pluripotent Stem Cell-Derived Cardiomyocytes. In: Nagy A, Turksen K, editors. Patient-Specific Induced Pluripotent Stem Cell Models [Internet]. New York, NY: Springer New York; 2015 [cited 2024 Jan 11]. p. 119–30. (Methods in Molecular Biology; vol. 1353). Available from: https://link.springer.com/10.1007/7651_2015_196</li>
+    <li>Brancaccio M, Maywood ES, Chesham JE, Loudon ASI, Hastings MH. A Gq-Ca2+ Axis Controls Circuit-Level Encoding of Circadian Time in the Suprachiasmatic Nucleus. Neuron. 2013 May;78(4):714–28.</li>
+    <li>Zhu MH, Jang J, Milosevic MM, Antic SD. Population imaging discrepancies between a genetically-encoded calcium indicator (GECI) versus a genetically-encoded voltage indicator (GEVI). Sci Rep. 2021 Mar 5;11(1):5295.</li>
+    <li>Gu X, Olson E, Spitzer N. Spontaneous neuronal calcium spikes and waves during early differentiation. J Neurosci. 1994 Nov 1;14(11):6325–35.</li>
+    <li>Heaney RP, Dowell MS, Hale CA, Bendich A. Calcium Absorption Varies within the Reference Range for Serum 25-Hydroxyvitamin D. J Am Coll Nutr. 2003 Apr;22(2):142–6.</li>
+    <li>Sorensen J, Wiklendt L, Hibberd T, Costa M, Spencer NJ. Techniques to identify and temporally correlate calcium transients between multiple regions of interest in vertebrate neural circuits. J Neurophysiol. 2017 Mar 1;117(3):885–902.</li>
+    <li>Gerstein GL, Perkel DH. Simultaneously Recorded Trains of Action Potentials: Analysis and Functional Interpretation. Science. 1969 May 16;164(3881):828–30.</li>
+    <li>Windhorst U, Johansson H, editors. Modern Techniques in Neuroscience Research [Internet]. Berlin, Heidelberg: Springer Berlin Heidelberg; 1999 [cited 2024 Jan 12]. Available from: https://link.springer.com/10.1007/978-3-642-58552-4</li>
+    <li>Smedler E, Uhlén P. Frequency decoding of calcium oscillations. Biochim Biophys Acta BBA - Gen Subj. 2014 Mar;1840(3):964–9.</li>
+    <li>Dickinson GD, Parker I. Temperature Dependence of IP3-Mediated Local and Global Ca2+ Signals. Biophys J. 2013 Jan;104(2):386–95.</li>
+    <li>Gómez-Viquez NL, Guerrero-Serna G, Arvizu F, García U, Guerrero-Hernández A. Inhibition of SERCA pumps induces desynchronized RyR activation in overloaded internal Ca 2+ stores in smooth muscle cells. Am J Physiol-Cell Physiol. 2010 May;298(5):C1038–46.</li>
+  </ol>
+</p>
+
 "),
 footer = modalButton("Close")
       ))
