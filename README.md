@@ -7,12 +7,15 @@ It is an essential interactive tool for scientists and professionals in the fiel
 
 <https://posit.co/download/rstudio-desktop/> 
 
-## How to install the app 
+## How to install the app
 
+# Only the first time the app is installed, enter the following command in the console
 ```
-# In the console of RStudio type the following:
-1. install.packages("remotes")
-2. remotes::install_github("EMBRIOInstitute/CalciumInsights", auth_token = "your GitHub token")
+install.packages("remotes")
+```
+# The following console command is to install from github
+```
+remotes::install_github("EMBRIOInstitute/CalciumInsights", auth_token = "your GitHub token")
 ```
 ## Example
 
