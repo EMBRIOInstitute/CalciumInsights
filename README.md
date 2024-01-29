@@ -9,11 +9,11 @@ It is an essential interactive tool for scientists and professionals in the fiel
 
 ## How to install the app
 
-# Only the first time the app is installed, enter the following command in the console
+### Only the first time the app is installed, enter the following command in the console
 ```
 install.packages("remotes")
 ```
-# The following console command is to install from github
+### The following console command is to install from github
 ```
 remotes::install_github("EMBRIOInstitute/CalciumInsights", auth_token = "your GitHub token")
 ```
