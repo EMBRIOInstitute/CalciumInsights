@@ -402,16 +402,16 @@ footer = modalButton("Close")
       ))
     })
 
-###### legends of graph
-    # observeEvent(input$legends, {
-    #   showModal(modalDialog(
-    #     title = "Legends",
-    #     size = "l",
-    #     img(src = system.file("app", "www", "images", "legend.png",
-    #                           package = "CalciumInsights"), width = "100%"),
-    #     footer = modalButton("Close")
-    #   ))
-    # })
+##### legends of graph
+observeEvent(input$legends, {
+  showModal(modalDialog(
+    title = "Legends",
+    size = "l",
+    img(src = system.file("app", "www", "images", "legend.png",
+                          package = "CalciumInsights"), width = "100%"),
+    footer = modalButton("Close")
+  ))
+})
 
 
 
@@ -463,7 +463,7 @@ footer = modalButton("Close")
       Nobservations <- nrow(filedata()$fileInput)
       Ncells <- ncol(filedata()$fileInput)-1
       SummaryData <- data.frame(list(Number = c(Ncells, Nobservations)))
-      rownames(SummaryData) <- c("Components", "Time observations")
+      rownames(SummaryData) <- c("Region of Interest (ROI)", "Time observations")
       list(SummaryData = SummaryData,
            data = data.frame(filedata()$fileInput,
                              row.names = NULL))

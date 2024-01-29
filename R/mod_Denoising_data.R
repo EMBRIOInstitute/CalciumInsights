@@ -490,7 +490,7 @@ mod_Denoising_data_server <- function(id){
       Nobservations <- nrow(filedata()$fileInput)
       Ncells <- ncol(filedata()$fileInput)-1
       SummaryData <- data.frame(list(Number = c(Ncells, Nobservations)))
-      rownames(SummaryData) <- c("Components", "Time observations")
+      rownames(SummaryData) <- c("Region of Interest (ROI)", "Time observations")
       list(SummaryData = SummaryData,
            data = data.frame(filedata()$fileInput,
                              row.names = NULL))
