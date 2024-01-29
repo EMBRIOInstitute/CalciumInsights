@@ -117,7 +117,7 @@ mod_Raw_data_ui <- function(id){
                    ),
                    downloadButton(ns("descargarP"), "Trace Metrics"),
                    downloadButton(ns("descargar"), "Transient Metrics"),
-                   downloadButton(ns("Calcium_Trance_Graph"), "Calcium Trance Graph")
+                   downloadButton(ns("Calcium_Trance_Graph"), "Calcium Trace Graph")
       ),
       mainPanel(
         tabsetPanel(
@@ -141,17 +141,17 @@ mod_Raw_data_ui <- function(id){
                               plotOutput(ns("derivative")),
                               #plotOutput(ns("plot_raw_smoothed"))
                      ),
-                     tabPanel("Components",
-                              #plotOutput(ns("plot_component")),
-                              plotOutput(ns("panel")),
-                              verbatimTextOutput(ns("outputList")),
-                              plotOutput(ns("plot_ls")),
-                              plotOutput(ns("plot_box_ls")),
-                              plotOutput(ns("plot_ls1")),
-                              plotOutput(ns("plot_box_ls1")),
-                              plotOutput(ns("plot_ls2")),
-                              plotOutput(ns("plot_box_ls2")),
-                     )
+                     # tabPanel("Components",
+                     #          #plotOutput(ns("plot_component")),
+                     #          plotOutput(ns("panel")),
+                     #          verbatimTextOutput(ns("outputList")),
+                     #          plotOutput(ns("plot_ls")),
+                     #          plotOutput(ns("plot_box_ls")),
+                     #          plotOutput(ns("plot_ls1")),
+                     #          plotOutput(ns("plot_box_ls1")),
+                     #          plotOutput(ns("plot_ls2")),
+                     #          plotOutput(ns("plot_box_ls2")),
+                     # )
                    )
           )
         )
@@ -173,7 +173,7 @@ mod_Raw_data_server <- function(id){
 
     observeEvent(input$param_info_button11, {
       showModal(modalDialog(
-        title = "Application Parameter Guide",
+        title = "Help",
         size = "l",
         HTML("
       <p style='text-align: justify;'>
@@ -333,7 +333,7 @@ mod_Raw_data_server <- function(id){
     <tr>
       <td>Transient Occurrence Time</td>
       <td>It alludes to the specific moment or time at which a transient event, characterized by a temporary increase in calcium concentration within a cell, takes place. It signifies the initiation or onset of the transient event and is typically measured from the beginning of the recording or a specific reference point.</td>
-      <td>[Referencia específica]</td>
+      <td></td>
     </tr>
     <tr>
       <td>Peak Rise Time</td>
@@ -676,7 +676,7 @@ footer = modalButton("Close")
                             linetype = "dashed", color = "purple") +
         ggplot2::labs(title = "First Derivative",
                       x = "Time [s]",
-                      y = "Fluorescence [a.u.]") +
+                      y = latex2exp::TeX("$\\textbf{\\Delta F/F_0\\cdot s^{-1}}$")) +
 
         ggplot2::theme_classic() +
 
@@ -788,7 +788,7 @@ footer = modalButton("Close")
 
         ggplot2::labs(title = "Calcium Trace",
                       x = "Time [s]",
-                      y = "Fluorescence [a.u.]") +
+                      y = latex2exp::TeX("$\\textbf{\\Delta F/F_0}$")) +
 
         ggplot2::theme_classic() +
 
@@ -1208,7 +1208,7 @@ footer = modalButton("Close")
 
     output$Calcium_Trance_Graph <- downloadHandler(
       filename = function() {
-        paste("calcium_trance", Sys.Date(), ".png", sep = "")
+        paste("calcium_trace", Sys.Date(), ".png", sep = "")
       },
       content = function(file) {
         # Get the ggplot object from the reactive
