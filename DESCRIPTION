@@ -21,7 +21,6 @@ Imports:
     refund, 
     fda, 
     fds,
-    FoSIntro,
     reshape2, 
     latex2exp, 
     plotly, 
