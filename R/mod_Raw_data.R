@@ -92,7 +92,7 @@ mod_Raw_data_ui <- function(id){
                                choices = c("Reference Level 0" = 1,
                                            "Standard definition" = 2,
                                            "Interval" = 3,
-                                           "Your own baseline"=4,
+                                           "Your baseline"=4,
                                            "Min"=5
                                ),
                                selected = 1,
@@ -249,13 +249,13 @@ mod_Raw_data_server <- function(id){
         - 'Reference Level 0': The baseline takes the line y = 0.
       </p>
       <p style='text-align: justify;'>
-        - 'Standar definition': The baseline is the average fluorescence from the beginning of the signal up to the Time Onset.
+        - 'Standard definition': The baseline is the average fluorescence from the beginning of the signal up to the Time Onset.
       </p>
       <p style='text-align: justify;'>
         - 'Interval': Here you can define a time interval of your preference where you can calculate the average fluorescence of the signal, and this average will be used as the baseline.
       </p>
       <p style='text-align: justify;'>
-        - 'Your own baseline': You can define your own baseline value.
+        - 'Your baseline': You can define your own baseline value.
       </p>
        <p style='text-align: justify;'>
         - 'min': Baseline is defined as the minimum fluorescence value of the signal.
