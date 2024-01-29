@@ -20,7 +20,7 @@ app_ui <- function(request) {
                             # tabPanel("Savitzky-Golay",
                             #          mod_Smoothed_data_ui("Smoothed_data_1")
                             # ),
-                            tabPanel("Loess Filter",
+                            tabPanel("Loess filter",
                                      mod_Denoising_data_ui("Denoising_data_1")
                             ),
                             tabPanel("Raw data",
