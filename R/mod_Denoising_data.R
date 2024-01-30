@@ -80,12 +80,6 @@ mod_Denoising_data_ui <- function(id){
 
                    div(style = "border-top: 1px solid #ccc; margin-top: 10px; margin-bottom: 10px;"),
 
-                   radioButtons(
-                     inputId = ns("auc2"),
-                     label = "Area Under the Curve (AUC):",
-                     choices = c("No" = 1, "Yes" = 2), selected = 1
-                   ),
-
                    selectInput(inputId = ns("Baseline"),
                                label = "Baseline:",
                                choices = c("Reference Level 0" = 1,
@@ -108,6 +102,12 @@ mod_Denoising_data_ui <- function(id){
                                     numericInput(inputId = ns("own_baseline"),
                                                  label = "Own Baseline:",
                                                  value = 0, step = 0.1),
+                   ),
+
+                   radioButtons(
+                     inputId = ns("auc2"),
+                     label = "Area Under the Curve (AUC):",
+                     choices = c("No" = 1, "Yes" = 2), selected = 1
                    ),
 
                    radioButtons(inputId = ns("raw_data"),
@@ -451,7 +451,7 @@ mod_Denoising_data_server <- function(id){
     filedata <- reactive({
       if (input$data_simulate > 0) {
         # Cargar los datos de ejemplo
-        data_example <- readRDS(system.file("data", "Data_Simulate_Calcium.rds", package = "CalciumInsights"))
+        data_example <- readRDS(system.file("example_data", "Example_Calcium_Data.rds", package = "CalciumInsights"))
         fileInput <- data_example
         fileInput2 <- NULL  # O ajusta según tus necesidades
       }

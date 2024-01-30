@@ -81,12 +81,6 @@ mod_Raw_data_ui <- function(id){
 
                    div(style = "border-top: 1px solid #ccc; margin-top: 10px; margin-bottom: 10px;"),
 
-                   radioButtons(
-                     inputId = ns("auc2"),
-                     label = "Area Under the Curve (AUC):",
-                     choices = c("No" = 1, "Yes" = 2), selected = 1
-                   ),
-
                    selectInput(inputId = ns("Baseline"),
                                label = "Baseline:",
                                choices = c("Reference Level 0" = 1,
@@ -110,6 +104,13 @@ mod_Raw_data_ui <- function(id){
                                                  label = "Own Baseline:",
                                                  value = 0, step = 0.1),
                    ),
+
+                   radioButtons(
+                     inputId = ns("auc2"),
+                     label = "Area Under the Curve (AUC):",
+                     choices = c("No" = 1, "Yes" = 2), selected = 1
+                   ),
+
                    radioButtons(
                      inputId = ns("FWHM"),
                      label = "Full Width at Half Maximum:",
