@@ -112,8 +112,8 @@ mod_Denoising_data_ui <- function(id){
 
                    radioButtons(inputId = ns("raw_data"),
                                 label = "Raw Data",
-                                choices = list("no"=1,
-                                               "yes"=2
+                                choices = list("No"=1,
+                                               "Yes"=2
                                 )
                    ),
 
