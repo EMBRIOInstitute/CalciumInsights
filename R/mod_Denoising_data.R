@@ -231,17 +231,17 @@ mod_Denoising_data_server <- function(id){
     "),
         HTML("
       <p style='text-align: justify;'>
-        <strong>Region of Interest (ROI):</strong> Choose the cell you want to analyze, corresponding to the columns in the loaded dataset.
+        <strong>Region of Interest (ROI):</strong> Choose the ROI you want to analyze, corresponding to the columns in the loaded dataset.
       </p>
     "),
         HTML("
       <p style='text-align: justify;'>
-        <strong>Smoothness Control:</strong> The 'span' parameter which controls the degree of smoothing.
+        <strong>Smoothness Control:</strong> The span parameter which controls the degree of smoothing. Approaching 1 provides smoother data but distances you further from the raw data.
       </p>
     "),
         HTML("
       <p style='text-align: justify;'>
-        <strong>Peak Height (min):</strong> This is the minimum (absolute) height required for a peak to be recognized.
+        <strong>Peak Height (min):</strong> This is the minimum amplitude required for a peak to be recognized.
       </p>
     "),
         HTML("
@@ -256,7 +256,7 @@ mod_Denoising_data_server <- function(id){
     "),
         HTML("
       <p style='text-align: justify;'>
-        <strong>Min Peak Distance:</strong> This is the minimum distance (in indices) that peaks must have to be counted.
+        <strong>Min Peak Distance:</strong> This is the minimum distance in time-steps (x coordinate) that peaks must have to be counted.
       </p>
     "),
         HTML("
@@ -266,12 +266,12 @@ mod_Denoising_data_server <- function(id){
     "),
         HTML("
       <p style='text-align: justify;'>
-        <strong>Prominence (min):</strong> This is the prominence distance that peaks must have to be counted.
+        <strong>Prominence (min):</strong> This is the prominence that the peaks must have to be counted as a peak.
       </p>
     "),
         HTML("
       <p style='text-align: justify;'>
-        <strong>Area Under the Curve (AUC):</strong> You can choose to calculate the area under the curve or not.
+        <strong>Area Under the Curve (AUC):</strong> You can choose either show or not the AUC in the visualization.
       </p>
     "),
         HTML("
@@ -284,7 +284,20 @@ mod_Denoising_data_server <- function(id){
     "),
         HTML("
       <p style='text-align: justify;'>
-        <strong>Baseline:</strong> You can select a Baseline.
+        <strong>Raw data: </strong> Either show or not the raw data together with the smoothed data.
+      </p>
+    "),
+        HTML("
+      <p style='text-align: justify;'>
+        - 'No': Not show the Raw data.
+      </p>
+      <p style='text-align: justify;'>
+        - 'Yes': Show the Raw data.
+      </p>
+    "),
+        HTML("
+      <p style='text-align: justify;'>
+        <strong>Baseline:</strong> You have the flexibility to choose a baseline amplitude for metric calculations using various options:
       </p>
     "),
         HTML("
@@ -298,7 +311,7 @@ mod_Denoising_data_server <- function(id){
         - 'Interval': Here you can define a time interval of your preference where you can calculate the average fluorescence of the signal, and this average will be used as the baseline.
       </p>
       <p style='text-align: justify;'>
-        - 'Your baseline': You can define your own baseline value.
+        - 'Your baseline': Define a costume baseline value.
       </p>
        <p style='text-align: justify;'>
         - 'min': Baseline is defined as the minimum fluorescence value of the signal.
@@ -306,7 +319,7 @@ mod_Denoising_data_server <- function(id){
     "),
         HTML("
       <p style='text-align: justify;'>
-        <strong> You can choose whether to display or not the Full Width at Half Maximum (FWHM) on the Calcium Trace graph.</strong>
+        <strong>Full Width at Half Maximum:</strong>  You can choose either show or not the FWHM in the visualization.
       </p>
     "),
         HTML("
