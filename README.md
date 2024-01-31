@@ -1,8 +1,19 @@
 # CalciumInsights
 It is an essential interactive tool for scientists and professionals in the fields of biology and neuroscience. This R package enhances the ability to discover patterns and relationships in calcium signal data, providing a profound understanding of underlying biological processes.
 
+## Install R and RStudio
+
+<https://cran.r-project.org/> 
+
+<https://posit.co/download/rstudio-desktop/> 
+
 ## How to install the app
 
+### Only the first time the app is installed, enter the following command in the console
+```
+install.packages("remotes")
+```
+### The following console command is to install from github
 ```
 remotes::install_github("EMBRIOInstitute/CalciumInsights", auth_token = "your GitHub token")
 ```

@@ -404,15 +404,15 @@ footer = modalButton("Close")
     })
 
 ##### legends of graph
-observeEvent(input$legends, {
-  showModal(modalDialog(
-    title = "Legends",
-    size = "l",
-    img(src = system.file("app", "www", "images", "legend.png",
-                          package = "CalciumInsights"), width = "100%"),
-    footer = modalButton("Close")
-  ))
-})
+# observeEvent(input$legends, {
+#   showModal(modalDialog(
+#     title = "Legends",
+#     size = "l",
+#     img(src = system.file("app", "www", "images", "legend.png",
+#                           package = "CalciumInsights"), width = "100%"),
+#     footer = modalButton("Close")
+#   ))
+# })
 
 
 
