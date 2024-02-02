@@ -464,7 +464,7 @@ mod_Denoising_data_server <- function(id){
     filedata <- reactive({
       if (input$data_simulate > 0) {
         # Cargar los datos de ejemplo
-        data_example <- readRDS(system.file("example_data", "Example_Calcium_Data.rds", package = "CalciumInsights"))
+        data_example <- readRDS(system.file("data", "Example_Calcium_Data.rds", package = "CalciumInsights"))
         fileInput <- data_example
         fileInput2 <- NULL  # O ajusta según tus necesidades
       }

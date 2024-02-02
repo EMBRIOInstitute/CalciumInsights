@@ -84,7 +84,7 @@ golem::add_sass_file("custom")
 
 ## Add internal datasets ----
 ## If you have data in your package
-usethis::use_data_raw(name = "Example_Calcium_Data", open = FALSE)
+usethis::use_data_raw(name = "Example_Calcium_Data", open = TRUE)
 
 ## Tests ----
 ## Add one line by test you want to create
