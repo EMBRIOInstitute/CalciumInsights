@@ -502,9 +502,9 @@ footer = modalButton("Close")
 
 
       ##### function loess for smoothed
-      #smoothed <- loess(signal ~ Time, data = data_raw , span = input$span)
-      #predictions <- predict(smoothed)
-      #df_smoothed1 <- data.frame(Time = data_raw$Time, signal = predictions)
+      smoothed <- loess(signal ~ Time, data = data_raw , span = 0.05)
+      predictions <- predict(smoothed)
+      df_smoothed1 <- data.frame(Time = data_raw$Time, signal = predictions)
 
       df_smoothed <- data_raw
       #####
@@ -518,7 +518,7 @@ footer = modalButton("Close")
 
       return(list(table_peak = table_peak,
                   table_positions_peaks  = table_positions_peaks,
-                  data_raw = data_raw, df_smoothed = df_smoothed,
+                  data_raw = data_raw, df_smoothed = df_smoothed, df_smoothed1 = df_smoothed1,
                   data = data))
     })
 
@@ -529,6 +529,7 @@ footer = modalButton("Close")
       table_positions_peaks = peaks_df()$table_positions_peaks # tabla de las posiciones de los piko
       data_raw = peaks_df()$data_raw  #data con la celula analizada
       data_smoothed = peaks_df()$df_smoothed   # data raw
+      data_smoothed1 = peaks_df()$df_smoothed1   # data raw
       peaks <- table_positions_peaks[,2]   # Índices donde se encuentran los picos
       data_putos_pekas = data.frame(x = data_smoothed[,1][peaks],
                                     y = data_smoothed[,2][peaks]) #puntos de los picos
@@ -538,15 +539,15 @@ footer = modalButton("Close")
                                       peak = table_positions_peaks)$cambios_menor_que_pfp # posicion donde
       #hay un cambio en la primera derivada
       # para el primer pico
-      data_min <- prominens2(data = data_smoothed,
+      data_min <- prominens1(data = data_smoothed,
                              peak = table_positions_peaks,
                              MSCPFP = MSCPFP)$data_min # puntos minimos donde empiezan los prominents
 
-      df_peaks_parcia <- prominens2(data = data_smoothed,
+      df_peaks_parcia <- prominens1(data = data_smoothed,
                                     peak = table_positions_peaks,
                                     MSCPFP = MSCPFP)$df_peaks_parcia    # el segmento del prominens
 
-      time_start_increasin_peak <- prominens2(data = data_smoothed,
+      time_start_increasin_peak <- prominens1(data = data_smoothed,
                                               peak = table_positions_peaks,
                                               MSCPFP = MSCPFP)$time_start_increasin_peak
       #####
@@ -554,7 +555,7 @@ footer = modalButton("Close")
       Puntos_medios <- FWHP2(peaks = data_smoothed[,1][peaks],
                              df_peaks_parcia = df_peaks_parcia)$Puntos_medios  # puntos medios de los prominances
 
-      table_peak$prominence <- prominens2(data = data_smoothed,
+      table_peak$prominence <- prominens1(data = data_smoothed,
                                           peak = table_positions_peaks,
                                           MSCPFP = MSCPFP)$prominens_amplitud  # valor de los prominens
 
@@ -588,7 +589,7 @@ footer = modalButton("Close")
 
 
 
-      table_peak$puntominimo_y <- prominens2(data = data_smoothed,
+      table_peak$puntominimo_y <- prominens1(data = data_smoothed,
                                              peak = table_positions_peaks,
                                              MSCPFP = MSCPFP)$df_peaks_parcia$p_fin1
 
@@ -959,21 +960,21 @@ footer = modalButton("Close")
                                         peak = table_positions_peaks)$cambios_menor_que_pfp # posicion donde hay un cambio en la primera dericada
         # para el primer pico
 
-        data_min <- prominens2(data = data_smoothed,
+        data_min <- prominens1(data = data_smoothed,
                                peak = table_positions_peaks,
                                MSCPFP = MSCPFP)$data_min # puntos minimos donde empiezan los prominents
-        df_peaks_parcia <- prominens2(data = data_smoothed,
+        df_peaks_parcia <- prominens1(data = data_smoothed,
                                       peak = table_positions_peaks,
                                       MSCPFP = MSCPFP)$df_peaks_parcia # el segmento del prominens
 
-        time_start_increasin_peak <- prominens2(data = data_smoothed,
+        time_start_increasin_peak <- prominens1(data = data_smoothed,
                                                 peak = table_positions_peaks,
                                                 MSCPFP = MSCPFP)$time_start_increasin_peak
 
         Puntos_medios <- FWHP2(peaks = data_smoothed[,1][peaks],
                                df_peaks_parcia = df_peaks_parcia)$Puntos_medios  # puntos medios de los prominances
 
-        table_peak$prominence <- prominens2(data = data_smoothed,
+        table_peak$prominence <- prominens1(data = data_smoothed,
                                             peak = table_positions_peaks,
                                             MSCPFP = MSCPFP)$prominens_amplitud  # valor de los prominens
         table_peak$Prominence_Midpoint <- Puntos_medios$p_eak_mediun # valor medio de las promineces
@@ -1003,7 +1004,7 @@ footer = modalButton("Close")
 
         table_peak$Time_to_peak <- table_peak$posision_peak - time_start_increasin_peak$Time
 
-        table_peak$puntominimo_y <- prominens2(data = data_smoothed,
+        table_peak$puntominimo_y <- prominens1(data = data_smoothed,
                                                peak = table_positions_peaks,
                                                MSCPFP = MSCPFP)$df_peaks_parcia$p_fin1
 
