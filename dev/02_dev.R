@@ -30,12 +30,16 @@ usethis::use_package( "refund" )
 usethis::use_package( "fda" )
 usethis::use_package( "fds" )
 usethis::use_package( "FoSIntro" )
-usethis::use_package( "reshape2" )
+usethis::use_package( "rainbow" )
 usethis::use_package( "shinyjs" )
 usethis::use_package( "latex2exp" )
 usethis::use_package( "plotly" )
 usethis::use_package( "magrittr" )
 usethis::use_package( "png" )
+
+
+
+
 
 
 attachment::att_amend_desc()
@@ -74,7 +78,6 @@ golem::add_utils("half_prominance")
 golem::add_utils("Time_of_the_first_peak")
 golem::add_utils("Metrics")
 golem::add_utils("Rise")
-
 
 ## External resources
 ## Creates .js and .css files at inst/app/www
