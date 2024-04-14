@@ -22,89 +22,102 @@ mod_FunctionalANOVA_ui <- function(id){
                    ),
                    conditionalPanel(
                      condition = "input.groups==1", ns=ns,
-                              fileInput(ns("data_group1"),
+                     fileInput(ns("data_group1"),
+                               accept = c('text/csv',
+                                          'text/comma-separated-values,text/plain',
+                                          '.csv'),
+                               label = h5("Group1")),
+                     fileInput(ns("data_group2"),
+                               accept = c('text/csv',
+                                          'text/comma-separated-values,text/plain',
+                                          '.csv'),
+                               label = h5("Group2")),
+                     fileInput(ns("data_group3"),
+                               accept = c('text/csv',
+                                          'text/comma-separated-values,text/plain',
+                                          '.csv'),
+                               label = h5("Group3"))
+                   ),
+                   conditionalPanel(
+                     condition = "input.groups==2", ns=ns,
+                     fluidRow(
+                       column(6,
+                              fileInput(ns("data_group11"),
                                         accept = c('text/csv',
                                                    'text/comma-separated-values,text/plain',
                                                    '.csv'),
                                         label = h5("Group1")),
-                              fileInput(ns("data_group2"),
+                              fileInput(ns("data_group22"),
                                         accept = c('text/csv',
                                                    'text/comma-separated-values,text/plain',
                                                    '.csv'),
-                                        label = h5("Group2")),
-                              fileInput(ns("data_group3"),
+                                        label = h5("Group2"))
+                       ),
+                       column(6,
+                              fileInput(ns("data_group33"),
                                         accept = c('text/csv',
                                                    'text/comma-separated-values,text/plain',
                                                    '.csv'),
-                                        label = h5("Group3"))
-                     ),
-                   conditionalPanel(
-                     condition = "input.groups==2", ns=ns,
-                     fileInput(ns("data_group11"),
-                               accept = c('text/csv',
-                                          'text/comma-separated-values,text/plain',
-                                          '.csv'),
-                               label = h5("Group1")),
-                     fileInput(ns("data_group22"),
-                               accept = c('text/csv',
-                                          'text/comma-separated-values,text/plain',
-                                          '.csv'),
-                               label = h5("Group2")),
-                     fileInput(ns("data_group33"),
-                               accept = c('text/csv',
-                                          'text/comma-separated-values,text/plain',
-                                          '.csv'),
-                               label = h5("Group3")),
-                     fileInput(ns("data_group44"),
-                               accept = c('text/csv',
-                                          'text/comma-separated-values,text/plain',
-                                          '.csv'),
-                               label = h5("Group4"))
+                                        label = h5("Group3")),
+                              fileInput(ns("data_group44"),
+                                        accept = c('text/csv',
+                                                   'text/comma-separated-values,text/plain',
+                                                   '.csv'),
+                                        label = h5("Group4"))
+                       )
+                     )
                    ),
 
                    conditionalPanel(
                      condition = "input.groups==3", ns=ns,
-                     fileInput(ns("data_group111"),
-                               accept = c('text/csv',
-                                          'text/comma-separated-values,text/plain',
-                                          '.csv'),
-                               label = h5("Group1")),
-                     fileInput(ns("data_group222"),
-                               accept = c('text/csv',
-                                          'text/comma-separated-values,text/plain',
-                                          '.csv'),
-                               label = h5("Group2")),
-                     fileInput(ns("data_group333"),
-                               accept = c('text/csv',
-                                          'text/comma-separated-values,text/plain',
-                                          '.csv'),
-                               label = h5("Group3")),
-                     fileInput(ns("data_group444"),
-                               accept = c('text/csv',
-                                          'text/comma-separated-values,text/plain',
-                                          '.csv'),
-                               label = h5("Group4")),
-                     fileInput(ns("data_group555"),
-                               accept = c('text/csv',
-                                          'text/comma-separated-values,text/plain',
-                                          '.csv'),
-                               label = h5("Group5"))
+                     fluidRow(
+                       column(6,
+                              fileInput(ns("data_group111"),
+                                        accept = c('text/csv',
+                                                   'text/comma-separated-values,text/plain',
+                                                   '.csv'),
+                                        label = h5("Group1")),
+                              fileInput(ns("data_group222"),
+                                        accept = c('text/csv',
+                                                   'text/comma-separated-values,text/plain',
+                                                   '.csv'),
+                                        label = h5("Group2")),
+                              fileInput(ns("data_group333"),
+                                        accept = c('text/csv',
+                                                   'text/comma-separated-values,text/plain',
+                                                   '.csv'),
+                                        label = h5("Group3"))
+                       ),
+                       column(6,
+                              fileInput(ns("data_group444"),
+                                        accept = c('text/csv',
+                                                   'text/comma-separated-values,text/plain',
+                                                   '.csv'),
+                                        label = h5("Group4")),
+                              fileInput(ns("data_group555"),
+                                        accept = c('text/csv',
+                                                   'text/comma-separated-values,text/plain',
+                                                   '.csv'),
+                                        label = h5("Group5"))
+                       )
+                     )
+
                    ),
                    checkboxInput(ns("checkbox1"), "Scalar effect", value = TRUE),
                    checkboxInput(ns("checkbox"), "Log transformation")
 
 
 
-                   ),
+      ),
       mainPanel(
         tabsetPanel(
           type = "tabs",
           tabPanel("SummaryData",
                    conditionalPanel(
                      condition = "input.groups==1", ns=ns,
-                   DT::DTOutput(ns("summary1")),
-                   DT::DTOutput(ns("summary2")),
-                   DT::DTOutput(ns("summary3"))
+                     DT::DTOutput(ns("summary1")),
+                     DT::DTOutput(ns("summary2")),
+                     DT::DTOutput(ns("summary3"))
                    ),
                    conditionalPanel(
                      condition = "input.groups==2", ns=ns,
@@ -128,7 +141,7 @@ mod_FunctionalANOVA_ui <- function(id){
                      tabPanel("Plots",
                               conditionalPanel(
                                 condition = "input.groups==1", ns=ns,
-                              plotOutput(ns("graph_mean3"))
+                                plotOutput(ns("graph_mean3"))
                               ),
                               conditionalPanel(
                                 condition = "input.groups==2", ns=ns,
@@ -138,7 +151,7 @@ mod_FunctionalANOVA_ui <- function(id){
                                 condition = "input.groups==3", ns=ns,
                                 plotOutput(ns("graph_mean5"))
                               )
-                              ),
+                     ),
                      tabPanel("Significance",
                               tags$h4("Base configuration",
                                       style = "color: gray; margin-top: 5px;"),
@@ -152,26 +165,26 @@ mod_FunctionalANOVA_ui <- function(id){
                               ),
                               conditionalPanel(
                                 condition = "input.groups==1", ns=ns,
-                              tabsetPanel(
-                                type = "tabs",
-                                tabPanel("Global effect",
-                                         plotOutput(ns("graph_effect1"))
-                                         ),
-                                tabPanel("Group1",
-                                         plotOutput(ns("group_effect1"))
-                                         ),
-                                tabPanel("Group2",
-                                         plotOutput(ns("group_effect2"))
-                                         ),
-                                tabPanel("Group3",
-                                         plotOutput(ns("group_effect3"))
-                                         ),
-                                tabPanel("Residual",
-                                         plotOutput(ns("group_effect4"))
-                                        ),
-                                tabPanel("Q plot",
-                                         plotOutput(ns("group_effect5"))
-                                         )
+                                tabsetPanel(
+                                  type = "tabs",
+                                  tabPanel("Global effect",
+                                           plotOutput(ns("graph_effect1"))
+                                  ),
+                                  tabPanel("Group1",
+                                           plotOutput(ns("group_effect1"))
+                                  ),
+                                  tabPanel("Group2",
+                                           plotOutput(ns("group_effect2"))
+                                  ),
+                                  tabPanel("Group3",
+                                           plotOutput(ns("group_effect3"))
+                                  ),
+                                  tabPanel("Residual",
+                                           plotOutput(ns("group_effect4"))
+                                  ),
+                                  tabPanel("Q plot",
+                                           plotOutput(ns("group_effect5"))
+                                  )
                                 )),
                               conditionalPanel(
                                 condition = "input.groups==2", ns=ns,
@@ -226,6 +239,59 @@ mod_FunctionalANOVA_ui <- function(id){
                                   ),
                                   tabPanel("Q plot",
                                            plotOutput(ns("group_effect57"))
+                                  ),
+                                  tabPanel("Comparations",
+                                           selectInput(ns("Comparation"), "",
+                                                       choices = c("Grupo 1 vs Grupo 2"=1,
+                                                                   "Grupo 1 vs Grupo 3"=2,
+                                                                   "Grupo 1 vs Grupo 4"=3,
+                                                                   "Grupo 1 vs Grupo 5"=4,
+                                                                   "Grupo 2 vs Grupo 3"=5,
+                                                                   "Grupo 2 vs Grupo 4"=6,
+                                                                   "Grupo 2 vs Grupo 5"=7,
+                                                                   "Grupo 3 vs Grupo 4"=8,
+                                                                   "Grupo 3 vs Grupo 5"=9,
+                                                                   "Grupo 4 vs Grupo 5"=10)),
+                                           conditionalPanel(
+                                             condition = "input.Comparation==1", ns=ns,
+                                             plotOutput(ns("Compartion1"))
+                                           ),
+                                           conditionalPanel(
+                                             condition = "input.Comparation==2", ns=ns,
+                                             plotOutput(ns("Compartion2"))
+                                           ),
+                                           conditionalPanel(
+                                             condition = "input.Comparation==3", ns=ns,
+                                             plotOutput(ns("Compartion3"))
+                                           ),
+                                           conditionalPanel(
+                                             condition = "input.Comparation==4", ns=ns,
+                                             plotOutput(ns("Compartion4"))
+                                           ),
+                                           conditionalPanel(
+                                             condition = "input.Comparation==5", ns=ns,
+                                             plotOutput(ns("Compartion5"))
+                                           ),
+                                           conditionalPanel(
+                                             condition = "input.Comparation==6", ns=ns,
+                                             plotOutput(ns("Compartion6"))
+                                           ),
+                                           conditionalPanel(
+                                             condition = "input.Comparation==7", ns=ns,
+                                             plotOutput(ns("Compartion7"))
+                                           ),
+                                           conditionalPanel(
+                                             condition = "input.Comparation==8", ns=ns,
+                                             plotOutput(ns("Compartion8"))
+                                           ),
+                                           conditionalPanel(
+                                             condition = "input.Comparation==9", ns=ns,
+                                             plotOutput(ns("Compartion9"))
+                                           ),
+                                           conditionalPanel(
+                                             condition = "input.Comparation==10", ns=ns,
+                                             plotOutput(ns("Compartion10"))
+                                           )
                                   )
                                 )),
 
@@ -243,10 +309,10 @@ mod_FunctionalANOVA_ui <- function(id){
                               )
 
 
-                              )
                      )
                    )
           )
+        )
       )
 
     )
@@ -294,19 +360,19 @@ mod_FunctionalANOVA_server <- function(id){
       DT::datatable(df)
     })
     graph_group1 <- reactive({
-        req(filedata1()$fileInput)
-        df1 <- data.frame(filedata1()$fileInput)
-        top1 <- reshape2::melt(df1, id=c(names(df1)[1]))
-        g1 <- ggplot2::ggplot(data = top1, ggplot2::aes(x=Time, y=value,
-                                                        group = factor(variable),
-                                                        colour = factor(variable))) +
-          ggplot2::geom_line(size=0.5) +
-          ggplot2::theme(text = ggplot2::element_text(size = 13),
-                         axis.text.x = ggplot2::element_text(angle=90)) +
-          ggplot2::labs(y = "", x = "Time (s)") +
-          ggplot2::theme(legend.position = "none") +
-          ggplot2::ggtitle("Group 1")
-        return(list(g1 = g1, top1 = top1))
+      req(filedata1()$fileInput)
+      df1 <- data.frame(filedata1()$fileInput)
+      top1 <- reshape2::melt(df1, id=c(names(df1)[1]))
+      g1 <- ggplot2::ggplot(data = top1, ggplot2::aes(x=Time, y=value,
+                                                      group = factor(variable),
+                                                      colour = factor(variable))) +
+        ggplot2::geom_line(size=0.5) +
+        ggplot2::theme(text = ggplot2::element_text(size = 13),
+                       axis.text.x = ggplot2::element_text(angle=90)) +
+        ggplot2::labs(y = "", x = "Time (s)") +
+        ggplot2::theme(legend.position = "none") +
+        ggplot2::ggtitle("Group 1")
+      return(list(g1 = g1, top1 = top1))
     })
     graph_group2 <- reactive({
       req(filedata2()$fileInput)
@@ -348,9 +414,9 @@ mod_FunctionalANOVA_server <- function(id){
       df2 <- data.frame(filedata2()$fileInput)
       df3 <- data.frame(filedata3()$fileInput)
       group <- c(rep('1', length(df1[,1])*ncol(df1[,-1])),     #df1[,1] es el tiempo
-                   rep('2', length(df2[,1])*ncol(df2[,-1])),
-                   rep('3', length(df3[,1])*ncol(df3[,-1]))
-                   )
+                 rep('2', length(df2[,1])*ncol(df2[,-1])),
+                 rep('3', length(df3[,1])*ncol(df3[,-1]))
+      )
       data2 = data.frame(data1, group=group)
       prom_global = aggregate(value~Time,data = data2, FUN = mean)
       mean4 <- data2%>%dplyr::group_by(group,Time)%>%dplyr::summarise(Mean = mean(value))%>%as.data.frame()
@@ -366,9 +432,9 @@ mod_FunctionalANOVA_server <- function(id){
     })
     output$graph_mean3 <- renderPlot({
       gridExtra::grid.arrange(graph_group1()$g1,
-                   graph_group2()$g2,
-                   graph_group3()$g3,
-                   means3()$m4, ncol = 2)
+                              graph_group2()$g2,
+                              graph_group3()$g3,
+                              means3()$m4, ncol = 2)
     })
     Data_for_anova <- reactive({
       req(filedata1()$fileInput)
@@ -383,7 +449,7 @@ mod_FunctionalANOVA_server <- function(id){
       data_functional = cbind(df1,
                               df2[,-1],
                               df3[,-1]
-                              )
+      )
       datafun = cbind(data_functional[,-1])
       id = seq(1:(as.numeric(dim(datafun)[2])))
       colnames(datafun ) <- c(id)
@@ -402,12 +468,12 @@ mod_FunctionalANOVA_server <- function(id){
       data1 = Data_for_anova()$data1
       time <- Data_for_anova()$time
       if (input$checkbox1) {fit4 <- refund::pffr(Ydata ~ antigen2 + c(antigen2), data = data1, method = "REML",
-                                         bs.yindex=list(bs="ps", k = as.numeric(input$k1), m=c(2, 1)),
-                                         bs.int=list(bs="ps", k = as.numeric(input$k2), m=c(2,1)))}
+                                                 bs.yindex=list(bs="ps", k = as.numeric(input$k1), m=c(2, 1)),
+                                                 bs.int=list(bs="ps", k = as.numeric(input$k2), m=c(2,1)))}
       else {
-      fit4 <- refund::pffr(Ydata ~ antigen2, data = data1,method = "REML",
-                           bs.yindex=list(bs="ps", k = as.numeric(input$k1), m=c(2, 1)),
-                           bs.int=list(bs="ps", k = as.numeric(input$k2), m=c(2,1)))
+        fit4 <- refund::pffr(Ydata ~ antigen2, data = data1,method = "REML",
+                             bs.yindex=list(bs="ps", k = as.numeric(input$k1), m=c(2, 1)),
+                             bs.int=list(bs="ps", k = as.numeric(input$k2), m=c(2,1)))
       }
       residual_fun = t(residuals(fit4))
       colnames(residual_fun) = colnames(data_functional)[-1]
@@ -482,8 +548,8 @@ mod_FunctionalANOVA_server <- function(id){
         ggplot2::theme(plot.title = ggplot2::element_text(size = 20, face = "bold"))
     })
 
-############ four groups #################
-##########################################
+    ############ four groups #################
+    ##########################################
 
     filedata11 <- reactive({
       req(input$data_group11)
@@ -532,8 +598,8 @@ mod_FunctionalANOVA_server <- function(id){
       df1 <- data.frame(filedata11()$fileInput)
       top41 <- reshape2::melt(df1, id=c(names(df1)[1]))
       g41 <- ggplot2::ggplot(data = top41, ggplot2::aes(x=Time, y=value,
-                                                      group = factor(variable),
-                                                      colour = factor(variable))) +
+                                                        group = factor(variable),
+                                                        colour = factor(variable))) +
         ggplot2::geom_line(size=0.5) +
         ggplot2::theme(text = ggplot2::element_text(size = 13),
                        axis.text.x = ggplot2::element_text(angle=90)) +
@@ -547,8 +613,8 @@ mod_FunctionalANOVA_server <- function(id){
       df1 <- data.frame(filedata22()$fileInput)
       top42 <- reshape2::melt(df1, id=c(names(df1)[1]))
       g42 <- ggplot2::ggplot(data = top42, ggplot2::aes(x=Time, y=value,
-                                                       group = factor(variable),
-                                                       colour = factor(variable))) +
+                                                        group = factor(variable),
+                                                        colour = factor(variable))) +
         ggplot2::geom_line(size=0.5) +
         ggplot2::theme(text = ggplot2::element_text(size = 13),
                        axis.text.x = ggplot2::element_text(angle=90)) +
@@ -562,8 +628,8 @@ mod_FunctionalANOVA_server <- function(id){
       df1 <- data.frame(filedata33()$fileInput)
       top43 <- reshape2::melt(df1, id=c(names(df1)[1]))
       g43 <- ggplot2::ggplot(data = top43, ggplot2::aes(x=Time, y=value,
-                                                       group = factor(variable),
-                                                       colour = factor(variable))) +
+                                                        group = factor(variable),
+                                                        colour = factor(variable))) +
         ggplot2::geom_line(size=0.5) +
         ggplot2::theme(text = ggplot2::element_text(size = 13),
                        axis.text.x = ggplot2::element_text(angle=90)) +
@@ -578,8 +644,8 @@ mod_FunctionalANOVA_server <- function(id){
       df1 <- data.frame(filedata44()$fileInput)
       top44 <- reshape2::melt(df1, id=c(names(df1)[1]))
       g44 <- ggplot2::ggplot(data = top44, ggplot2::aes(x=Time, y=value,
-                                                       group = factor(variable),
-                                                       colour = factor(variable))) +
+                                                        group = factor(variable),
+                                                        colour = factor(variable))) +
         ggplot2::geom_line(size=0.5) +
         ggplot2::theme(text = ggplot2::element_text(size = 13),
                        axis.text.x = ggplot2::element_text(angle=90)) +
@@ -642,7 +708,7 @@ mod_FunctionalANOVA_server <- function(id){
                    rep('2', ncol(df2[,-1])),
                    rep('3', ncol(df3[,-1])),
                    rep('4', ncol(df4[,-1]))
-                   )
+      )
       data_functional = cbind(df1,
                               df2[,-1],
                               df3[,-1],
@@ -668,13 +734,13 @@ mod_FunctionalANOVA_server <- function(id){
       time <- Data_for_anova4()$time
       if (input$checkbox1) {
         fit41 <- refund::pffr(Ydata ~ antigen2 + c(antigen2), data = data1, method = "REML",
-                                                 bs.yindex=list(bs="ps", k = as.numeric(input$k1), m=c(2, 1)),
-                                                 bs.int=list(bs="ps", k = as.numeric(input$k2), m=c(2,1)))
-        }
+                              bs.yindex=list(bs="ps", k = as.numeric(input$k1), m=c(2, 1)),
+                              bs.int=list(bs="ps", k = as.numeric(input$k2), m=c(2,1)))
+      }
       else {
         fit41 <- refund::pffr(Ydata ~ antigen2, data = data1,method = "REML",
-                             bs.yindex=list(bs="ps", k = as.numeric(input$k1), m=c(2, 1)),
-                             bs.int=list(bs="ps", k = as.numeric(input$k2), m=c(2,1)))
+                              bs.yindex=list(bs="ps", k = as.numeric(input$k1), m=c(2, 1)),
+                              bs.int=list(bs="ps", k = as.numeric(input$k2), m=c(2,1)))
       }
       residual_fun = t(residuals(fit41))
       colnames(residual_fun) = colnames(data_functional)[-1]
@@ -820,10 +886,14 @@ mod_FunctionalANOVA_server <- function(id){
                                                         colour = factor(variable))) +
         ggplot2::geom_line(size=0.5) +
         ggplot2::theme(text = ggplot2::element_text(size = 13),
-                       axis.text.x = ggplot2::element_text(angle=90)) +
+                       axis.text.x = ggplot2::element_text(angle=90),
+                       panel.background = ggplot2::element_blank(),  # Elimina el fondo gris
+                       plot.background = ggplot2::element_blank()) +  # Elimina el fondo del área de trazado
         ggplot2::labs(y = "", x = "Time (s)") +
         ggplot2::theme(legend.position = "none") +
         ggplot2::ggtitle("Group 1")
+
+
       return(list(g51 = g51, top51 = top51))
     })
 
@@ -836,10 +906,13 @@ mod_FunctionalANOVA_server <- function(id){
                                                         colour = factor(variable))) +
         ggplot2::geom_line(size=0.5) +
         ggplot2::theme(text = ggplot2::element_text(size = 13),
-                       axis.text.x = ggplot2::element_text(angle=90)) +
+                       axis.text.x = ggplot2::element_text(angle=90),
+                       panel.background = ggplot2::element_blank(),  # Elimina el fondo gris
+                       plot.background = ggplot2::element_blank()) +  # Elimina el fondo del área de trazado
         ggplot2::labs(y = "", x = "Time (s)") +
         ggplot2::theme(legend.position = "none") +
-        ggplot2::ggtitle("Group 1")
+        ggplot2::ggtitle("Group 2")
+
       return(list(g52 = g52, top52 = top52))
     })
 
@@ -852,10 +925,13 @@ mod_FunctionalANOVA_server <- function(id){
                                                         colour = factor(variable))) +
         ggplot2::geom_line(size=0.5) +
         ggplot2::theme(text = ggplot2::element_text(size = 13),
-                       axis.text.x = ggplot2::element_text(angle=90)) +
+                       axis.text.x = ggplot2::element_text(angle=90),
+                       panel.background = ggplot2::element_blank(),  # Elimina el fondo gris
+                       plot.background = ggplot2::element_blank()) +  # Elimina el fondo del área de trazado
         ggplot2::labs(y = "", x = "Time (s)") +
         ggplot2::theme(legend.position = "none") +
-        ggplot2::ggtitle("Group 1")
+        ggplot2::ggtitle("Group 3")
+
       return(list(g53 = g53, top53 = top53))
     })
 
@@ -868,10 +944,13 @@ mod_FunctionalANOVA_server <- function(id){
                                                         colour = factor(variable))) +
         ggplot2::geom_line(size=0.5) +
         ggplot2::theme(text = ggplot2::element_text(size = 13),
-                       axis.text.x = ggplot2::element_text(angle=90)) +
+                       axis.text.x = ggplot2::element_text(angle=90),
+                       panel.background = ggplot2::element_blank(),  # Elimina el fondo gris
+                       plot.background = ggplot2::element_blank()) +  # Elimina el fondo del área de trazado
         ggplot2::labs(y = "", x = "Time (s)") +
         ggplot2::theme(legend.position = "none") +
-        ggplot2::ggtitle("Group 1")
+        ggplot2::ggtitle("Group 4")
+
       return(list(g54 = g54, top54 = top54))
     })
 
@@ -884,10 +963,13 @@ mod_FunctionalANOVA_server <- function(id){
                                                         colour = factor(variable))) +
         ggplot2::geom_line(size=0.5) +
         ggplot2::theme(text = ggplot2::element_text(size = 13),
-                       axis.text.x = ggplot2::element_text(angle=90)) +
+                       axis.text.x = ggplot2::element_text(angle=90),
+                       panel.background = ggplot2::element_blank(),  # Elimina el fondo gris
+                       plot.background = ggplot2::element_blank()) +  # Elimina el fondo del área de trazado
         ggplot2::labs(y = "", x = "Time (s)") +
         ggplot2::theme(legend.position = "none") +
-        ggplot2::ggtitle("Group 1")
+        ggplot2::ggtitle("Group 5")
+
       return(list(g55 = g55, top55 = top55))
     })
 
@@ -917,10 +999,13 @@ mod_FunctionalANOVA_server <- function(id){
       mean4 <- data2%>%dplyr::group_by(group,Time)%>%dplyr::summarise(Mean = mean(value))%>%as.data.frame()
       prom1 = data.frame(group=c(rep("Global",length(df1[,1]))), Time=prom_global$Time, Mean=prom_global$value)
       prom3 = rbind(mean4, prom1)
-      m5 = ggplot2::ggplot(prom3, ggplot2::aes(x=Time,y=Mean, group = group, colour = group)) +
+      m5 = ggplot2::ggplot(prom3, ggplot2::aes(x=Time, y=Mean, group = group, colour = group)) +
         ggplot2::geom_line(size=1) +
-        ggplot2::theme(text = ggplot2::element_text(size = 13), axis.text.x = ggplot2::element_text(angle=90))+
-        ggplot2::labs (y  = "", x= "Time (s)") + ggplot2::ggtitle("Average curves")+
+        ggplot2::theme(text = ggplot2::element_text(size = 13), axis.text.x = ggplot2::element_text(angle=90),
+                       panel.background = ggplot2::element_blank(),  # Elimina el fondo gris
+                       plot.background = ggplot2::element_blank()) +  # Elimina el fondo del área de trazado
+        ggplot2::labs(y  = "", x= "Time (s)") +
+        ggplot2::ggtitle("Average curves")+
         ggplot2::scale_color_manual(values = c("red", "blue", "aquamarine2", "green", "orange", "black")) +
         ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5))
       return(list(m5 = m5))
@@ -933,7 +1018,7 @@ mod_FunctionalANOVA_server <- function(id){
                               graph_group54()$g54,
                               graph_group55()$g55,
                               means5()$m5, ncol = 2)
-      })
+    })
 
     Data_for_anova5 <- reactive({
       req(filedata111()$fileInput)
@@ -968,6 +1053,7 @@ mod_FunctionalANOVA_server <- function(id){
       return(list(Ydata = Ydata, data_functional = data_functional, data1 = data1, time = time))
     })
 
+
     fit_5 <- reactive({
       minn <- abs(min(min(graph_group51()$top51[,3]), min(graph_group52()$top52[,3]),
                       min(graph_group53()$top53[,3]), min(graph_group54()$top54[,3]),
@@ -979,12 +1065,12 @@ mod_FunctionalANOVA_server <- function(id){
       data1 = Data_for_anova5()$data1
       time <- Data_for_anova5()$time
       if (input$checkbox1) {
-        fit51 <- refund::pffr(Ydata ~ antigen2 + c(antigen2), data = data1, method = "REML",
+        fit51 <- refund::pffr(Ydata ~ antigen2 + c(antigen2), yind = time, data = data1, method = "REML",
                               bs.yindex=list(bs="ps", k = as.numeric(input$k1), m=c(2, 1)),
                               bs.int=list(bs="ps", k = as.numeric(input$k2), m=c(2,1)))
       }
       else {
-        fit51 <- refund::pffr(Ydata ~ antigen2, data = data1,method = "REML",
+        fit51 <- refund::pffr(Ydata ~ antigen2, yind = time, data = data1, method = "REML",
                               bs.yindex=list(bs="ps", k = as.numeric(input$k1), m=c(2, 1)),
                               bs.int=list(bs="ps", k = as.numeric(input$k2), m=c(2,1)))
       }
@@ -1071,6 +1157,275 @@ mod_FunctionalANOVA_server <- function(id){
         ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5))+
         ggplot2::theme(plot.title = ggplot2::element_text(size = 20, face = "bold"))
     })
+
+    ### groups comparations for 5 levels
+    ########################
+    comparations <- reactive({
+
+      minn <- abs(min(min(graph_group51()$top51[,3]), min(graph_group52()$top52[,3]),
+                      min(graph_group53()$top53[,3]), min(graph_group54()$top54[,3]),
+                      min(graph_group55()$top55[,3])))
+      minn1 <- ifelse(minn %% 1 == 0, minn + 1, ceiling(minn))
+
+      if (input$checkbox) {Ydata = log(Data_for_anova5()$Ydata + minn1)}
+      else{Ydata = Data_for_anova5()$Ydata}
+      data_functional = Data_for_anova5()$data_functional
+      data1 = Data_for_anova5()$data1
+      time <- Data_for_anova5()$time
+
+      fit51 <- fit_5()$fit51
+
+      coefi <- coef(fit51)
+
+      antigen21 = data.frame(coefi$smterms[2][1])[,c(1, 4, 8)]
+      colnames(antigen21) <- c("Time1","coef_A1_value", "coef_A1_se")
+      coef_A1_se <- antigen21$coef_A1_se
+
+      antigen22 = data.frame(coefi$smterms[3][1])[,c(1, 4, 8)]
+      colnames(antigen22) <- c("Time1","coef_A2_value", "coef_A2_se")
+      coef_A2_se <- antigen22$coef_A2_se
+
+      antigen23 = data.frame(coefi$smterms[4][1])[,c(1, 4, 8)]
+      colnames(antigen23) <- c("Time1","coef_A3_value", "coef_A3_se")
+      coef_A3_se <- antigen23$coef_A3_se
+
+      antigen24 = data.frame(coefi$smterms[5][1])[,c(1, 4, 8)]
+      colnames(antigen24) <- c("Time1","coef_A4_value", "coef_A4_se")
+      coef_A4_se <- antigen24$coef_A4_se
+
+      antigen25 = data.frame(coefi$smterms[6][1])[,c(1, 4, 8)]
+      colnames(antigen25) <- c("Time1","coef_A5_value", "coef_A5_se")
+      coef_A5_se <- antigen25$coef_A5_se
+
+      dif_2_1 = antigen22$coef_A2_value - antigen21$coef_A1_value
+
+
+      predframe2_1 <- data.frame(Time1 = antigen21$Time1, dif_2_1,
+                                 CI_lwr=dif_2_1-1.96*sqrt(coef_A1_se^2+coef_A2_se^2),
+                                 CI_upr = dif_2_1+1.96*sqrt(coef_A1_se^2+coef_A2_se^2))
+
+      dif_3_1 = antigen23$coef_A3_value - antigen21$coef_A1_value
+
+      predframe3_1 <- data.frame(Time1 = antigen21$Time1, dif_3_1,
+                                 CI_lwr=dif_3_1-1.96*sqrt(coef_A1_se^2+coef_A3_se^2),
+                                 CI_upr = dif_3_1+1.96*sqrt(coef_A1_se^2+coef_A3_se^2))
+
+      dif_4_1 = antigen24$coef_A4_value - antigen21$coef_A1_value
+
+      predframe4_1 <- data.frame(Time1 = antigen21$Time1, dif_4_1,
+                                 CI_lwr=dif_4_1-1.96*sqrt(coef_A1_se^2+coef_A4_se^2),
+                                 CI_upr = dif_4_1+1.96*sqrt(coef_A1_se^2+coef_A4_se^2))
+
+      dif_5_1 = antigen25$coef_A5_value - antigen21$coef_A1_value
+
+      predframe5_1 <- data.frame(Time1 = antigen21$Time1, dif_5_1,
+                                 CI_lwr=dif_5_1-1.96*sqrt(coef_A1_se^2+coef_A5_se^2),
+                                 CI_upr = dif_5_1+1.96*sqrt(coef_A1_se^2+coef_A5_se^2))
+
+      dif_2_3 = antigen22$coef_A2_value - antigen23$coef_A3_value
+
+      predframe2_3 <- data.frame(Time1 = antigen22$Time1, dif_2_3,
+                                 CI_lwr=dif_2_3-1.96*sqrt(coef_A2_se^2+coef_A3_se^2),
+                                 CI_upr = dif_2_3+1.96*sqrt(coef_A2_se^2+coef_A3_se^2))
+
+      dif_2_4 = antigen22$coef_A2_value - antigen24$coef_A4_value
+
+      predframe2_4 <- data.frame(Time1 = antigen22$Time1, dif_2_4,
+                                 CI_lwr=dif_2_4-1.96*sqrt(coef_A2_se^2+coef_A4_se^2),
+                                 CI_upr = dif_2_4+1.96*sqrt(coef_A2_se^2+coef_A4_se^2))
+
+      dif_2_5 = antigen22$coef_A2_value - antigen25$coef_A5_value
+
+      predframe2_5 <- data.frame(Time1 = antigen22$Time1, dif_2_5,
+                                 CI_lwr=dif_2_5-1.96*sqrt(coef_A2_se^2+coef_A5_se^2),
+                                 CI_upr = dif_2_5+1.96*sqrt(coef_A2_se^2+coef_A5_se^2))
+
+      dif_3_4 = antigen23$coef_A3_value - antigen24$coef_A4_value
+
+      predframe3_4 <- data.frame(Time1 = antigen23$Time1, dif_3_4,
+                                 CI_lwr=dif_3_4-1.96*sqrt(coef_A3_se^2+coef_A4_se^2),
+                                 CI_upr = dif_3_4+1.96*sqrt(coef_A3_se^2+coef_A4_se^2))
+
+      dif_3_5 = antigen23$coef_A3_value - antigen25$coef_A5_value
+
+      predframe3_5 <- data.frame(Time1 = antigen23$Time1, dif_3_5,
+                                 CI_lwr=dif_3_5-1.96*sqrt(coef_A3_se^2+coef_A5_se^2),
+                                 CI_upr = dif_3_5+1.96*sqrt(coef_A3_se^2+coef_A5_se^2))
+
+      dif_4_5 = antigen24$coef_A4_value - antigen25$coef_A5_value
+
+      predframe4_5 <- data.frame(Time1 = antigen24$Time1, dif_4_5,
+                                 CI_lwr=dif_4_5-1.96*sqrt(coef_A4_se^2+coef_A5_se^2),
+                                 CI_upr = dif_4_5+1.96*sqrt(coef_A4_se^2+coef_A5_se^2))
+
+      return(list(predframe2_1 = predframe2_1, predframe3_1 = predframe3_1,
+                  predframe4_1 = predframe4_1, predframe5_1 = predframe5_1,
+                  predframe2_3 = predframe2_3, predframe2_4 = predframe2_4,
+                  predframe2_5 = predframe2_5, predframe3_4 = predframe3_4,
+                  predframe3_5 = predframe3_5, predframe4_5 = predframe4_5))
+    })
+
+
+    output$Compartion1 <- renderPlot({
+      predframe = comparations()$predframe2_1
+      ggplot2::ggplot(predframe, ggplot2::aes(Time1,dif_2_1)) + ggplot2::geom_line()+
+        ggplot2::geom_ribbon(data=predframe,ggplot2::aes(ymin=CI_lwr,ymax=CI_upr),alpha=0.3)+
+        ggplot2::labs(x = "Time(s)", y= "Estimated effect difference",
+                      title = "Group 2 and Group 1" ) +
+        ggplot2::theme(panel.background = ggplot2::element_rect(fill = "white", color = "black"))+
+        ggplot2::geom_hline(yintercept = 0, linetype = "dashed", color = "black")+
+        #ggplot2::scale_x_continuous(breaks=seq(0,820,50))+
+        ggplot2::theme(plot.title = ggplot2::element_text(size = 17, hjust = 0.5),
+                       axis.text.x = ggplot2::element_text(angle=90),
+                       axis.text = ggplot2::element_text(size = 17),
+                       axis.title = ggplot2::element_text(size = 17)) #+
+      #ggplot2::scale_y_continuous(limits = c(-0.25, 0.25))
+    })
+
+    output$Compartion2 <- renderPlot({
+      predframe = comparations()$predframe3_1
+      ggplot2::ggplot(predframe, ggplot2::aes(Time1,dif_3_1)) + ggplot2::geom_line()+
+        ggplot2::geom_ribbon(data=predframe,ggplot2::aes(ymin=CI_lwr,ymax=CI_upr),alpha=0.3)+
+        ggplot2::labs(x = "Time(s)", y= "Estimated effect difference",
+                      title = "Group 3 and Group 1" ) +
+        ggplot2::theme(panel.background = ggplot2::element_rect(fill = "white", color = "black"))+
+        ggplot2::geom_hline(yintercept = 0, linetype = "dashed", color = "black")+
+        #ggplot2::scale_x_continuous(breaks=seq(0,820,50))+
+        ggplot2::theme(plot.title = ggplot2::element_text(size = 17, hjust = 0.5),
+                       axis.text.x = ggplot2::element_text(angle=90),
+                       axis.text = ggplot2::element_text(size = 17),
+                       axis.title = ggplot2::element_text(size = 17)) #+
+      #ggplot2::scale_y_continuous(limits = c(-0.25, 0.25))
+    })
+
+    output$Compartion3 <- renderPlot({
+      predframe = comparations()$predframe4_1
+      ggplot2::ggplot(predframe, ggplot2::aes(Time1,dif_4_1)) + ggplot2::geom_line()+
+        ggplot2::geom_ribbon(data=predframe,ggplot2::aes(ymin=CI_lwr,ymax=CI_upr),alpha=0.3)+
+        ggplot2::labs(x = "Time(s)", y= "Estimated effect difference",
+                      title = "Group 4 and Group 1" ) +
+        ggplot2::theme(panel.background = ggplot2::element_rect(fill = "white", color = "black"))+
+        ggplot2::geom_hline(yintercept = 0, linetype = "dashed", color = "black")+
+        #ggplot2::scale_x_continuous(breaks=seq(0,820,50))+
+        ggplot2::theme(plot.title = ggplot2::element_text(size = 17, hjust = 0.5),
+                       axis.text.x = ggplot2::element_text(angle=90),
+                       axis.text = ggplot2::element_text(size = 17),
+                       axis.title = ggplot2::element_text(size = 17)) #+
+      #ggplot2::scale_y_continuous(limits = c(-0.25, 0.25))
+    })
+
+    output$Compartion4 <- renderPlot({
+      predframe = comparations()$predframe5_1
+      ggplot2::ggplot(predframe, ggplot2::aes(Time1,dif_5_1)) + ggplot2::geom_line()+
+        ggplot2::geom_ribbon(data=predframe,ggplot2::aes(ymin=CI_lwr,ymax=CI_upr),alpha=0.3)+
+        ggplot2::labs(x = "Time(s)", y= "Estimated effect difference",
+                      title = "Group 5 and Group 1" ) +
+        ggplot2::theme(panel.background = ggplot2::element_rect(fill = "white", color = "black"))+
+        ggplot2::geom_hline(yintercept = 0, linetype = "dashed", color = "black")+
+        #ggplot2::scale_x_continuous(breaks=seq(0,820,50))+
+        ggplot2::theme(plot.title = ggplot2::element_text(size = 17, hjust = 0.5),
+                       axis.text.x = ggplot2::element_text(angle=90),
+                       axis.text = ggplot2::element_text(size = 17),
+                       axis.title = ggplot2::element_text(size = 17)) #+
+      #ggplot2::scale_y_continuous(limits = c(-0.25, 0.25))
+    })
+
+    output$Compartion5 <- renderPlot({
+      predframe = comparations()$predframe2_3
+      ggplot2::ggplot(predframe, ggplot2::aes(Time1,dif_2_3)) + ggplot2::geom_line()+
+        ggplot2::geom_ribbon(data=predframe,ggplot2::aes(ymin=CI_lwr,ymax=CI_upr),alpha=0.3)+
+        ggplot2::labs(x = "Time(s)", y= "Estimated effect difference",
+                      title = "Group 2 and Group 3" ) +
+        ggplot2::theme(panel.background = ggplot2::element_rect(fill = "white", color = "black"))+
+        ggplot2::geom_hline(yintercept = 0, linetype = "dashed", color = "black")+
+        #ggplot2::scale_x_continuous(breaks=seq(0,820,50))+
+        ggplot2::theme(plot.title = ggplot2::element_text(size = 17, hjust = 0.5),
+                       axis.text.x = ggplot2::element_text(angle=90),
+                       axis.text = ggplot2::element_text(size = 17),
+                       axis.title = ggplot2::element_text(size = 17)) #+
+      #ggplot2::scale_y_continuous(limits = c(-0.25, 0.25))
+    })
+
+    output$Compartion6 <- renderPlot({
+      predframe = comparations()$predframe2_4
+      ggplot2::ggplot(predframe, ggplot2::aes(Time1,dif_2_4)) + ggplot2::geom_line()+
+        ggplot2::geom_ribbon(data=predframe,ggplot2::aes(ymin=CI_lwr,ymax=CI_upr),alpha=0.3)+
+        ggplot2::labs(x = "Time(s)", y= "Estimated effect difference",
+                      title = "Group 2 and Group 4" ) +
+        ggplot2::theme(panel.background = ggplot2::element_rect(fill = "white", color = "black"))+
+        ggplot2::geom_hline(yintercept = 0, linetype = "dashed", color = "black")+
+        #ggplot2::scale_x_continuous(breaks=seq(0,820,50))+
+        ggplot2::theme(plot.title = ggplot2::element_text(size = 17, hjust = 0.5),
+                       axis.text.x = ggplot2::element_text(angle=90),
+                       axis.text = ggplot2::element_text(size = 17),
+                       axis.title = ggplot2::element_text(size = 17)) #+
+      #ggplot2::scale_y_continuous(limits = c(-0.25, 0.25))
+    })
+
+    output$Compartion7 <- renderPlot({
+      predframe = comparations()$predframe2_5
+      ggplot2::ggplot(predframe, ggplot2::aes(Time1,dif_2_5)) + ggplot2::geom_line()+
+        ggplot2::geom_ribbon(data=predframe,ggplot2::aes(ymin=CI_lwr,ymax=CI_upr),alpha=0.3)+
+        ggplot2::labs(x = "Time(s)", y= "Estimated effect difference",
+                      title = "Group 2 and Group 5" ) +
+        ggplot2::theme(panel.background = ggplot2::element_rect(fill = "white", color = "black"))+
+        ggplot2::geom_hline(yintercept = 0, linetype = "dashed", color = "black")+
+        #ggplot2::scale_x_continuous(breaks=seq(0,820,50))+
+        ggplot2::theme(plot.title = ggplot2::element_text(size = 17, hjust = 0.5),
+                       axis.text.x = ggplot2::element_text(angle=90),
+                       axis.text = ggplot2::element_text(size = 17),
+                       axis.title = ggplot2::element_text(size = 17)) #+
+      #ggplot2::scale_y_continuous(limits = c(-0.25, 0.25))
+    })
+
+    output$Compartion8 <- renderPlot({
+      predframe = comparations()$predframe3_4
+      ggplot2::ggplot(predframe, ggplot2::aes(Time1,dif_3_4)) + ggplot2::geom_line()+
+        ggplot2::geom_ribbon(data=predframe,ggplot2::aes(ymin=CI_lwr,ymax=CI_upr),alpha=0.3)+
+        ggplot2::labs(x = "Time(s)", y= "Estimated effect difference",
+                      title = "Group 3 and Group 4" ) +
+        ggplot2::theme(panel.background = ggplot2::element_rect(fill = "white", color = "black"))+
+        ggplot2::geom_hline(yintercept = 0, linetype = "dashed", color = "black")+
+        #ggplot2::scale_x_continuous(breaks=seq(0,820,50))+
+        ggplot2::theme(plot.title = ggplot2::element_text(size = 17, hjust = 0.5),
+                       axis.text.x = ggplot2::element_text(angle=90),
+                       axis.text = ggplot2::element_text(size = 17),
+                       axis.title = ggplot2::element_text(size = 17)) #+
+      #ggplot2::scale_y_continuous(limits = c(-0.25, 0.25))
+    })
+
+    output$Compartion9 <- renderPlot({
+      predframe = comparations()$predframe3_5
+      ggplot2::ggplot(predframe, ggplot2::aes(Time1,dif_3_5)) + ggplot2::geom_line()+
+        ggplot2::geom_ribbon(data=predframe,ggplot2::aes(ymin=CI_lwr,ymax=CI_upr),alpha=0.3)+
+        ggplot2::labs(x = "Time(s)", y= "Estimated effect difference",
+                      title = "Group 3 and Group 5" ) +
+        ggplot2::theme(panel.background = ggplot2::element_rect(fill = "white", color = "black"))+
+        ggplot2::geom_hline(yintercept = 0, linetype = "dashed", color = "black")+
+        #ggplot2::scale_x_continuous(breaks=seq(0,820,50))+
+        ggplot2::theme(plot.title = ggplot2::element_text(size = 17, hjust = 0.5),
+                       axis.text.x = ggplot2::element_text(angle=90),
+                       axis.text = ggplot2::element_text(size = 17),
+                       axis.title = ggplot2::element_text(size = 17)) #+
+      #ggplot2::scale_y_continuous(limits = c(-0.25, 0.25))
+    })
+
+    output$Compartion10 <- renderPlot({
+      predframe = comparations()$predframe4_5
+      ggplot2::ggplot(predframe, ggplot2::aes(Time1,dif_4_5)) + ggplot2::geom_line()+
+        ggplot2::geom_ribbon(data=predframe,ggplot2::aes(ymin=CI_lwr,ymax=CI_upr),alpha=0.3)+
+        ggplot2::labs(x = "Time(s)", y= "Estimated effect difference",
+                      title = "Group 4 and Group 5" ) +
+        ggplot2::theme(panel.background = ggplot2::element_rect(fill = "white", color = "black"))+
+        ggplot2::geom_hline(yintercept = 0, linetype = "dashed", color = "black")+
+        #ggplot2::scale_x_continuous(breaks=seq(0,820,50))+
+        ggplot2::theme(plot.title = ggplot2::element_text(size = 17, hjust = 0.5),
+                       axis.text.x = ggplot2::element_text(angle=90),
+                       axis.text = ggplot2::element_text(size = 17),
+                       axis.title = ggplot2::element_text(size = 17)) #+
+      #ggplot2::scale_y_continuous(limits = c(-0.25, 0.25))
+    })
+
 
 
   })
