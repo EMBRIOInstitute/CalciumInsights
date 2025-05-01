@@ -1082,7 +1082,7 @@ mod_FunctionalANOVA_server <- function(id){
       AIC = AIC(fit51)
       BIC=BIC(fit51)
       R2_adjusted = summary(fit51)$r.sq*100
-      infromation = data.frame(RMSE = RMSE, AIC = AIC , BIC = BIC, R2_adjusted = R2_adjusted)
+      infromation = data.frame(RMSE = RMSE, AIC = AIC , BIC = BIC)
       return(list(infromation = infromation, fit51 = fit51))
     })
 

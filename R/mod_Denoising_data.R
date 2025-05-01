@@ -960,7 +960,7 @@ mod_Denoising_data_server <- function(id){
                                       "Prominence", "FWHP", "FWHM", "Peak_Rise_Time",
                                       "Transient_Ocurrence_Time", "Rise_Rate"))
       df_p$Amplitude <- df_p$Amplitude - peaks_plot()$baseline1
-      DT::datatable(df_p, caption = tags$caption(tags$strong("Transient Metrics")))
+      DT::datatable(round(df_p, 3), caption = tags$caption(tags$strong("Transient Metrics")))
     })
 
 
@@ -981,7 +981,7 @@ mod_Denoising_data_server <- function(id){
       }
       else {Transient_Metrics <- df_p2}
 
-      DT::datatable(Transient_Metrics,  options = list(
+      DT::datatable(round(Transient_Metrics, 3),  options = list(
         pagingType = 'simple',
         dom = 't',
         autoWidth = TRUE
