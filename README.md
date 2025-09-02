@@ -1,11 +1,44 @@
 # CalciumInsights
-It is an essential interactive tool for scientists and professionals in the fields of biology and neuroscience. This R package enhances the ability to discover patterns and relationships in calcium signal data, providing a profound understanding of underlying biological processes.
 
-## Install R and RStudio
+CalciumInsights is an interactive application built in R designed to analyze tissue-agnostic calcium traces.
 
-<https://cran.r-project.org/> 
 
-<https://posit.co/download/rstudio-desktop/> 
+![image](figures/CI_description.png)
+
+# Installation
+
+To install CalciumInsights R and RStudio are required:
+
+<https://cran.r-project.org/>
+
+<https://posit.co/download/rstudio-desktop/>
+
+## Packages
+
+```{r}
+config (>= 0.3.1)
+golem (>= 0.3.2)
+shiny (>= 1.7.2)
+shinydashboard
+shinyjs
+ggplot2
+DT
+gridExtra
+mdatools
+pracma
+tidyverse
+dplyr
+reshape2
+refund
+fda
+fds
+reshape2
+latex2exp
+plotly
+magrittr
+png
+prospectr
+```
 
 ## How to install the app
 
@@ -15,7 +48,7 @@ install.packages("remotes")
 ```
 ### The following console command is to install from github
 ```
-remotes::install_github("EMBRIOInstitute/CalciumInsights", auth_token = "your GitHub token")
+remotes::install_github("AOG-Lab/CalciumInsights")
 ```
 ## Example
 
@@ -25,5 +58,3 @@ This is a basic example which shows you how to solve a common problem:
 library(CalciumInsights)
 run_app()
 ```
-
-
